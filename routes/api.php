@@ -18,7 +18,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('teste',[\App\Http\Controllers\TestController::class, 'index']);
+Route::get('teste',[\App\Http\Controllers\TestController::class, 'index']);
 
 Route::group([
     'middleware' => 'api',
@@ -37,5 +37,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('/validatedToken', function() {
         return true;
     });
+
+    Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
 
 });
