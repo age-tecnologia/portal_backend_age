@@ -39,5 +39,6 @@ Route::group(['middleware' => 'auth:api'], function() {
     });
 
     Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
+    Route::get('report/dici', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'dici']);
 
 });
