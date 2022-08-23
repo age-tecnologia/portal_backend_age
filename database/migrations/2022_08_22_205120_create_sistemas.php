@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sistemas', function (Blueprint $table) {
+        Schema::create('portal_sistemas', function (Blueprint $table) {
             $table->id();
             $table->string('sistema');
             $table->timestamps();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sistemas');
+        Schema::dropIfExists('portal_sistemas');
     }
 };

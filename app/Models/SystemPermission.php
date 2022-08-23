@@ -11,7 +11,7 @@ class SystemPermission extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'permissoes_sistema';
+    protected $table = 'portal_sistema_permissoes';
     protected $connection = 'mysql';
 
 

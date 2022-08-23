@@ -14,6 +14,7 @@ class User extends Authenticatable implements JWTSubject
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $connection = 'mysql';
+    protected $table = 'portal_users';
 
     /**
      * The attributes that are mass assignable.

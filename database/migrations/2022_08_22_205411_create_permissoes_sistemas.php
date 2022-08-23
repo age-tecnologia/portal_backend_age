@@ -13,16 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('permissoes_sistema', function (Blueprint $table) {
+        Schema::create('portal_sistema_permissoes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('sistema_id');
             $table->unsignedBigInteger('modified_by');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('sistema_id')->references('id')->on('sistemas');
-            $table->foreign('modified_by')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('portal_users');
+            $table->foreign('sistema_id')->references('id')->on('portal_sistemas');
+            $table->foreign('modified_by')->references('id')->on('portal_users');
         });
     }
 
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permissoes_sistema');
+        Schema::dropIfExists('portal_sistema_permissoes');
     }
 };

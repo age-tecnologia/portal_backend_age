@@ -13,14 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('portal_users', function (Blueprint $table) {
+        Schema::create('agerv_colaboradores', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->string('nome', 255);
+            $table->unsignedBigInteger('funcao_id')->default(1);
+            $table->unsignedBigInteger('setor_id')->default(1);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('portal_users');
+        Schema::dropIfExists('colaboradores');
     }
 };

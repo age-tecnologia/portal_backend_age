@@ -45,4 +45,14 @@ Route::group(['middleware' => 'auth:api'], function() {
        Route::get('/systems', [\App\Http\Controllers\SystemPermissionController::class, 'index']);
     });
 
+    Route::prefix('agerv')->group(function() {
+        Route::prefix('dashboard')->group(function() {
+           Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'index']);
+        });
+
+        Route::prefix('routines')->group(function() {
+            Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
+        });
+    });
+
 });
