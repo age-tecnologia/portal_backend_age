@@ -15,7 +15,12 @@ return new class extends Migration
     {
         Schema::create('portal_colaboradores_setores', function (Blueprint $table) {
             $table->id();
+            $table->string('setor');
+            $table->unsignedBigInteger('modified_by');
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('modified_by')->references('id')->on('portal_users');
         });
     }
 

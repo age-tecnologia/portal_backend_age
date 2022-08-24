@@ -369,7 +369,8 @@ class RvSellerController extends Controller
         $this->cancelTotals = VoalleSales::select('plano', 'data_contrato')
                                         ->whereMonth('data_vigencia', $this->month)
                                         ->whereYear('data_vigencia', $this->year)
-                                        ->where('situacao', 'Cancelado')
+                                        ->where('status', '<>', 'Aprovado')
+                                        ->where('status', '<>', 'Em Aprovação')
                                         ->where('vendedor', $this->username)
                                         ->count();
 
