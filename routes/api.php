@@ -47,7 +47,7 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     Route::prefix('agerv')->group(function() {
         Route::prefix('dashboard')->group(function() {
-           Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'index']);
+           Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'seller']);
         });
 
         Route::prefix('routines')->group(function() {

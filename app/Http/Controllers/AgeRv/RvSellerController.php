@@ -26,42 +26,56 @@ class RvSellerController extends Controller
 
 
     private string $username; // Dados do usuário para extração do relatório.
+    private string $channel; // Dados do canal que o usuário pertence.
     private string $month; // Mês para filtro das vendas.
     private string $year; // Ano para filtro das vendas.
     private int $cancelD7 = 0;  // Vendas canceladas antes dos 7 dias.
     private int $deflator = 0; // Deflator de adição ou subtração.
     private int $sales = 0; // Vendas totais.
     private int $stars = 0; // Estrelas acumuladas.
-    private int $cancel_totals = 0; // Cancelamentos totais, antes ou depois dos 7 dias.
+    private int $cancelTotals = 0; // Cancelamentos totais, antes ou depois dos 7 dias.
     private int $meta = 0; // Meta do colaborador.
-    private float $meta_percent = 0.0; // Percentual da meta atingida.
-    private float $value_stars = 0.0 // Valor das estrelas, baseado no percentual da meta atingida.
+    private float $metaPercent = 0.0; // Percentual da meta atingida.
+    private float $valueStars = 0.0; // Valor das estrelas, baseado no percentual da meta atingida.
     private float $commission = 0.0; // Comissão, sendo o cálculo (estrela x valor_estrela) + deflator.
 
-    public function index()
+    /*
+     * Bloco responsável pela chamada nos outros métodos e envio do json contendo as informações pro dashboard.
+     */
+    public function seller(Request $request)
     {
-        //$this->username = 'SABRINA LAIS MOREIRA MOTA';
-        $this->username = 'Camila Meirelles Gonçalvez'; // Recupera o valor do usuário pela requisição,
-        $this->year = Carbon::now()->format('Y'); // Trás o ano atual.
-        $this->month = Carbon::now()->format('m'); // Trás o mês atual.
+
+        $validated = $request->validate([
+           'year' => 'required',
+           'month' => 'required'
+        ]);
 
 
+        $this->username = $request->input('username'); // Recupera o valor do usuário pela requisição,
+        $this->year = $request->input('year'); // Recupera o ano filtrado.
+        $this->month = $request->input('month'); // Recupera o mês filtrado.
+
+
+        // Dados tratados para exibição na dashboard do vendedor.
         $data = [
             'cancel_d7' => $this->cancelD7(),
             'deflator' => $this->deflator(),
             'sales' => $this->sales(),
             'stars' => $this->stars(),
-            'cancel_total' => '',
-            'meta_percent' => '',
-            'value_stars' => '',
-            'commission' => '',
+            'cancel_total' => $this->cancelTotals(),
+            'meta_percent' => $this->metaPercent(),
+            'value_stars' => $this->valueStars(),
+            'commission' => $this->commission(),
 
         ];
 
         return response()->json([$data], 201);
     }
 
-    public function cancelD7()
+    /*
+     * Retorna todas as vendas canceladas com menos de 7 dias no período.
+     */
+    public function cancelD7() : int
     {
         // Trás todas as vendas com situação cancelada e com a vigência do mês/ano requisitado
         $sales = VoalleSales::select('id',
@@ -106,7 +120,10 @@ class RvSellerController extends Controller
         return $this->cancelD7;
     }
 
-    public function deflator()
+    /*
+     * Retorna o valor do deflator, baseado na regra de negócio.
+     */
+    public function deflator() : int
     {
         // Valida se existe cancelamento antes dos 7 dias, caso aja, o deflator passa a penalizar em -10%
         if($this->cancelD7 > 0) {
@@ -118,33 +135,332 @@ class RvSellerController extends Controller
         return $this->deflator;
     }
 
-    public function sales()
+    /*
+     * Retorna a contagem de vendas realizadas no período.
+     */
+    public function sales() : int
     {
+        // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->sales = VoalleSales::where('vendedor', $this->username)
                                     ->whereMonth('data_vigencia', $this->month)
                                     ->whereYear('data_vigencia', $this->year)
+                                    ->whereMonth('data_ativacao', $this->month)
+                                    ->whereYear('data_ativacao', $this->year)
+                                    ->whereMonth('data_contrato','>=', '05')
+                                    ->whereYear('data_contrato', $this->year)
+                                    ->where('status', 'Aprovado')
                                     ->count();
         return $this->sales;
     }
 
-    public function stars()
+    /*
+     * Retorna a contagem de estrelas baseada no plano vendido.
+     */
+    public function stars() : int
     {
-        $plans = VoalleSales::select('plano')
+        // Trás os planos vendidos, onde o status não for inválido
+        $plans = VoalleSales::select('plano', 'data_contrato')
                             ->whereMonth('data_vigencia', $this->month)
                             ->whereYear('data_vigencia', $this->year)
-                            ->where('status', '<>', 'Inválida')
+                            ->where('status', 'Aprovado')
                             ->where('vendedor', $this->username)
+                            ->whereMonth('data_ativacao', $this->month)
+                            ->whereYear('data_ativacao', $this->year)
+                            ->whereMonth('data_contrato','>=', '05')
+                            ->whereYear('data_contrato', $this->year)
                             ->get();
 
-        $plans->each(function ($item, $key) {
-            if(str_contains($item->plano,'PLANO 480 MEGA FIDELIZADO')) {
-                $this->stars += 9;
-            } elseif(str_contains($item->plano,'PLANO 480 MEGA FIDELIZADO'))
+        // Percorre todos os dados, verificando qual o plano vendido e atribui as estrelas devidas.
+        $plans->each(function($item) {
+
+            // Se o mês do cadastro do contrato for MAIO, executa esse bloco.
+            if( Carbon::parse($item->data_contrato) < Carbon::parse('2022-06-01') &&
+                Carbon::parse($item->data_contrato) >= Carbon::parse('2022-05-01')) {
+
+                // Verifica qual é o plano e atribui a estrela correspondente.
+                if(str_contains($item->plano,'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                    $this->stars += 5;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA PROMOCAO LEVE 960 MEGA ')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 360 MEGA')) {
+                    $this->stars += 11;
+                } elseif(str_contains($item->plano,'PLANO 400 MEGA FIDELIZADO')) {
+                    $this->stars += 15;
+                } elseif(str_contains($item->plano,'PLANO 480 MEGA - FIDELIZADO')) {
+                    $this->stars += 15;
+                } elseif(str_contains($item->plano,'PLANO 720 MEGA ')) {
+                    $this->stars += 25;
+                } elseif(str_contains($item->plano,'PLANO 740 MEGA FIDELIZADO')) {
+                    $this->stars += 25;
+                } elseif(str_contains($item->plano,'PLANO 800 MEGA FIDELIZADO')) {
+                    $this->stars += 17;
+                } elseif(str_contains($item->plano,'PLANO 960 MEGA')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO 960 MEGA TURBINADO + AGE TV + DEEZER PREMIUM')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
+                    $this->stars += 12;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                    $this->stars += 17;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 800 MEGA FIDELIZADO + IP FIXO')) {
+                    $this->stars += 20;
+                }
+
+            // Se o mês do cadastro do contrato for JUNHO, executa esse bloco.
+            } elseif(Carbon::parse($item->data_contrato) < Carbon::parse('2022-07-01') &&
+                     Carbon::parse($item->data_contrato) >= Carbon::parse('2022-06-01')) {
+
+                // Verifica qual é o plano e atribui a estrela correspondente.
+                if(str_contains($item->plano,'COMBO EMPRESARIAL 600 MEGA + 1 FIXO BRASIL SEM FIDELIDADE')) {
+                    $this->stars += 10;
+                } elseif(str_contains($item->plano,'COMBO EMPRESARIAL 600 MEGA + 2 FIXOS BRASIL SEM FIDELIDADE')) {
+                    $this->stars += 13;
+                } elseif(str_contains($item->plano,'PLANO 120 MEGA')) {
+                    $this->stars += 7;
+                } elseif(str_contains($item->plano,'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                    $this->stars += 7;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA PROMOCAO LEVE 960 MEGA ')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA SEM FIDELIDADE')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 400 MEGA FIDELIZADO')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 480 MEGA - FIDELIZADO')) {
+                    $this->stars += 15;
+                } elseif(str_contains($item->plano,'PLANO 720 MEGA ')) {
+                    $this->stars += 25;
+                } elseif(str_contains($item->plano,'PLANO 800 MEGA - COLABORADOR')) {
+                    $this->stars += 17;
+                } elseif(str_contains($item->plano,'PLANO 800 MEGA FIDELIZADO')) {
+                    $this->stars += 17;
+                } elseif(str_contains($item->plano,'PLANO 960 MEGA')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO 960 MEGA TURBINADO + AGE TV + DEEZER PREMIUM')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                    $this->stars += 17;
+                }
+
+              // Se o mês do cadastro do contrato for JULHO, executa esse bloco.
+            } elseif(Carbon::parse($item->data_contrato) < Carbon::parse('2022-08-01') &&
+                     Carbon::parse($item->data_contrato) >= Carbon::parse('2022-07-01')) {
+
+                // Verifica qual é o plano e atribui a estrela correspondente.
+                if(str_contains($item->plano,'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
+                    $this->stars += 30;
+                } elseif(str_contains($item->plano,'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                    $this->stars += 15;
+                } elseif(str_contains($item->plano,'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                    $this->stars += 7;
+                } elseif(str_contains($item->plano,'PLANO 120 MEGA SEM FIDELIDADE')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA ')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA + DEEZER PREMIUM SEM FIDELIDADE')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 400 MEGA - COLABORADOR')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 400 MEGA FIDELIZADO')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 400 MEGA NÃO FIDELIZADO')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 480 MEGA - FIDELIZADO')) {
+                    $this->stars += 7;
+                } elseif(str_contains($item->plano,'PLANO 480 MEGA FIDELIZADO')) {
+                    $this->stars += 7;
+                } elseif(str_contains($item->plano,'PLANO 740 MEGA FIDELIZADO')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 740 MEGA FIDELIZADO')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 800 MEGA - CAMPANHA CONDOMÍNIO FIDELIZADO (AMBOS)')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 800 MEGA - COLABORADOR')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 800 MEGA FIDELIZADO')) {
+                    $this->stars += 17;
+                } elseif(str_contains($item->plano,'PLANO 960 MEGA')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO 960 MEGA (LOJAS)')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + IP FIXO')) {
+                    $this->stars += 38;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 1 GIGA SEM FIDELIDADE + IP FIXO')) {
+                    $this->stars += 36;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
+                    $this->stars += 12;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                    $this->stars += 15;
+                }
+
+              // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
+            } elseif(Carbon::parse($item->data_contrato) < Carbon::parse('2022-09-01') &&
+                     Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
+
+                // Verifica qual é o plano e atribui a estrela correspondente.
+                if(str_contains($item->plano,'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
+                    $this->stars += 30;
+                } elseif(str_contains($item->plano,'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                    $this->stars += 15;
+                } elseif(str_contains($item->plano,'PLANO 1 GIGA NÃO FIDELIZADO + DEEZER PREMIUM')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                    $this->stars += 7;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 400 MEGA FIDELIZADO')) {
+                    $this->stars += 7;
+                } elseif(str_contains($item->plano,'PLANO 480 MEGA FIDELIZADO')) {
+                    $this->stars += 7;
+                } elseif(str_contains($item->plano,'PLANO 480 MEGA NÃO FIDELIZADO')) {
+                    $this->stars += 0;
+                } elseif(str_contains($item->plano,'PLANO 740 MEGA FIDELIZADO')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO 800 MEGA FIDELIZADO')) {
+                    $this->stars += 15;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                    $this->stars += 35;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                    $this->stars += 9;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
+                    $this->stars += 12;
+                } elseif(str_contains($item->plano,'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                    $this->stars += 17;
+                }
+            }
         });
 
         return $this->stars;
 
     }
 
+    /*
+     * Retorna a contagem de cancelamento total no período.
+     */
+    public function cancelTotals() : int
+    {
+        $this->cancelTotals = VoalleSales::select('plano', 'data_contrato')
+                                        ->whereMonth('data_vigencia', $this->month)
+                                        ->whereYear('data_vigencia', $this->year)
+                                        ->where('situacao', 'Cancelado')
+                                        ->where('vendedor', $this->username)
+                                        ->count();
 
+        return $this->cancelTotals;
+    }
+
+    /*
+     * Retorna a porcentagem da meta atingida no período..
+     */
+    public function metaPercent() : float
+    {
+        $this->meta = 60;
+
+        $this->metaPercent = number_format(($this->sales / $this->meta) * 100, 2);
+
+        return $this->metaPercent;
+
+    }
+
+    /*
+     * Retorna a contagem de estrelas no período.
+     */
+    public function valueStars() : float
+    {
+
+        $this->channel = 'MCV';
+
+            // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
+            if($this->channel === 'PJ') {
+                if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                    $this->valueStars = 1.30;
+                } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                    $this->valueStars = 3;
+                } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                    $this->valueStars = 5;
+                } elseif($this->metaPercent >= 141) {
+                    $this->valueStars = 7;
+                }
+            } elseif ($this->channel === 'MCV') {
+
+                // Verifica o mês e aplica a diferença na meta mínima
+                if($this->month <= '07') {
+                    $minPercent = 70;
+                } elseif($this->month === '08') {
+                    $minPercent = 60;
+                }
+
+                if($this->metaPercent >= $minPercent && $this->metaPercent < 100) {
+                    $this->valueStars = 0.90;
+                } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                    $this->valueStars = 1.20;
+                } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                    $this->valueStars = 2;
+                } elseif($this->metaPercent >= 141) {
+                    $this->valueStars = 4.5;
+                }
+
+            } elseif ($this->channel === 'PAP') {
+
+                if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                    $this->valueStars = 1.30;
+                } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                    $this->valueStars = 3;
+                } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                    $this->valueStars = 5;
+                } elseif($this->metaPercent >= 141) {
+                    $this->valueStars = 7;
+                }
+            } elseif($this->channel === 'LIDER') {
+                if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                    $this->valueStars = 0.25;
+                } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                    $this->valueStars = 0.40;
+                } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                    $this->valueStars = 0.80;
+                } elseif($this->metaPercent >= 141) {
+                    $this->valueStars = 1.30;
+                }
+            }
+
+        return $this->valueStars;
+    }
+
+    /*
+     * Retorna o valor da comissão no período.
+     */
+    public function commission() : float
+    {
+        $this->commission = $this->valueStars * $this->stars;
+
+        return $this->commission;
+    }
 }
+
