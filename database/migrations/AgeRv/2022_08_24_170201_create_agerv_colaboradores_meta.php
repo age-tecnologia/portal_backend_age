@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('agerv_meta_colaborador', function (Blueprint $table) {
+        Schema::create('agerv_colaboradores_meta', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('colaborador_id');
             $table->string('mes_competencia');
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('agerv_meta_colaborador');
+        Schema::dropIfExists('agerv_colaboradores_meta');
     }
 };

@@ -70,9 +70,8 @@ class VoalleSalesController extends Controller
 
 
                 foreach($salesVoalle as $sale => $value) {
-                    $dataVoalle->firstOrCreate([
+                    $dataVoalle->create([
                         'id_contrato' => $value->id_contrato,
-                    ], [
                         'nome_cliente' => $value->nome_cliente,
                         'status' => $value->status,
                         'situacao' => $value->situacao,
@@ -87,6 +86,7 @@ class VoalleSalesController extends Controller
                         'plano' => $value->plano,
                     ]);
                 }
+
 
 //                $collaborator = new CollaboratorController();
 //                $collaborator->create();

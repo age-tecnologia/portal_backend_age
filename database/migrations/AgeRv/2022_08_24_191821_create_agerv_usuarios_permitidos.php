@@ -13,16 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('portal_sistema_permissoes', function (Blueprint $table) {
+        Schema::create('agerv_usuarios_permitidos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('sistema_id');
-            $table->unsignedBigInteger('modified_by');
+            $table->unsignedBigInteger('funcao_id');
+            $table->unsignedBigInteger('setor_id');
+            $table->boolean('isAdmin');
+            $table->boolean('isFinancial');
             $table->timestamps();
             $table->softDeletes();
+
             $table->foreign('user_id')->references('id')->on('portal_users');
-            $table->foreign('sistema_id')->references('id')->on('portal_sistemas');
-            $table->foreign('modified_by')->references('id')->on('portal_users');
+            $table->foreign('funcao_id')->references('id')->on('portal_colaboradores_funcoes');
+            $table->foreign('setor_id')->references('id')->on('portal_colaboradores_setores');
         });
     }
 
@@ -33,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('portal_sistema_permissoes');
+        Schema::dropIfExists('agerv_usuarios_permitidos');
     }
 };

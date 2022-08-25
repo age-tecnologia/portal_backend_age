@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\AgeRv;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class SystemsController extends Controller
+class CollaboratorMetaController extends Controller
 {
     /**
      * Display a listing of the resource.

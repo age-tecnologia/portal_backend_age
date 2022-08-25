@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\AgeRv;
 
 use App\Http\Controllers\Controller;
+use App\Models\AgeRv\Collaborator;
+use App\Models\AgeRv\CollaboratorMeta;
 use App\Models\AgeRv\VoalleSales;
 use Carbon\Carbon;
 use http\Env\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RvSellerController extends Controller
 {
@@ -26,18 +29,22 @@ class RvSellerController extends Controller
 
 
     private string $username; // Dados do usuário para extração do relatório.
+    private int $id; // Dados do usuário para extração do relatório.
     private string $channel; // Dados do canal que o usuário pertence.
     private string $month; // Mês para filtro das vendas.
     private string $year; // Ano para filtro das vendas.
     private int $cancelD7 = 0;  // Vendas canceladas antes dos 7 dias.
     private int $deflator = 0; // Deflator de adição ou subtração.
-    private int $sales = 0; // Vendas totais.
+    private int $sales = 0; // Vendas validas.
+    private int $salesTotals; // Vendas totais.
+    private int $salesAprovation; // Vendas em aprovação.
     private int $stars = 0; // Estrelas acumuladas.
     private int $cancelTotals = 0; // Cancelamentos totais, antes ou depois dos 7 dias.
     private int $meta = 0; // Meta do colaborador.
+    private int $minMeta = 0; // Mínimo a ser atingido.
     private float $metaPercent = 0.0; // Percentual da meta atingida.
     private float $valueStars = 0.0; // Valor das estrelas, baseado no percentual da meta atingida.
-    private float $commission = 0.0; // Comissão, sendo o cálculo (estrela x valor_estrela) + deflator.
+    private $commission; // Comissão, sendo o cálculo (estrela x valor_estrela) + deflator.
 
     /*
      * Bloco responsável pela chamada nos outros métodos e envio do json contendo as informações pro dashboard.
@@ -50,26 +57,33 @@ class RvSellerController extends Controller
            'month' => 'required'
         ]);
 
+        $collaborator = Collaborator::where('user_id', auth()->user()->id)->select('user_id','nome')->first();
 
-        $this->username = $request->input('username'); // Recupera o valor do usuário pela requisição,
+        if(! isset($collaborator->nome)) {
+            return response()->json(['Usuário sem colaborador vinculado!'], 406);
+        }
+
+        $this->username = $collaborator->nome;
+        $this->id = $collaborator->user_id;
+
         $this->year = $request->input('year'); // Recupera o ano filtrado.
         $this->month = $request->input('month'); // Recupera o mês filtrado.
 
 
-        // Dados tratados para exibição na dashboard do vendedor.
-        $data = [
-            'cancel_d7' => $this->cancelD7(),
+        return response()->json([
+            'cancelD7' => $this->cancelD7(),
             'deflator' => $this->deflator(),
             'sales' => $this->sales(),
+            'salesTotals' => $this->salesTotals(),
+            'salesAprovation' => $this->salesAprovation(),
             'stars' => $this->stars(),
-            'cancel_total' => $this->cancelTotals(),
-            'meta_percent' => $this->metaPercent(),
-            'value_stars' => $this->valueStars(),
+            'cancelTotals' => $this->cancelTotals(),
+            'metaPercent' => $this->metaPercent(),
+            'valueStars' => $this->valueStars(),
             'commission' => $this->commission(),
-
-        ];
-
-        return response()->json([$data], 201);
+            'meta' => $this->meta,
+            'minMeta' => $this->minMeta
+        ], 201);
     }
 
     /*
@@ -115,6 +129,7 @@ class RvSellerController extends Controller
         // Busca as vendas inválidas, para apresentar no dashboard.
         $this->cancelD7 = VoalleSales::where('status', 'Inválida')
                                         ->where('vendedor', $this->username)
+                                        ->where('data_vigencia', $this->month)
                                         ->count();
 
         return $this->cancelD7;
@@ -136,7 +151,7 @@ class RvSellerController extends Controller
     }
 
     /*
-     * Retorna a contagem de vendas realizadas no período.
+     * Retorna a contagem de vendas válidas no período.
      */
     public function sales() : int
     {
@@ -151,6 +166,38 @@ class RvSellerController extends Controller
                                     ->where('status', 'Aprovado')
                                     ->count();
         return $this->sales;
+    }
+
+    /*
+     * Retorna a contagem de vendas totais no período.
+     */
+    public function salesTotals() : int
+    {
+        // Trás a contagem de todas as vendas realizadas no mês filtrado.
+        $this->salesTotals = VoalleSales::where('vendedor', $this->username)
+            ->whereMonth('data_vigencia', $this->month)
+            ->whereYear('data_vigencia', $this->year)
+            ->whereMonth('data_ativacao', $this->month)
+            ->whereYear('data_ativacao', $this->year)
+            ->whereMonth('data_contrato','>=', '05')
+            ->whereYear('data_contrato', $this->year)
+            ->count();
+        return $this->salesTotals;
+    }
+
+    /*
+     * Retorna a contagem de vendas em aprovação no período.
+     */
+    public function salesAprovation() : int
+    {
+        // Trás a contagem de todas as vendas realizadas no mês filtrado.
+        $this->salesAprovation = VoalleSales::where('vendedor', $this->username)
+            ->whereMonth('data_contrato', $this->month)
+            ->whereYear('data_contrato', $this->year)
+            ->where('status', 'Em Aprovação')
+            ->count();
+
+        return $this->salesAprovation;
     }
 
     /*
@@ -382,7 +429,17 @@ class RvSellerController extends Controller
      */
     public function metaPercent() : float
     {
-        $this->meta = 60;
+
+        $data = CollaboratorMeta::where('colaborador_id', $this->id)
+                                ->where('mes_competencia', $this->month)
+                                ->first();
+
+        if(! isset($data->meta)) {
+            return 0;
+        }
+
+        $this->meta = $data->meta;
+
 
         $this->metaPercent = number_format(($this->sales / $this->meta) * 100, 2);
 
@@ -396,7 +453,12 @@ class RvSellerController extends Controller
     public function valueStars() : float
     {
 
-        $this->channel = 'MCV';
+        $data = DB::table('agerv_colaboradores as c')
+                    ->leftJoin('agerv_colaboradores_canais as cc', 'c.canal_id', '=', 'cc.id')
+                    ->select('c.nome','cc.canal')
+                    ->first();
+
+        $this->channel = $data->canal;
 
             // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
             if($this->channel === 'PJ') {
@@ -413,12 +475,12 @@ class RvSellerController extends Controller
 
                 // Verifica o mês e aplica a diferença na meta mínima
                 if($this->month <= '07') {
-                    $minPercent = 70;
+                    $this->minMeta = 70;
                 } elseif($this->month === '08') {
-                    $minPercent = 60;
+                    $this->minMeta = 60;
                 }
 
-                if($this->metaPercent >= $minPercent && $this->metaPercent < 100) {
+                if($this->metaPercent >= $this->minMeta && $this->metaPercent < 100) {
                     $this->valueStars = 0.90;
                 } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
                     $this->valueStars = 1.20;
@@ -457,11 +519,19 @@ class RvSellerController extends Controller
     /*
      * Retorna o valor da comissão no período.
      */
-    public function commission() : float
+    public function commission()
     {
         $this->commission = $this->valueStars * $this->stars;
 
-        return $this->commission;
+        if($this->commission > 0) {
+            if($this->deflator > 0) {
+                $this->commission = $this->commission * 1.1;
+            } elseif($this->deflator < 0) {
+                $this->commission = $this->commission * 0.9;
+            }
+        }
+
+        return number_format($this->commission, 2, ',', '.');
     }
 }
 

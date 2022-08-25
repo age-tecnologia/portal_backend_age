@@ -13,14 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('agerv_colaboradores_vinculados', function (Blueprint $table) {
+        Schema::create('agereport_usuarios_permitidos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('colaborador_id');
+            $table->unsignedBigInteger('funcao_id');
+            $table->unsignedBigInteger('setor_id');
+            $table->boolean('isAdmin');
+            $table->boolean('isFinancial');
             $table->timestamps();
             $table->softDeletes();
+
             $table->foreign('user_id')->references('id')->on('portal_users');
-            $table->foreign('colaborador_id')->references('id')->on('agerv_colaboradores');
+            $table->foreign('funcao_id')->references('id')->on('portal_colaboradores_funcoes');
+            $table->foreign('setor_id')->references('id')->on('portal_colaboradores_setores');
         });
     }
 
@@ -31,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('agerv_colaboradores_vinculados');
+        Schema::dropIfExists('agereport_usuarios_permitidos');
     }
 };

@@ -15,15 +15,17 @@ return new class extends Migration
     {
         Schema::create('agerv_colaboradores', function (Blueprint $table) {
             $table->id();
-            $table->string('nome', 255)->unique();
+            $table->string('nome', 255);
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('funcao_id')->default(1);
-            $table->unsignedBigInteger('setor_id')->default(1);
+            $table->unsignedBigInteger('canal_id')->default(1);
             $table->timestamps();
             $table->softDeletes();
 
 
+            $table->foreign('user_id')->references('id')->on('portal_users');
             $table->foreign('funcao_id')->references('id')->on('portal_colaboradores_funcoes');
-            $table->foreign('setor_id')->references('id')->on('portal_colaboradores_setores');
+            $table->foreign('canal_id')->references('id')->on('agerv_colaboradores_canais');
         });
     }
 

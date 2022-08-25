@@ -77,4 +77,9 @@ class ReportAllController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'dici.xlsx');
 
     }
+
+    public function default()
+    {
+
+    }
 }

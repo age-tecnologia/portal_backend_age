@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('isMaster');
+            $table->boolean('isMaster');
             $table->boolean('isAdmin');
             $table->boolean('isCommittee');
             $table->timestamp('email_verified_at')->nullable();

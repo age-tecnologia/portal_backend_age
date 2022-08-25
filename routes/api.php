@@ -38,19 +38,28 @@ Route::group(['middleware' => 'auth:api'], function() {
         return true;
     });
 
-    Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
-    Route::get('report/dici', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'dici']);
+    Route::middleware('AccessAgeReport')->prefix('agerreport')->group(function() {
 
-    Route::prefix('permissions')->group(function() {
-       Route::get('/systems', [\App\Http\Controllers\SystemPermissionController::class, 'index']);
+        Route::get('/Access', function () {
+            return true;
+        });
+
+        Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
+        Route::get('report/dici', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'dici']);
     });
 
-    Route::prefix('agerv')->group(function() {
+
+    Route::middleware('AccessAgeRv')->prefix('agerv')->group(function() {
+
+        Route::get('/Access', function () {
+            return true;
+        });
+
         Route::prefix('dashboard')->group(function() {
            Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'seller']);
         });
 
-        Route::prefix('routines')->group(function() {
+        Route::middleware('AccessMaster')->prefix('routines')->group(function() {
             Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
         });
     });
