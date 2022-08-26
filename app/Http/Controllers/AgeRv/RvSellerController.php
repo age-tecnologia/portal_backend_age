@@ -111,6 +111,7 @@ class RvSellerController extends Controller
                             ->whereYear('data_vigencia', $this->year)
                             ->whereMonth('data_vigencia', $this->month)
                             ->where('situacao', 'Cancelado')
+                            ->where('status', 'Aprovada')
                             ->where('vendedor', $this->username)
                             ->get();
 
@@ -171,7 +172,6 @@ class RvSellerController extends Controller
                                     ->whereMonth('data_contrato','>=', '06')
                                     ->whereYear('data_contrato', $this->year)
                                     ->where('status','<>', 'Cancelado')
-                                    ->where('status','<>', 'Inválida')
                                     ->count();
         return $this->sales;
     }
@@ -222,6 +222,8 @@ class RvSellerController extends Controller
                             ->whereYear('data_ativacao', $this->year)
                             ->whereMonth('data_contrato','>=', '06')
                             ->whereYear('data_contrato', $this->year)
+                            ->where('status', 'Aprovado')
+                            ->orWhere('status', 'Inválido')
                             ->get();
 
         // Percorre todos os dados, verificando qual o plano vendido e atribui as estrelas devidas.
@@ -559,6 +561,7 @@ class RvSellerController extends Controller
             ->whereYear('data_ativacao', $this->year)
             ->whereMonth('data_contrato','>=', '06')
             ->whereYear('data_contrato', $this->year)
+            ->where('status', 'Aprovado')
             ->distinct()
             ->groupBy('plano')
             ->get();
@@ -593,6 +596,8 @@ class RvSellerController extends Controller
             ->whereYear('data_ativacao', $this->year)
             ->whereMonth('data_contrato','>=', '05')
             ->whereYear('data_contrato', $this->year)
+            ->where('status', '<>', 'Cancelada')
+            ->where('status', '<>', 'Em Aprovação')
             ->get();
 
         $plans->each(function($item) {
@@ -792,7 +797,7 @@ class RvSellerController extends Controller
             ->whereYear('data_vigencia', $this->year)
             ->whereMonth('data_ativacao', $this->month)
             ->whereYear('data_ativacao', $this->year)
-            ->whereMonth('data_contrato','>=', '05')
+            ->whereMonth('data_contrato','>=', '06')
             ->whereYear('data_contrato', $this->year)
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao',
                      'data_vigencia', 'data_cancelamento', 'plano')
@@ -845,8 +850,8 @@ class RvSellerController extends Controller
             ->whereYear('data_ativacao', $this->year)
             ->whereMonth('data_contrato','>=', '06')
             ->whereYear('data_contrato', $this->year)
-            ->where('status','<>', 'Cancelado')
-            ->where('status','<>', 'Inválida')
+            ->where('status', 'Aprovado')
+            ->where('situacao', '<>', 'Cancelado')
             ->get();
 
         $data->each(function($value) {
