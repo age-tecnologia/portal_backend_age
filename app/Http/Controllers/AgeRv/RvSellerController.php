@@ -86,7 +86,9 @@ class RvSellerController extends Controller
             'minMeta' => $this->minMeta,
             'extractStars' => $this->extractStars(),
             'extractSalesTotals' => $this->extractSalesTotals(),
-            'extractSalesAprovation' => $this->extractSalesAprovation()
+            'extractSalesAprovation' => $this->extractSalesAprovation(),
+            'extractSalesValids' => $this->extractSalesValids(),
+            'extractCancelsD7' => $this->extractCancelsD7()
         ], 201);
     }
 
@@ -134,6 +136,7 @@ class RvSellerController extends Controller
         $this->cancelD7 = VoalleSales::where('status', 'Inválida')
                                         ->where('vendedor', $this->username)
                                         ->whereMonth('data_vigencia', $this->month)
+                                        ->whereYear('data_vigencia', $this->year)
                                         ->count();
 
         return $this->cancelD7;
@@ -165,9 +168,10 @@ class RvSellerController extends Controller
                                     ->whereYear('data_vigencia', $this->year)
                                     ->whereMonth('data_ativacao', $this->month)
                                     ->whereYear('data_ativacao', $this->year)
-                                    ->whereMonth('data_contrato','>=', '05')
+                                    ->whereMonth('data_contrato','>=', '06')
                                     ->whereYear('data_contrato', $this->year)
-                                    ->where('status', 'Aprovado')
+                                    ->where('status','<>', 'Cancelado')
+                                    ->where('status','<>', 'Inválida')
                                     ->count();
         return $this->sales;
     }
@@ -179,13 +183,13 @@ class RvSellerController extends Controller
     {
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->salesTotals = VoalleSales::where('vendedor', $this->username)
-            ->whereMonth('data_vigencia', $this->month)
-            ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_ativacao', $this->month)
-            ->whereYear('data_ativacao', $this->year)
-            ->whereMonth('data_contrato','>=', '05')
-            ->whereYear('data_contrato', $this->year)
-            ->count();
+                                        ->whereMonth('data_vigencia', $this->month)
+                                        ->whereYear('data_vigencia', $this->year)
+                                        ->whereMonth('data_ativacao', $this->month)
+                                        ->whereYear('data_ativacao', $this->year)
+                                        ->whereMonth('data_contrato','>=', '06')
+                                        ->whereYear('data_contrato', $this->year)
+                                        ->count();
         return $this->salesTotals;
     }
 
@@ -211,13 +215,12 @@ class RvSellerController extends Controller
     {
         // Trás os planos vendidos, onde o status não for inválido
         $plans = VoalleSales::select('plano', 'data_contrato')
+                            ->where('vendedor', $this->username)
                             ->whereMonth('data_vigencia', $this->month)
                             ->whereYear('data_vigencia', $this->year)
-                            ->where('status', 'Aprovado')
-                            ->where('vendedor', $this->username)
                             ->whereMonth('data_ativacao', $this->month)
                             ->whereYear('data_ativacao', $this->year)
-                            ->whereMonth('data_contrato','>=', '05')
+                            ->whereMonth('data_contrato','>=', '06')
                             ->whereYear('data_contrato', $this->year)
                             ->get();
 
@@ -420,6 +423,10 @@ class RvSellerController extends Controller
         $this->cancelTotals = VoalleSales::select('plano', 'data_contrato')
                                         ->whereMonth('data_vigencia', $this->month)
                                         ->whereYear('data_vigencia', $this->year)
+                                        ->whereMonth('data_ativacao', $this->month)
+                                        ->whereYear('data_ativacao', $this->year)
+                                        ->whereMonth('data_contrato','>=', '06')
+                                        ->whereYear('data_contrato', $this->year)
                                         ->where('status', '<>', 'Aprovado')
                                         ->where('status', '<>', 'Em Aprovação')
                                         ->where('vendedor', $this->username)
@@ -547,11 +554,10 @@ class RvSellerController extends Controller
         $plans = VoalleSales::selectRaw('plano, count(*) as "qntd" ')
             ->whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->where('status', 'Aprovado')
             ->where('vendedor', $this->username)
             ->whereMonth('data_ativacao', $this->month)
             ->whereYear('data_ativacao', $this->year)
-            ->whereMonth('data_contrato','>=', '05')
+            ->whereMonth('data_contrato','>=', '06')
             ->whereYear('data_contrato', $this->year)
             ->distinct()
             ->groupBy('plano')
@@ -582,7 +588,6 @@ class RvSellerController extends Controller
             ->where('vendedor', $this->username)
             ->whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->where('status', 'Aprovado')
             ->where('vendedor', $this->username)
             ->whereMonth('data_ativacao', $this->month)
             ->whereYear('data_ativacao', $this->year)
@@ -816,6 +821,17 @@ class RvSellerController extends Controller
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'plano')
             ->get();
 
+        $data->each(function($value) {
+            $value->data_contrato = Carbon::parse($value->data_contrato)->format('d/m/Y');
+            $value->data_ativacao = Carbon::parse($value->data_ativacao)->format('d/m/Y');
+            $value->data_vigencia = Carbon::parse($value->data_vigencia)->format('d/m/Y');
+            if(! is_null($value->data_cancelamento)) {
+                $value->data_cancelamento = Carbon::parse($value->data_cancelamento)->format('d/m/Y');
+            }
+
+            $this->sanitizePlan($value);
+        });
+
         return $data;
     }
 
@@ -827,13 +843,49 @@ class RvSellerController extends Controller
             ->whereYear('data_vigencia', $this->year)
             ->whereMonth('data_ativacao', $this->month)
             ->whereYear('data_ativacao', $this->year)
-            ->whereMonth('data_contrato','>=', '05')
+            ->whereMonth('data_contrato','>=', '06')
             ->whereYear('data_contrato', $this->year)
-            ->where('status', 'Aprovado')
+            ->where('status','<>', 'Cancelado')
+            ->where('status','<>', 'Inválida')
             ->get();
+
+        $data->each(function($value) {
+            $value->data_contrato = Carbon::parse($value->data_contrato)->format('d/m/Y');
+            $value->data_ativacao = Carbon::parse($value->data_ativacao)->format('d/m/Y');
+            $value->data_vigencia = Carbon::parse($value->data_vigencia)->format('d/m/Y');
+
+            if(! is_null($value->data_cancelamento)) {
+                $value->data_cancelamento = Carbon::parse($value->data_cancelamento)->format('d/m/Y');
+            }
+
+            $this->sanitizePlan($value);
+        });
 
         return $data;
 
+    }
+
+    public function extractCancelsD7()
+    {
+        $data = VoalleSales::where('status', 'Inválida')
+                            ->where('vendedor', $this->username)
+                            ->whereMonth('data_vigencia', $this->month)
+                            ->whereYear('data_vigencia', $this->year)
+                            ->get();
+
+        $data->each(function($value) {
+            $value->data_contrato = Carbon::parse($value->data_contrato)->format('d/m/Y');
+            $value->data_ativacao = Carbon::parse($value->data_ativacao)->format('d/m/Y');
+            $value->data_vigencia = Carbon::parse($value->data_vigencia)->format('d/m/Y');
+
+            if(! is_null($value->data_cancelamento)) {
+                $value->data_cancelamento = Carbon::parse($value->data_cancelamento)->format('d/m/Y');
+            }
+
+            $this->sanitizePlan($value);
+        });
+
+        return $data;
     }
 
     public function sanitizePlan($valor)
