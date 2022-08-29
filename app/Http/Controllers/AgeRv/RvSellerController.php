@@ -973,12 +973,22 @@ class RvSellerController extends Controller
             }
         }
 
+        $this->stars = number_format(($daysMonth * $this->stars) / $dateActual, 0);
+        $this->commission = $this->stars * $this->valueStars;
+
+        if($this->commission > 0) {
+            if($this->deflator > 0) {
+                $this->commission = $this->commission * 1.1;
+            } elseif($this->deflator < 0) {
+                $this->commission = $this->commission * 0.9;
+            }
+        }
 
         return [
-            'stars' => number_format(($daysMonth * $this->stars) / $dateActual, 0),
+            'stars' => $this->stars,
             'sales' => number_format(($daysMonth * $this->sales) / $dateActual, 0),
             'metaPercent' => $this->metaPercent,
-            'commission' => number_format(($daysMonth * $this->commission) / $dateActual, 2, ',', '.'),
+            'commission' => $this->commission,
             'dateActual' => $dateActual,
             'daysMonth' => $daysMonth,
             'daysMissing' => $daysMissing,
