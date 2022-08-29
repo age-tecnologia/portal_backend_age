@@ -88,7 +88,8 @@ class RvSellerController extends Controller
             'extractSalesTotals' => $this->extractSalesTotals(),
             'extractSalesAprovation' => $this->extractSalesAprovation(),
             'extractSalesValids' => $this->extractSalesValids(),
-            'extractCancelsD7' => $this->extractCancelsD7()
+            'extractCancelsD7' => $this->extractCancelsD7(),
+            'projection' => $this->projection()
         ], 201);
     }
 
@@ -891,6 +892,42 @@ class RvSellerController extends Controller
         });
 
         return $data;
+    }
+
+    public function projection()
+    {
+        $dateActual = Carbon::now()->format('d');
+        $daysMonth = Carbon::now()->format('t');
+        $dayName = Carbon::now()->format('l');
+        $year = Carbon::now()->format('Y');
+        $month = Carbon::now()->format('m');
+        $dayUtils = $daysMonth;
+        $daysMissing = $dayUtils - $dateActual;
+
+        for($i = 1;  ($daysMonth + 1) > $i; $i++) {
+            $date = Carbon::parse("$year-$month-$i")->format('d/m/Y');
+            $dayName = Carbon::parse("$year-$month-$i")->format('l');
+
+            if($dayName === 'Sunday') {
+                $dayUtils = $dayUtils - 1;
+
+            } elseif($dayName === 'Saturday') {
+                $dayUtils = $dayUtils - 0.5;
+
+            }
+
+        }
+
+
+        return [
+            'stars' => number_format(($daysMonth * $this->stars) / $dateActual, 0),
+            'sales' => number_format(($daysMonth * $this->sales) / $dateActual, 0),
+            'metaPercent' => number_format(($daysMonth * $this->metaPercent) / $dateActual, 2),
+            'commission' => number_format(($daysMonth * $this->commission) / $dateActual, 2, ',', '.'),
+            'dateActual' => $dateActual,
+            'daysMonth' => $daysMonth,
+            'daysMissing' => $daysMissing,
+        ];
     }
 
     public function sanitizePlan($valor)
