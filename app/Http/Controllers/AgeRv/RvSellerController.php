@@ -918,11 +918,66 @@ class RvSellerController extends Controller
 
         }
 
+        $this->metaPercent = number_format(($daysMonth * $this->metaPercent) / $dateActual, 2);
+
+        // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
+        if($this->channel === 'PJ') {
+            if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                $this->valueStars = 1.30;
+            } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                $this->valueStars = 3;
+            } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                $this->valueStars = 5;
+            } elseif($this->metaPercent >= 141) {
+                $this->valueStars = 7;
+            }
+        } elseif ($this->channel === 'MCV') {
+
+            // Verifica o mês e aplica a diferença na meta mínima
+            if($this->month <= '07') {
+                $this->minMeta = 70;
+            } elseif($this->month === '08') {
+                $this->minMeta = 60;
+            }
+
+            if($this->metaPercent >= $this->minMeta && $this->metaPercent < 100) {
+                $this->valueStars = 0.90;
+            } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                $this->valueStars = 1.20;
+            } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                $this->valueStars = 2;
+            } elseif($this->metaPercent >= 141) {
+                $this->valueStars = 4.5;
+            }
+
+        } elseif ($this->channel === 'PAP') {
+
+            if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                $this->valueStars = 1.30;
+            } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                $this->valueStars = 3;
+            } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                $this->valueStars = 5;
+            } elseif($this->metaPercent >= 141) {
+                $this->valueStars = 7;
+            }
+        } elseif($this->channel === 'LIDER') {
+            if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                $this->valueStars = 0.25;
+            } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                $this->valueStars = 0.40;
+            } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                $this->valueStars = 0.80;
+            } elseif($this->metaPercent >= 141) {
+                $this->valueStars = 1.30;
+            }
+        }
+
 
         return [
             'stars' => number_format(($daysMonth * $this->stars) / $dateActual, 0),
             'sales' => number_format(($daysMonth * $this->sales) / $dateActual, 0),
-            'metaPercent' => number_format(($daysMonth * $this->metaPercent) / $dateActual, 2),
+            'metaPercent' => $this->metaPercent,
             'commission' => number_format(($daysMonth * $this->commission) / $dateActual, 2, ',', '.'),
             'dateActual' => $dateActual,
             'daysMonth' => $daysMonth,
