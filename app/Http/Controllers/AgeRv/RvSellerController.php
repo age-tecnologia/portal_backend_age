@@ -918,7 +918,8 @@ class RvSellerController extends Controller
 
         }
 
-        $this->metaPercent = number_format(($daysMonth * $this->metaPercent) / $dateActual, 2);
+        $this->metaPercent = number_format($this->metaPercent  / ($dayUtils - 2) * $dayUtils, 2);
+
 
         // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
         if($this->channel === 'PJ') {
@@ -973,7 +974,7 @@ class RvSellerController extends Controller
             }
         }
 
-        $this->stars = ($daysMonth * $this->stars) / $dateActual;
+        $this->stars = ($this->stars / ($dayUtils -2)) * $dayUtils;
         $this->commission = $this->stars * $this->valueStars;
 
         if($this->commission > 0) {
@@ -986,10 +987,10 @@ class RvSellerController extends Controller
 
         return [
             'stars' => number_format($this->stars, 0),
-            'sales' => number_format(($daysMonth * $this->sales) / $dateActual, 0),
+            'sales' => number_format(($this->sales / ($dayUtils - 2)) * $dayUtils, 0),
             'metaPercent' => number_format($this->metaPercent, 2),
             'commission' => number_format($this->commission, 2, ',', '.'),
-            'dateActual' => $dateActual,
+            'dateActual' => ($dayUtils - 1),
             'daysMonth' => $daysMonth,
             'daysMissing' => $daysMissing,
         ];

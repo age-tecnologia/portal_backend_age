@@ -35,7 +35,16 @@ Route::group([
 Route::group(['middleware' => 'auth:api'], function() {
 
     Route::get('/validatedToken', function() {
-        return true;
+
+        $access = null;
+        $levelAccess = \App\Models\LevelAccess::
+                        where('id', auth()->user()->nivel_acesso_id)
+                        ->first();
+
+        return [
+            'levelAccess' => $levelAccess->nivel,
+            'status' => true
+        ];
     });
 
     Route::middleware('AccessAgeReport')->prefix('agerreport')->group(function() {
@@ -56,20 +65,9 @@ Route::group(['middleware' => 'auth:api'], function() {
             $collaborator = \App\Models\AgeRv\AccessPermission::where('user_id', auth()->user()->id)->first();
             $access = null;
 
-            if($collaborator->isAdmin === 1) {
-                $access = 'admin';
-            } elseif($collaborator->isFinancial === 1) {
-                $access = 'financial';
-            } elseif($collaborator->isSeller === 1) {
-                $access = 'seller';
-            } elseif($collaborator->isSupervisor === 1) {
-                $access = 'supervisor';
-            } elseif($collaborator->isManager === 1) {
-                $access = 'manager';
-            }
 
             return [
-              'levelAccess' => $access
+              'levelAccess' => 'seller'
             ];
 
         });

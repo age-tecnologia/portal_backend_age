@@ -12,6 +12,6 @@ class AccessPermission extends Model
     use SoftDeletes;
 
     protected $table = 'agerv_usuarios_permitidos';
-    protected $fillable = ['user_id', 'funcao_id', 'setor_id', 'isAdmin', 'isFinancial'];
+    protected $fillable = ['user_id', 'funcao_id', 'setor_id', 'nivel_acesso_id'];
     protected $connection = 'mysql';
 }

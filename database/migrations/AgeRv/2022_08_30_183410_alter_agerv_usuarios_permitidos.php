@@ -14,9 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('agerv_usuarios_permitidos', function (Blueprint $table) {
-            $table->boolean('isManager')->after('isAdmin');
-            $table->boolean('isSupervisor')->after('isManager');
-            $table->boolean('isSeller')->after('isSupervisor');
+           $table->unsignedBigInteger('nivel_acesso_id')->default(1)->after('setor_id');
+           $table->foreign('nivel_acesso_id')->references('id')->on('portal_nivel_acesso');
         });
     }
 
@@ -28,9 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('agerv_usuarios_permitidos', function (Blueprint $table) {
-            $table->dropColumn('isManager');
-            $table->dropColumn('isSupervisor');
-            $table->dropColumn('isSeller');
+            $table->dropForeign(['nivel_acesso_id']);
+            $table->dropColumn('nivel_acesso_id');
         });
     }
 };
