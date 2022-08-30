@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('agerv_usuarios_permitidos', function (Blueprint $table) {
-            $table->boolean('isSupervisor')->after('isAdmin');
+            $table->boolean('isManager')->after('isAdmin');
+            $table->boolean('isSupervisor')->after('isManager');
             $table->boolean('isSeller')->after('isSupervisor');
         });
     }
@@ -26,6 +27,10 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('agerv_usuarios_permitidos', function (Blueprint $table) {
+            $table->dropColumn('isManager');
+            $table->dropColumn('isSupervisor');
+            $table->dropColumn('isSeller');
+        });
     }
 };
