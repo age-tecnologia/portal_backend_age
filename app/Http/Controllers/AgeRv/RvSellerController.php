@@ -112,7 +112,7 @@ class RvSellerController extends Controller
                             ->whereYear('data_vigencia', $this->year)
                             ->whereMonth('data_vigencia', $this->month)
                             ->where('situacao', 'Cancelado')
-                            ->where('status', 'Aprovada')
+                            ->where('status', 'Aprovado')
                             ->where('vendedor', $this->username)
                             ->get();
 
@@ -973,7 +973,7 @@ class RvSellerController extends Controller
             }
         }
 
-        $this->stars = number_format(($daysMonth * $this->stars) / $dateActual, 0);
+        $this->stars = ($daysMonth * $this->stars) / $dateActual;
         $this->commission = $this->stars * $this->valueStars;
 
         if($this->commission > 0) {
@@ -985,10 +985,10 @@ class RvSellerController extends Controller
         }
 
         return [
-            'stars' => $this->stars,
+            'stars' => number_format($this->stars, 0),
             'sales' => number_format(($daysMonth * $this->sales) / $dateActual, 0),
-            'metaPercent' => $this->metaPercent,
-            'commission' => $this->commission,
+            'metaPercent' => number_format($this->metaPercent, 2),
+            'commission' => number_format($this->commission, 2, ',', '.'),
             'dateActual' => $dateActual,
             'daysMonth' => $daysMonth,
             'daysMissing' => $daysMissing,

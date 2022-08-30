@@ -52,7 +52,24 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::middleware('AccessAgeRv')->prefix('agerv')->group(function() {
 
         Route::get('/Access', function () {
-            return true;
+
+            $collaborator = \App\Models\AgeRv\AccessPermission::where('user_id', auth()->user()->id)->first();
+            $access = null;
+
+            if($collaborator->isAdmin === 1) {
+                $access = 'admin';
+            } elseif($collaborator->isFinancial === 1) {
+                $access = 'financial';
+            } elseif($collaborator->isSeller === 1) {
+                $access = 'seller';
+            } elseif($collaborator->isSupervisor === 1) {
+                $access = 'supervisor';
+            }
+
+            return [
+              'levelAccess' => $access
+            ];
+
         });
 
         Route::prefix('dashboard')->group(function() {
