@@ -98,7 +98,8 @@ class RvSellerController extends Controller
             'extractSalesAprovation' => $this->extractSalesAprovation(),
             'extractSalesValids' => $this->extractSalesValids(),
             'extractCancelsD7' => $this->extractCancelsD7(),
-            'projection' => $this->projection()
+            'projection' => $this->projection(),
+            'channel' => $this->channel
         ], 201);
     }
 
@@ -514,25 +515,55 @@ class RvSellerController extends Controller
 
             } elseif ($this->channel === 'PAP') {
 
-                if($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                    $this->valueStars = 1.30;
-                } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                    $this->valueStars = 3;
-                } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                    $this->valueStars = 5;
-                } elseif($this->metaPercent >= 141) {
-                    $this->valueStars = 7;
+                if($this->month === '07') {
+
+                    if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                        $this->valueStars = 1.3;
+                    } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                        $this->valueStars = 3;
+                    } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                        $this->valueStars = 5;
+                    } elseif($this->metaPercent >= 141) {
+                        $this->valueStars = 7;
+                    }
+                } elseif($this->month === '08') {
+
+                    if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                        $this->valueStars = 2.50;
+                    } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                        $this->valueStars = 5;
+                    } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                        $this->valueStars = 7;
+                    } elseif($this->metaPercent >= 141) {
+                        $this->valueStars = 10;
+                    }
                 }
             } elseif($this->channel === 'LIDER') {
-                if($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                    $this->valueStars = 0.25;
-                } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                    $this->valueStars = 0.40;
-                } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                    $this->valueStars = 0.80;
-                } elseif($this->metaPercent >= 141) {
-                    $this->valueStars = 1.30;
+
+                if($this->month === '07') {
+                    if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                        $this->valueStars = 0.25;
+                    } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                        $this->valueStars = 0.40;
+                    } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                        $this->valueStars = 0.80;
+                    } elseif($this->metaPercent >= 141) {
+                        $this->valueStars = 1.30;
+                    }
+                } elseif($this->month === '08') {
+
+                    if($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                        $this->valueStars = 0.6;
+                    } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                        $this->valueStars = 0.9;
+                    } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                        $this->valueStars = 1.5;
+                    } elseif($this->metaPercent >= 141) {
+                        $this->valueStars = 3;
+                    }
+
                 }
+
             }
 
         return $this->valueStars;
@@ -978,13 +1009,13 @@ class RvSellerController extends Controller
         } elseif ($this->channel === 'PAP') {
 
             if($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                $this->valueStars = 1.30;
+                $this->valueStars = 2.50;
             } elseif($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                $this->valueStars = 3;
-            } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
                 $this->valueStars = 5;
-            } elseif($this->metaPercent >= 141) {
+            } elseif($this->metaPercent >= 120 && $this->metaPercent < 141) {
                 $this->valueStars = 7;
+            } elseif($this->metaPercent >= 141) {
+                $this->valueStars = 10;
             }
         } elseif($this->channel === 'LIDER') {
             if($this->metaPercent >= 60 && $this->metaPercent < 100) {
