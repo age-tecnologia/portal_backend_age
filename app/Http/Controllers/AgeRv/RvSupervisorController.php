@@ -973,7 +973,7 @@ class RvSupervisorController extends Controller
             }
         }
 
-        $this->stars = ($this->stars / ($dayUtils -2)) * $dayUtils;
+        $this->stars = ($this->stars / ($dayUtils -1)) * $dayUtils;
         $this->commission = $this->stars * $this->valueStars;
 
         if($this->commission > 0) {
@@ -986,10 +986,10 @@ class RvSupervisorController extends Controller
 
         return [
             'stars' => number_format($this->stars, 0),
-            'sales' => number_format(($this->sales / ($dayUtils - 2)) * $dayUtils, 0),
+            'sales' => number_format(($this->sales / ($dayUtils - 1)) * $dayUtils, 0),
             'metaPercent' => number_format($this->metaPercent, 2),
             'commission' => number_format($this->commission, 2, ',', '.'),
-            'dateActual' => ($dayUtils - 1),
+            'dateActual' => $dayUtils,
             'daysMonth' => $daysMonth,
             'daysMissing' => $daysMissing,
         ];

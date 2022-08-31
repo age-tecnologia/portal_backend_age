@@ -67,7 +67,8 @@ Route::group(['middleware' => 'auth:api'], function() {
 
 
             return [
-              'levelAccess' => 'seller'
+                'levelAccess' => 'User',
+                'function' => 'Vendedor'
             ];
 
         });
@@ -78,8 +79,9 @@ Route::group(['middleware' => 'auth:api'], function() {
         });
 
         Route::middleware('AccessMaster')->prefix('routines')->group(function() {
-            Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
         });
+        Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
+
     });
 
 });
