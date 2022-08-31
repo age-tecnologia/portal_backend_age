@@ -27,31 +27,39 @@ class TestController extends Controller
         $year = Carbon::now()->format('Y');
         $month = Carbon::now()->format('m');
         $dayUtils = $daysMonth;
+        $dayUtil = 0;
+
+        $datesUtils = [];
 
         for($i = 1;  ($daysMonth + 1) > $i; $i++) {
             $date = Carbon::parse("$year-$month-$i")->format('d/m/Y');
             $dayName = Carbon::parse("$year-$month-$i")->format('l');
 
-            if($dayName === 'Sunday') {
-                $dayUtils = $dayUtils - 1;
 
-            } elseif($dayName === 'Saturday') {
-                $dayUtils = $dayUtils - 0.5;
-
+            if($dayName !== 'Sunday') {
+                if($dayName === 'Saturday') {
+                    $dayUtil = $dayUtil + 0.5;
+                } else {
+                    $dayUtil += 1;
+                }
             }
 
+            $datesUtils[] = [
+                $i => [
+                    $dayUtil
+                ]
+            ];
         }
 
+        $dayUtilActual = $datesUtils[($dateActual - 1)];
+        $dayUtilPrevius = $datesUtils[($dateActual - 2)];
 
-        return [
-            'stars' => 102,
-            'sales' => 202,
-            'metaPercent' => 198,
-            'commission' => 2023.20,
-            'dateActual' => $dateActual,
-            'daysMonth' => $daysMonth,
-            'daysMissing' => $dayUtils,
-        ];
+        foreach($dayUtilActual[$dateActual] as $item => $value) {
+            $int = $value;
+        }
+
+        return $int;
+
     }
 
 

@@ -75,7 +75,6 @@ Route::group(['middleware' => 'auth:api'], function() {
 
         Route::prefix('dashboard')->group(function() {
            Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'seller']);
-           Route::get('/supervisor', [\App\Http\Controllers\AgeRv\RvSupervisorController::class, 'supervisor']);
         });
 
         Route::middleware('AccessMaster')->prefix('routines')->group(function() {

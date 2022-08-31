@@ -29,6 +29,7 @@ class RvSellerController extends Controller
 
 
     private string $username; // Dados do usuário para extração do relatório.
+    private string $type; // Tipo de colaborador, se é vendedor/supervisor/gestor.
     private int $id; // Dados do usuário para extração do relatório.
     private string $channel; // Dados do canal que o usuário pertence.
     private string $month; // Mês para filtro das vendas.
@@ -58,10 +59,18 @@ class RvSellerController extends Controller
            'month' => 'required'
         ]);
 
-        $collaborator = Collaborator::where('user_id', auth()->user()->id)->select('user_id','nome')->first();
+        $collaborator = Collaborator::where('user_id', auth()->user()->id)->select('user_id','nome', 'funcao_id')->first();
 
         if(! isset($collaborator->nome)) {
             return response()->json(['Usuário sem colaborador vinculado!'], 406);
+        }
+
+        if($collaborator->funcao_id === 1) {
+            // É vendedor
+            $this->type = 'vendedor';
+        } elseif($collaborator->funcao_id === 3) {
+            // É supervisor
+            $this->type = 'supervisor';
         }
 
         $this->username = $collaborator->nome;
@@ -79,7 +88,7 @@ class RvSellerController extends Controller
             'salesAprovation' => $this->salesAprovation(),
             'stars' => $this->stars(),
             'cancelTotals' => $this->cancelTotals(),
-            'metaPercent' => $this->metaPercent(),
+            'metaPercent' => number_format($this->metaPercent(), 2),
             'valueStars' => $this->valueStars(),
             'commission' => $this->commission(),
             'meta' => $this->meta,
@@ -113,7 +122,7 @@ class RvSellerController extends Controller
                             ->whereMonth('data_vigencia', $this->month)
                             ->where('situacao', 'Cancelado')
                             ->where('status', 'Aprovado')
-                            ->where('vendedor', $this->username)
+                            ->where($this->type, $this->username)
                             ->get();
 
 
@@ -136,7 +145,7 @@ class RvSellerController extends Controller
 
         // Busca as vendas inválidas, para apresentar no dashboard.
         $this->cancelD7 = VoalleSales::where('status', 'Inválida')
-                                        ->where('vendedor', $this->username)
+                                        ->where($this->type, $this->username)
                                         ->whereMonth('data_vigencia', $this->month)
                                         ->whereYear('data_vigencia', $this->year)
                                         ->count();
@@ -165,7 +174,7 @@ class RvSellerController extends Controller
     public function sales() : int
     {
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
-        $this->sales = VoalleSales::where('vendedor', $this->username)
+        $this->sales = VoalleSales::where($this->type, $this->username)
                                     ->whereMonth('data_vigencia', $this->month)
                                     ->whereYear('data_vigencia', $this->year)
                                     ->whereMonth('data_ativacao', $this->month)
@@ -183,7 +192,7 @@ class RvSellerController extends Controller
     public function salesTotals() : int
     {
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
-        $this->salesTotals = VoalleSales::where('vendedor', $this->username)
+        $this->salesTotals = VoalleSales::where($this->type, $this->username)
                                         ->whereMonth('data_vigencia', $this->month)
                                         ->whereYear('data_vigencia', $this->year)
                                         ->whereMonth('data_ativacao', $this->month)
@@ -200,7 +209,7 @@ class RvSellerController extends Controller
     public function salesAprovation() : int
     {
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
-        $this->salesAprovation = VoalleSales::where('vendedor', $this->username)
+        $this->salesAprovation = VoalleSales::where($this->type, $this->username)
             ->whereMonth('data_contrato', $this->month)
             ->whereYear('data_contrato', $this->year)
             ->where('status', 'Em Aprovação')
@@ -216,7 +225,7 @@ class RvSellerController extends Controller
     {
         // Trás os planos vendidos, onde o status não for inválido
         $plans = VoalleSales::select('plano', 'data_contrato')
-                            ->where('vendedor', $this->username)
+                            ->where($this->type, $this->username)
                             ->whereMonth('data_vigencia', $this->month)
                             ->whereYear('data_vigencia', $this->year)
                             ->whereMonth('data_ativacao', $this->month)
@@ -432,7 +441,7 @@ class RvSellerController extends Controller
                                         ->whereYear('data_contrato', $this->year)
                                         ->where('status', '<>', 'Aprovado')
                                         ->where('status', '<>', 'Em Aprovação')
-                                        ->where('vendedor', $this->username)
+                                        ->where($this->type, $this->username)
                                         ->count();
 
         return $this->cancelTotals;
@@ -454,8 +463,7 @@ class RvSellerController extends Controller
 
         $this->meta = $data->meta;
 
-
-        $this->metaPercent = number_format(($this->sales / $this->meta) * 100, 2);
+        $this->metaPercent = ($this->sales / $this->meta) * 100;
 
         return $this->metaPercent;
 
@@ -557,7 +565,7 @@ class RvSellerController extends Controller
         $plans = VoalleSales::selectRaw('plano, count(*) as "qntd" ')
             ->whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->where('vendedor', $this->username)
+            ->where($this->type, $this->username)
             ->whereMonth('data_ativacao', $this->month)
             ->whereYear('data_ativacao', $this->year)
             ->whereMonth('data_contrato','>=', '06')
@@ -589,10 +597,10 @@ class RvSellerController extends Controller
 
         $plans = VoalleSales::select('plano', 'data_contrato')
             ->where('plano', $plan)
-            ->where('vendedor', $this->username)
+            ->where($this->type, $this->username)
             ->whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->where('vendedor', $this->username)
+            ->where($this->type, $this->username)
             ->whereMonth('data_ativacao', $this->month)
             ->whereYear('data_ativacao', $this->year)
             ->whereMonth('data_contrato','>=', '05')
@@ -793,7 +801,7 @@ class RvSellerController extends Controller
     public function extractSalesTotals()
     {
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
-        $data = VoalleSales::where('vendedor', $this->username)
+        $data = VoalleSales::where($this->type, $this->username)
             ->whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
             ->whereMonth('data_ativacao', $this->month)
@@ -820,7 +828,7 @@ class RvSellerController extends Controller
 
     public function extractSalesAprovation()
     {
-        $data = VoalleSales::where('vendedor', $this->username)
+        $data = VoalleSales::where($this->type, $this->username)
             ->whereMonth('data_contrato',$this->month)
             ->whereYear('data_contrato', $this->year)
             ->where('status', 'Em Aprovação')
@@ -844,7 +852,7 @@ class RvSellerController extends Controller
     public function extractSalesValids()
     {
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
-        $data = VoalleSales::where('vendedor', $this->username)
+        $data = VoalleSales::where($this->type, $this->username)
             ->whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
             ->whereMonth('data_ativacao', $this->month)
@@ -874,7 +882,7 @@ class RvSellerController extends Controller
     public function extractCancelsD7()
     {
         $data = VoalleSales::where('status', 'Inválida')
-                            ->where('vendedor', $this->username)
+                            ->where($this->type, $this->username)
                             ->whereMonth('data_vigencia', $this->month)
                             ->whereYear('data_vigencia', $this->year)
                             ->get();
@@ -903,22 +911,38 @@ class RvSellerController extends Controller
         $month = Carbon::now()->format('m');
         $dayUtils = $daysMonth;
         $daysMissing = $dayUtils - $dateActual;
+        $dayUtil = 0;
+        $datesUtils = [];
 
         for($i = 1;  ($daysMonth + 1) > $i; $i++) {
             $date = Carbon::parse("$year-$month-$i")->format('d/m/Y');
             $dayName = Carbon::parse("$year-$month-$i")->format('l');
 
-            if($dayName === 'Sunday') {
-                $dayUtils = $dayUtils - 1;
 
-            } elseif($dayName === 'Saturday') {
-                $dayUtils = $dayUtils - 0.5;
-
+            if($dayName !== 'Sunday') {
+                if($dayName === 'Saturday') {
+                    $dayUtil = $dayUtil + 0.5;
+                } else {
+                    $dayUtil += 1;
+                }
             }
 
+            $datesUtils[] = [
+                $i => [
+                    $dayUtil
+                ]
+            ];
         }
 
-        $this->metaPercent = number_format($this->metaPercent  / ($dayUtils - 1) * $dayUtils, 2);
+        $dayUtilActual = $datesUtils[($dateActual - 1)];
+        $dayUtilPrevius = $datesUtils[($dateActual - 2)];
+
+        foreach($dayUtilActual[$dateActual] as $item => $value) {
+            $dateUtilActual = $value;
+        }
+
+
+        $this->metaPercent = $this->metaPercent  / ($dateUtilActual - 1) * $dayUtil;
 
 
         // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
@@ -974,7 +998,7 @@ class RvSellerController extends Controller
             }
         }
 
-        $this->stars = ($this->stars / ($dayUtils -1)) * $dayUtils;
+        $this->stars = ($this->stars / ($dateUtilActual - 1)) * $dayUtil;
         $this->commission = $this->stars * $this->valueStars;
 
         if($this->commission > 0) {
@@ -985,13 +1009,13 @@ class RvSellerController extends Controller
             }
         }
 
+
         return [
             'stars' => number_format($this->stars, 0),
-            'sales' => number_format(($this->sales / ($dayUtils - 1)) * $dayUtils, 0),
+            'sales' => number_format(($this->sales / ($dateUtilActual - 1)) * $dayUtil, 0),
             'metaPercent' => number_format($this->metaPercent, 2),
             'commission' => number_format($this->commission, 2, ',', '.'),
-            'dateActual' => $dayUtils,
-            'daysMonth' => $daysMonth,
+            'dateActual' => $dateUtilActual,
             'daysMissing' => $daysMissing,
         ];
     }
