@@ -78,9 +78,6 @@ class AuthController extends Controller
                         'name' => $separeName[0],
                         'email' => $username,
                         'password' => Hash::make($password),
-                        'isMaster' => 0,
-                        'isAdmin' => 0,
-                        'isCommittee' => 0,
                     ]);
 
                     $auth = new AuthController();
