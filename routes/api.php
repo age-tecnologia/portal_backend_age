@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\AgeRv\AccessPermission as AccessPermissionAlias;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,7 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('teste',[\App\Http\Controllers\TestController::class, 'index']);
+Route::get('teste', [\App\Http\Controllers\TestController::class, 'index']);
 
 Route::group([
     'middleware' => 'api',
@@ -32,14 +33,14 @@ Route::group([
     Route::post('me', [\App\Http\Controllers\AuthController::class, 'me']);
 });
 
-Route::group(['middleware' => 'auth:api'], function() {
+Route::group(['middleware' => 'auth:api'], function () {
 
-    Route::get('/validatedToken', function() {
+    Route::get('/validatedToken', function () {
 
         $access = null;
         $levelAccess = \App\Models\LevelAccess::
-                        where('id', auth()->user()->nivel_acesso_id)
-                        ->first();
+        where('id', auth()->user()->nivel_acesso_id)
+            ->first();
 
         return [
             'levelAccess' => $levelAccess->nivel,
@@ -47,7 +48,7 @@ Route::group(['middleware' => 'auth:api'], function() {
         ];
     });
 
-    Route::middleware('AccessAgeReport')->prefix('agerreport')->group(function() {
+    Route::middleware('AccessAgeReport')->prefix('agerreport')->group(function () {
 
         Route::get('/Access', function () {
             return true;
@@ -58,26 +59,30 @@ Route::group(['middleware' => 'auth:api'], function() {
     });
 
 
-    Route::middleware('AccessAgeRv')->prefix('agerv')->group(function() {
+    Route::middleware('AccessAgeRv')->prefix('agerv')->group(function () {
 
         Route::get('/Access', function () {
 
-            $collaborator = \App\Models\AgeRv\AccessPermission::where('user_id', auth()->user()->id)->first();
+            $accesPermissions = \Illuminate\Support\Facades\DB::table('agerv_usuarios_permitidos as up')
+                                ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
+                                ->leftJoin('portal_nivel_acesso as na', 'up.nivel_acesso_id', '=', 'na.id')
+                                ->where('user_id', auth()->user()->id)
+                                ->select('cf.funcao', 'na.nivel')
+                                ->first();
             $access = null;
 
-
             return [
-                'levelAccess' => 'User',
-                'function' => 'Vendedor'
+                'levelAccess' => $accesPermissions->nivel,
+                'function' => $accesPermissions->funcao
             ];
 
         });
 
-        Route::prefix('dashboard')->group(function() {
-           Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'seller']);
+        Route::prefix('dashboard')->group(function () {
+            Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'seller']);
         });
 
-        Route::middleware('AccessMaster')->prefix('routines')->group(function() {
+        Route::middleware('AccessMaster')->prefix('routines')->group(function () {
         });
         Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
 
