@@ -485,7 +485,8 @@ class RvSellerController extends Controller
     {
 
         $data = DB::table('agerv_colaboradores as c')
-            ->leftJoin('agerv_colaboradores_canais as cc', 'c.canal_id', '=', 'cc.id')
+            ->leftJoin('agerv_colaboradores_canais as cc', 'c.tipo_comissao_id', '=', 'cc.id')
+            ->where('c.user_id', $this->id)
             ->select('c.nome', 'cc.canal')
             ->first();
 
