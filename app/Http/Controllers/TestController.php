@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ReportExport;
 use App\Exports\UsersExport;
+use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\VoalleSales;
 use App\Models\User;
 use Carbon\Carbon;
@@ -20,46 +21,40 @@ class TestController extends Controller
 
     public function index(Request $request)
     {
+        $s = Collaborator::where('funcao_id', 3)
+                        ->where('nome', '<>', 'Multi Canal de Vendas')
+                        ->select('nome', 'id')
+                        ->distinct()
+                        ->get();
 
-        $dateActual = Carbon::now()->format('d');
-        $daysMonth = Carbon::now()->format('t');
-        $dayName = Carbon::now()->format('l');
-        $year = Carbon::now()->format('Y');
-        $month = Carbon::now()->format('m');
-        $dayUtils = $daysMonth;
-        $dayUtil = 0;
+        $c = new Collaborator();
 
-        $datesUtils = [];
+        foreach ($s as $item => $value) {
 
-        for($i = 1;  ($daysMonth + 1) > $i; $i++) {
-            $date = Carbon::parse("$year-$month-$i")->format('d/m/Y');
-            $dayName = Carbon::parse("$year-$month-$i")->format('l');
+            $ss = VoalleSales::whereMonth('data_contrato', '>', '06')
+                ->whereYear('data_contrato', '=', '2022')
+                ->where('supervisor', $value->nome)
+                ->where('vendedor', '<>', ' ')
+                ->select('vendedor')
+                ->distinct()
+                ->get();
 
+            foreach($ss as $item2 => $value2) {
 
-            if($dayName !== 'Sunday') {
-                if($dayName === 'Saturday') {
-                    $dayUtil = $dayUtil + 0.5;
-                } else {
-                    $dayUtil += 1;
-                }
+                $c->create([
+                    'nome' => $value2->vendedor,
+                    'funcao_id' => 1,
+                    'canal_id' => 2,
+                    'supervisor_id' => $value->id
+                ]);
+
             }
 
-            $datesUtils[] = [
-                $i => [
-                    $dayUtil
-                ]
-            ];
         }
 
-        $dayUtilActual = $datesUtils[($dateActual - 1)];
-        $dayUtilPrevius = $datesUtils[($dateActual - 2)];
-
-        foreach($dayUtilActual[$dateActual] as $item => $value) {
-            $int = $value;
-        }
-
-        return $int;
-
+//        foreach ($s as $item => $value) {
+//
+//        }
     }
 
 

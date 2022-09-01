@@ -12,6 +12,14 @@ class Collaborator extends Model
     use SoftDeletes;
 
     protected $table = 'agerv_colaboradores';
-    protected $fillable = ['nome', 'user_id', 'funcao_id', 'canal_id'];
+
+    protected $fillable = [ 'nome',
+                            'user_id',
+                            'funcao_id',
+                            'supervisor_id',
+                            'gestor_id',
+                            'canal_id'
+                            ];
+
     protected $connection = 'mysql';
 }
