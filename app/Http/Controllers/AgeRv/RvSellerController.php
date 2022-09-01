@@ -966,10 +966,16 @@ class RvSellerController extends Controller
         }
 
         $dayUtilActual = $datesUtils[($dateActual - 1)];
-        $dayUtilPrevius = $datesUtils[($dateActual - 2)];
+
+
+        if(array_key_exists(($dateActual - 2), $datesUtils)) {
+            $dayUtilPrevius = $datesUtils[($dateActual - 2)];
+        }
+
+        return "Projeção indisponível, pois é o primeiro dia do mês!";
 
         foreach($dayUtilActual[$dateActual] as $item => $value) {
-            $dateUtilActual = $value;
+            return $value;
         }
 
 
