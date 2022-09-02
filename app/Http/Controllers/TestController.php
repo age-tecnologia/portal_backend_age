@@ -6,6 +6,7 @@ use App\Exports\ReportExport;
 use App\Exports\UsersExport;
 use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
+use App\Models\AgeRv\CollaboratorMeta;
 use App\Models\AgeRv\VoalleSales;
 use App\Models\User;
 use Carbon\Carbon;
@@ -22,9 +23,18 @@ class TestController extends Controller
 
     public function index(Request $request)
     {
-        $channels = Channel::select('canal')->get();
+        $co = Collaborator::where('tipo_comissao_id', 2)->get();
 
-        return $channels;
+        $m = new CollaboratorMeta();
+
+        foreach($co as $item => $value) {
+            $m->create([
+                'colaborador_id' => $value->id,
+                'mes_competencia' => '08',
+                'meta' => 22,
+                'modified_by' => 1
+            ]);
+        }
     }
 
 

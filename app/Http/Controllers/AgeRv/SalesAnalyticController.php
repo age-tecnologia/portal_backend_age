@@ -25,10 +25,13 @@ class SalesAnalyticController extends Controller
     private int $salesBaseCount = 0;
     private int $starsTotalCount = 0;
     private int $starsSeller = 0;
+    private $commissionTotal = 0;
+    private $commissionChannel = 0;
     private $metaPercent;
     private $valueStars;
     private $salesSeller;
     private $d7Seller;
+    private $salesSup = 0;
 
 
     public function index()
@@ -44,7 +47,7 @@ class SalesAnalyticController extends Controller
                             ->first();
 
         $this->year = '2022';
-        $this->month = '08';
+        $this->month = '07';
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -71,7 +74,7 @@ class SalesAnalyticController extends Controller
             'salesCancelledD7' => $this->salesCancelledsD7Count,
             'salesBase' => $this->salesBaseCount,
             'starsTotal' => $this->starsTotalCount,
-            'commissionTotal' => 0
+            'commissionTotal' => number_format($this->commissionTotal, 2, ',', '.'),
         ];
 
     }
@@ -91,13 +94,16 @@ class SalesAnalyticController extends Controller
                 ->select('nome')
                 ->get();
 
+            $this->commissionChannel = 0;
+
             $this->dataChannels[] = [
                 'canal' => $value->canal,
                 'salesTotal' => $this->salesTotalsChannels($supervisors),
                 'salesCancelled' => $this->salesCancelleds(),
                 'salesBase' => $this->salesBase(),
                 'starsTotal' => $this->starsTotal(),
-                'sellers' => $this->sellers()
+                'supervisors' => $this->supervisors(),
+                'commission' => number_format($this->commissionChannel, 2, ',', '.')
             ];
         }
 
@@ -374,10 +380,49 @@ class SalesAnalyticController extends Controller
         return $stars;
     }
 
-    private function sellers() {
+    private function supervisors() {
 
-        $sellers = $this->salesTotals->unique(function($item) {
-           return $item->vendedor;
+        $supervisors = $this->salesTotals->unique(function($item) {
+            return $item->supervisor;
+        });
+
+        $supervisors = $supervisors->map(function($item) {
+            return $item->supervisor;
+        });
+
+        $data = [];
+
+        $supervisors->each(function($item) {
+            $data[] = [
+                $item
+            ];
+        });
+
+        foreach($supervisors as $item => $value) {
+
+            $this->salesSup = 0;
+
+            $data[] = [
+                'supervisor' => $value,
+                'salesTotal' => $this->salesSup,
+                'salesCancelled' => 10,
+                'starsTotal' => 10,
+                'valueStar' => 10,
+                'commission' => 10,
+                'sellers' => $this->sellers($value)
+            ];
+        }
+
+        return $data;
+
+    }
+
+    private function sellers($supervisor) {
+
+        $sellers = $this->salesTotals->unique(function($item) use($supervisor) {
+           if($item->supervisor === $supervisor) {
+               return $item->vendedor;
+           }
         });
 
         $sellers = $sellers->map(function($item) {
@@ -417,6 +462,8 @@ class SalesAnalyticController extends Controller
         });
 
         $this->salesSeller = count($sales);
+
+        $this->salesSup = 10;
 
         return [
             'extract' => 0, //$sales,
@@ -669,99 +716,106 @@ class SalesAnalyticController extends Controller
                     ->first();
 
         if (!isset($data->meta)) {
-            return 0;
-        }
+            $this->valueStars = 0;
+            return "Colaborador sem meta definida";
+        } else {
 
-        $this->metaPercent = ($this->salesSeller / $data->meta) * 100;
 
-        if(isset($data->id)) {
+            if ($data->meta === 0) {
+                return "Colaborador com meta zerada!";
+            } else {
+                $this->metaPercent = ($this->salesSeller / $data->meta) * 100;
 
-            // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
-            if ($data->canal === 'PJ') {
-                if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                    $this->valueStars = 1.30;
-                } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                    $this->valueStars = 3;
-                } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                    $this->valueStars = 5;
-                } elseif ($this->metaPercent >= 141) {
-                    $this->valueStars = 7;
-                }
-            } elseif ($data->canal === 'MCV') {
+                if (isset($data->meta)) {
 
-                // Verifica o mês e aplica a diferença na meta mínima
-                if ($this->month <= '07') {
-                    $this->minMeta = 70;
-                } elseif ($this->month === '08') {
-                    $this->minMeta = 60;
-                }
+                    // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
+                    if ($data->canal === 'PJ') {
+                        if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                            $this->valueStars = 1.30;
+                        } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                            $this->valueStars = 3;
+                        } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                            $this->valueStars = 5;
+                        } elseif ($this->metaPercent >= 141) {
+                            $this->valueStars = 7;
+                        }
+                    } elseif ($data->canal === 'MCV') {
 
-                if ($this->metaPercent >= $this->minMeta && $this->metaPercent < 100) {
-                    $this->valueStars = 0.90;
-                } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                    $this->valueStars = 1.20;
-                } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                    $this->valueStars = 2;
-                } elseif ($this->metaPercent >= 141) {
-                    $this->valueStars = 4.5;
-                }
+                        // Verifica o mês e aplica a diferença na meta mínima
+                        if ($this->month <= '07') {
+                            $this->minMeta = 70;
+                        } elseif ($this->month === '08') {
+                            $this->minMeta = 60;
+                        }
 
-            } elseif ($data->canal === 'PAP') {
+                        if ($this->metaPercent >= $this->minMeta && $this->metaPercent < 100) {
+                            $this->valueStars = 0.90;
+                        } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                            $this->valueStars = 1.20;
+                        } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                            $this->valueStars = 2;
+                        } elseif ($this->metaPercent >= 141) {
+                            $this->valueStars = 4.5;
+                        }
 
-                if ($this->month === '07') {
+                    } elseif ($data->canal === 'PAP') {
 
-                    if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                        $this->valueStars = 1.3;
-                    } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                        $this->valueStars = 3;
-                    } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                        $this->valueStars = 5;
-                    } elseif ($this->metaPercent >= 141) {
-                        $this->valueStars = 7;
+                        if ($this->month === '07') {
+
+                            if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                                $this->valueStars = 1.3;
+                            } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                                $this->valueStars = 3;
+                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                                $this->valueStars = 5;
+                            } elseif ($this->metaPercent >= 141) {
+                                $this->valueStars = 7;
+                            }
+                        } elseif ($this->month === '08') {
+
+                            if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                                $this->valueStars = 2.50;
+                            } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                                $this->valueStars = 5;
+                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                                $this->valueStars = 7;
+                            } elseif ($this->metaPercent >= 141) {
+                                $this->valueStars = 10;
+                            }
+                        }
+                    } elseif ($data->canal === 'LIDER') {
+
+                        if ($this->month === '07') {
+                            if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                                $this->valueStars = 0.25;
+                            } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                                $this->valueStars = 0.40;
+                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                                $this->valueStars = 0.80;
+                            } elseif ($this->metaPercent >= 141) {
+                                $this->valueStars = 1.30;
+                            }
+                        } elseif ($this->month === '08') {
+
+                            if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                                $this->valueStars = 0.6;
+                            } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                                $this->valueStars = 0.9;
+                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                                $this->valueStars = 1.5;
+                            } elseif ($this->metaPercent >= 141) {
+                                $this->valueStars = 3;
+                            }
+
+                        }
                     }
-                } elseif ($this->month === '08') {
 
-                    if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                        $this->valueStars = 2.50;
-                    } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                        $this->valueStars = 5;
-                    } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                        $this->valueStars = 7;
-                    } elseif ($this->metaPercent >= 141) {
-                        $this->valueStars = 10;
-                    }
-                }
-            } elseif ($data->canal === 'LIDER') {
+                    return $this->valueStars;
 
-                if ($this->month === '07') {
-                    if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                        $this->valueStars = 0.25;
-                    } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                        $this->valueStars = 0.40;
-                    } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                        $this->valueStars = 0.80;
-                    } elseif ($this->metaPercent >= 141) {
-                        $this->valueStars = 1.30;
-                    }
-                } elseif ($this->month === '08') {
-
-                    if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                        $this->valueStars = 0.6;
-                    } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                        $this->valueStars = 0.9;
-                    } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                        $this->valueStars = 1.5;
-                    } elseif ($this->metaPercent >= 141) {
-                        $this->valueStars = 3;
-                    }
-
+                } else {
+                    return "Nenhum colaborador ativo";
                 }
             }
-
-            return $this->valueStars;
-
-        } else {
-            return "Nenhum colaborador ativo";
         }
     }
 
@@ -769,13 +823,18 @@ class SalesAnalyticController extends Controller
 
         $commission = $this->starsSeller * $this->valueStars;
 
+
+
         if($this->d7Seller > 0) {
             $commission = $commission * 0.9;
         } else {
             $commission = $commission * 1.1;
         }
 
-        return $commission;
+        $this->commissionTotal += $commission;
+        $this->commissionChannel += $commission;
+
+        return number_format($commission, 2, ',', '.');
 
     }
 }
