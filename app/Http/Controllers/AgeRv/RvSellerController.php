@@ -950,7 +950,6 @@ class RvSellerController extends Controller
         $year = Carbon::now()->format('Y');
         $month = Carbon::now()->format('m');
         $dayUtils = $daysMonth;
-        $daysMissing = $dayUtils - $dateActual;
         $dayUtil = 0;
         $datesUtils = [];
 
@@ -974,17 +973,20 @@ class RvSellerController extends Controller
             ];
         }
 
+        $daysMissing = $dayUtil - $dateActual;
+
         $dayUtilActual = $datesUtils[($dateActual - 1)];
 
 
         if (array_key_exists(($dateActual - 2), $datesUtils)) {
             $dayUtilPrevius = $datesUtils[($dateActual - 2)];
+        } else {
+            return "Projeção indisponível, pois é o primeiro dia do mês!";
         }
 
-        return "Projeção indisponível, pois é o primeiro dia do mês!";
 
-        foreach ($dayUtilActual[$dateActual] as $item => $value) {
-            return $value;
+        foreach ($dayUtilActual as $item => $value) {
+            $dateUtilActual = $value[0];
         }
 
 
