@@ -32,6 +32,7 @@ class SalesAnalyticController extends Controller
     private $salesSeller;
     private $d7Seller;
     private $salesSup = 0;
+    private $salesSupExtract = [];
 
 
     public function index()
@@ -47,7 +48,7 @@ class SalesAnalyticController extends Controller
                             ->first();
 
         $this->year = '2022';
-        $this->month = '07';
+        $this->month = '08';
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -404,14 +405,21 @@ class SalesAnalyticController extends Controller
 
             $data[] = [
                 'supervisor' => $value,
-                'salesTotal' => $this->salesSup,
-                'salesCancelled' => 10,
+                'sellers' => $this->sellers($value),
+                'salesTotal' => [
+                    'count' => $this->salesSup,
+                    'extract' => $this->salesSupExtract,
+                ],
+                'salesCancelled' => [
+                    'count' => 10,
+                    'extract' => 10
+                ],
                 'starsTotal' => 10,
                 'valueStar' => 10,
                 'commission' => 10,
-                'sellers' => $this->sellers($value)
             ];
         }
+
 
         return $data;
 
@@ -463,7 +471,8 @@ class SalesAnalyticController extends Controller
 
         $this->salesSeller = count($sales);
 
-        $this->salesSup = 10;
+        $this->salesSup += count($sales);
+        $this->salesSupExtract[] = $sales;
 
         return [
             'extract' => 0, //$sales,

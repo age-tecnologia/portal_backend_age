@@ -30,7 +30,7 @@ class TestController extends Controller
         foreach($co as $item => $value) {
             $m->create([
                 'colaborador_id' => $value->id,
-                'mes_competencia' => '08',
+                'mes_competencia' => '07',
                 'meta' => 22,
                 'modified_by' => 1
             ]);
