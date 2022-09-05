@@ -31,8 +31,16 @@ class SalesAnalyticController extends Controller
     private $valueStars;
     private $salesSeller;
     private $d7Seller;
+    private $deflatorSeller;
     private $salesSup = 0;
     private $salesSupExtract = [];
+    private $salesSupCancelleds = 0;
+    private $salesSupCancelledsExtract = [];
+    private $salesSupCancelledsD7 = 0;
+    private $salesSupCancelledsD7Extract = [];
+    private $starsSupTotal = 0;
+    private $valueStarsSup;
+    private $deflatorSup;
 
 
     public function index()
@@ -98,7 +106,7 @@ class SalesAnalyticController extends Controller
             $this->commissionChannel = 0;
 
             $this->dataChannels[] = [
-                'canal' => $value->canal,
+                'channel' => $value->canal,
                 'salesTotal' => $this->salesTotalsChannels($supervisors),
                 'salesCancelled' => $this->salesCancelleds(),
                 'salesBase' => $this->salesBase(),
@@ -402,6 +410,14 @@ class SalesAnalyticController extends Controller
         foreach($supervisors as $item => $value) {
 
             $this->salesSup = 0;
+            $this->salesSupExtract = [];
+            $this->salesSupCancelleds = 0;
+            $this->salesSupCancelledsExtract = [];
+            $this->salesSupCancelledsD7 = 0;
+            $this->salesSupCancelledsD7Extract = [];
+            $this->starsSupTotal = 0;
+            $this->valueStarsSup = 0;
+            $this->deflatorSup = 0;
 
             $data[] = [
                 'supervisor' => $value,
@@ -411,12 +427,13 @@ class SalesAnalyticController extends Controller
                     'extract' => $this->salesSupExtract,
                 ],
                 'salesCancelled' => [
-                    'count' => 10,
-                    'extract' => 10
+                    'count' => $this->salesSupCancelleds,
+                    'extract' => $this->salesSupCancelledsExtract
                 ],
-                'starsTotal' => 10,
-                'valueStar' => 10,
-                'commission' => 10,
+                'starsTotal' => $this->starsSupTotal,
+                'valueStar' => $this->valueStarSup($value),
+                'commission' => $this->commissionSup(),
+                'deflator' => $this->deflatorSup,
             ];
         }
 
@@ -452,7 +469,8 @@ class SalesAnalyticController extends Controller
                 'salesCancelled' => $this->salesCancelledSeller($value),
                 'starsTotal' => $this->starsSellers($value),
                 'valueStar' => $this->valueStarSeller($value),
-                'commission' => $this->commissionSeller()
+                'commission' => $this->commissionSeller(),
+                'deflator' => $this->deflatorSeller,
             ];
         }
 
@@ -506,6 +524,13 @@ class SalesAnalyticController extends Controller
         });
 
         $this->d7Seller = count($d7);
+
+        $this->salesSupCancelleds += count($cancelleds);
+        $this->salesSupCancelledExtract[] = $cancelleds;
+        $this->salesSupCancelledsD7 += count($d7);
+        $this->salesSupCancelledD7Extract[] = $d7;
+
+
 
 
         return [
@@ -711,6 +736,8 @@ class SalesAnalyticController extends Controller
            }
         });
 
+        $this->starsSupTotal += $this->starsSeller;
+
         return $this->starsSeller;
     }
 
@@ -726,29 +753,18 @@ class SalesAnalyticController extends Controller
 
         if (!isset($data->meta)) {
             $this->valueStars = 0;
-            return "Colaborador sem meta definida";
+            return "Sem meta";
         } else {
 
-
             if ($data->meta === 0) {
-                return "Colaborador com meta zerada!";
+                return "Meta zerada";
             } else {
                 $this->metaPercent = ($this->salesSeller / $data->meta) * 100;
 
                 if (isset($data->meta)) {
 
                     // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
-                    if ($data->canal === 'PJ') {
-                        if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                            $this->valueStars = 1.30;
-                        } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                            $this->valueStars = 3;
-                        } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                            $this->valueStars = 5;
-                        } elseif ($this->metaPercent >= 141) {
-                            $this->valueStars = 7;
-                        }
-                    } elseif ($data->canal === 'MCV') {
+                     if ($data->canal === 'MCV') {
 
                         // Verifica o mês e aplica a diferença na meta mínima
                         if ($this->month <= '07') {
@@ -832,12 +848,12 @@ class SalesAnalyticController extends Controller
 
         $commission = $this->starsSeller * $this->valueStars;
 
-
-
         if($this->d7Seller > 0) {
             $commission = $commission * 0.9;
+            $this->deflatorSeller = -10;
         } else {
             $commission = $commission * 1.1;
+            $this->deflatorSeller = 10;
         }
 
         $this->commissionTotal += $commission;
@@ -846,4 +862,84 @@ class SalesAnalyticController extends Controller
         return number_format($commission, 2, ',', '.');
 
     }
+
+    private function valueStarSup($name) {
+
+        $data = DB::table('agerv_colaboradores as c')
+            ->leftJoin('agerv_colaboradores_meta as cm', 'cm.colaborador_id', '=', 'c.id')
+            ->leftJoin('agerv_colaboradores_canais as cc', 'c.tipo_comissao_id', '=', 'cc.id')
+            ->where('c.nome', $name)
+            ->where('cm.mes_competencia', $this->month)
+            ->select('c.id', 'cc.canal', 'cm.meta')
+            ->first();
+
+        if (!isset($data->meta)) {
+            $this->valueStars = 0;
+            return "Sem meta";
+        } else {
+
+            if ($data->meta === 0) {
+                return "Meta zerada";
+            } else {
+                $this->metaPercent = ($this->salesSup / $data->meta) * 100;
+
+                if (isset($data->meta)) {
+
+                    // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
+                     if($data->canal === 'LIDER') {
+
+                        if ($this->month === '07') {
+                            if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                                $this->valueStarsSup = 0.25;
+                            } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                                $this->valueStarsSup = 0.40;
+                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                                $this->valueStarsSup = 0.80;
+                            } elseif ($this->metaPercent >= 141) {
+                                $this->valueStarsSup = 1.30;
+                            }
+                        } elseif ($this->month === '08') {
+
+                            if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
+                                $this->valueStarsSup = 0.6;
+                            } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                                $this->valueStarsSup = 0.9;
+                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                                $this->valueStarsSup = 1.5;
+                            } elseif ($this->metaPercent >= 141) {
+                                $this->valueStarsSup = 3;
+                            }
+
+                        }
+                    }
+
+                    return $this->valueStarsSup;
+
+                } else {
+                    return "Nenhum colaborador ativo";
+                }
+            }
+        }
+    }
+
+
+    private function commissionSup() {
+
+        $commission = $this->starsSupTotal * $this->valueStarsSup;
+
+        if($this->salesSupCancelledsD7 > 0) {
+            $commission = $commission * 0.9;
+            $this->deflatorSup = -10;
+        } else {
+            $commission = $commission * 1.1;
+            $this->deflatorSup = 10;
+        }
+
+        $this->commissionTotal += $commission;
+        $this->commissionChannel += $commission;
+
+        return number_format($commission, 2, ',', '.');
+    }
+
+
 }
