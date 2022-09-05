@@ -61,7 +61,8 @@ class SalesAnalyticController extends Controller
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
             $c->funcao === 'Diretoria' ||
-            $c->funcao === 'Gerente Geral') {
+            $c->funcao === 'Gerente geral') {
+
 
             return $this->master();
 
