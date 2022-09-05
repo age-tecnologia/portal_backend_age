@@ -41,6 +41,9 @@ class SalesAnalyticController extends Controller
     private $starsSupTotal = 0;
     private $valueStarsSup;
     private $deflatorSup;
+    private $metaSup;
+    private $metaSeller;
+
 
 
     public function index()
@@ -56,7 +59,7 @@ class SalesAnalyticController extends Controller
                             ->first();
 
         $this->year = '2022';
-        $this->month = '08';
+        $this->month = '07';
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -419,6 +422,7 @@ class SalesAnalyticController extends Controller
             $this->starsSupTotal = 0;
             $this->valueStarsSup = 0;
             $this->deflatorSup = 0;
+            $this->metaSup = 0;
 
             $data[] = [
                 'supervisor' => $value,
@@ -435,6 +439,7 @@ class SalesAnalyticController extends Controller
                 'valueStar' => $this->valueStarSup($value),
                 'commission' => $this->commissionSup(),
                 'deflator' => $this->deflatorSup,
+                'meta' => $this->metaSup,
             ];
         }
 
@@ -464,6 +469,9 @@ class SalesAnalyticController extends Controller
         });
 
         foreach($sellers as $item => $value) {
+
+            $this->metaSeller = 0;
+
             $data[] = [
                 'seller' => $value,
                 'salesTotal' => $this->salesSeller($value),
@@ -472,6 +480,7 @@ class SalesAnalyticController extends Controller
                 'valueStar' => $this->valueStarSeller($value),
                 'commission' => $this->commissionSeller(),
                 'deflator' => $this->deflatorSeller,
+                'meta' => $this->metaSeller
             ];
         }
 
@@ -494,7 +503,7 @@ class SalesAnalyticController extends Controller
         $this->salesSupExtract[] = $sales;
 
         return [
-            'extract' => 0, //$sales,
+            'extract' => $sales,
             'count' => count($sales)
         ];
     }
@@ -761,6 +770,7 @@ class SalesAnalyticController extends Controller
                 return "Meta zerada";
             } else {
                 $this->metaPercent = ($this->salesSeller / $data->meta) * 100;
+                $this->metaSeller = $data->meta;
 
                 if (isset($data->meta)) {
 
@@ -883,6 +893,7 @@ class SalesAnalyticController extends Controller
                 return "Meta zerada";
             } else {
                 $this->metaPercent = ($this->salesSup / $data->meta) * 100;
+                $this->metaSup = $data->meta;
 
                 if (isset($data->meta)) {
 
