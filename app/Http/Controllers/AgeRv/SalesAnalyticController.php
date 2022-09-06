@@ -59,7 +59,7 @@ class SalesAnalyticController extends Controller
                             ->first();
 
         $this->year = '2022';
-        $this->month = '07';
+        $this->month = '08';
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -134,6 +134,7 @@ class SalesAnalyticController extends Controller
             ->whereMonth('data_contrato', '>=', '06')
             ->whereYear('data_contrato', $this->year)
             ->whereIn('supervisor', $supervisors)
+            ->where('status', '<>', 'Cancelado')
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
                     'vendedor', 'supervisor', 'data_cancelamento', 'plano')
             ->get();
@@ -452,10 +453,15 @@ class SalesAnalyticController extends Controller
 
     private function sellers($supervisor) {
 
-        $sellers = $this->salesTotals->unique(function($item) use($supervisor) {
-           if($item->supervisor === $supervisor) {
-               return $item->vendedor;
-           }
+
+        $sellers = $this->salesTotals->filter(function($item) use($supervisor) {
+            if($item->supervisor === $supervisor) {
+                return $item;
+            }
+        });
+
+        $sellers = $sellers->unique(function($item) use($supervisor) {
+            return $item->vendedor;
         });
 
         $sellers = $sellers->map(function($item) {
@@ -464,11 +470,12 @@ class SalesAnalyticController extends Controller
 
         $data = [];
 
-        $sellers->each(function($item) {
+        $sellers = $sellers->each(function($item) {
             $data[] = [
                 $item
             ];
         });
+
 
         foreach($sellers as $item => $value) {
 
@@ -894,10 +901,12 @@ class SalesAnalyticController extends Controller
 
         if (!isset($data->meta)) {
             $this->valueStars = 0;
+            $this->metaPercent = 0;
             return "Sem meta";
         } else {
 
             if ($data->meta === 0) {
+                $this->metaPercent = 0;
                 return "Meta zerada";
             } else {
                 $this->metaPercent = ($this->salesSup / $data->meta) * 100;
