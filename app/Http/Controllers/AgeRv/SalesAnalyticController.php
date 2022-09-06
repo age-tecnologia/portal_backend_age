@@ -102,7 +102,6 @@ class SalesAnalyticController extends Controller
 
         $this->dataChannels = [];
 
-        $salesSup = new SalesSupervisor();
 
         foreach ($this->channels as $c => $value) {
 
