@@ -47,7 +47,7 @@ class RvSellerController extends Controller
     private float $valueStars = 0.0; // Valor das estrelas, baseado no percentual da meta atingida.
     private $commission; // Comissão, sendo o cálculo (estrela x valor_estrela) + deflator.
     private int $valueStar; // Valor da estrela do plano individualmente.
-
+    private int $collaboratorId;
     /*
      * Bloco responsável pela chamada nos outros métodos e envio do json contendo as informações pro dashboard.
      */
@@ -66,7 +66,7 @@ class RvSellerController extends Controller
         $collaborator = DB::table('agerv_colaboradores as c')
                             ->leftJoin('agerv_usuarios_permitidos as up', 'up.user_id', '=', 'c.user_id')
                             ->where('c.user_id', auth()->user()->id)
-                            ->select('c.nome', 'c.user_id', 'up.funcao_id')
+                            ->select('c.nome', 'c.user_id', 'up.funcao_id', 'c.id')
                             ->first();
 
         if (!isset($collaborator->nome)) {
@@ -83,6 +83,7 @@ class RvSellerController extends Controller
 
         $this->username = $collaborator->nome;
         $this->id = $collaborator->user_id;
+        $this->collaboratorId = $collaborator->id;
 
         $this->year = $request->input('year'); // Recupera o ano filtrado.
         $this->month = $request->input('month'); // Recupera o mês filtrado.
@@ -459,10 +460,11 @@ class RvSellerController extends Controller
     /*
      * Retorna a porcentagem da meta atingida no período..
      */
-    public function metaPercent(): float
+    public function metaPercent()
     {
 
-        $data = CollaboratorMeta::where('colaborador_id', $this->id)
+
+        $data = CollaboratorMeta::where('colaborador_id', $this->collaboratorId)
             ->where('mes_competencia', $this->month)
             ->first();
 
@@ -509,6 +511,8 @@ class RvSellerController extends Controller
             if ($this->month <= '07') {
                 $this->minMeta = 70;
             } elseif ($this->month === '08') {
+                $this->minMeta = 60;
+            } else {
                 $this->minMeta = 60;
             }
 
