@@ -23,18 +23,17 @@ class TestController extends Controller
 
     public function index(Request $request)
     {
-        $co = Collaborator::where('tipo_comissao_id', 2)->get();
+        $meta = new CollaboratorMeta();
+        $colaborador = Collaborator::where('nome', $request->input('name'))
+                        ->first();
 
-        $m = new CollaboratorMeta();
 
-        foreach($co as $item => $value) {
-            $m->create([
-                'colaborador_id' => $value->id,
-                'mes_competencia' => '07',
-                'meta' => 22,
-                'modified_by' => 1
-            ]);
-        }
+        $meta->create([
+           'colaborador_id' => $colaborador->id,
+            'mes_competencia' => '08',
+            'meta' => $request->input('meta'),
+            'modified_by' => 1
+        ]);
     }
 
 

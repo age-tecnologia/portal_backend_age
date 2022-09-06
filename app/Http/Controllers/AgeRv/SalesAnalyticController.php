@@ -811,7 +811,7 @@ class SalesAnalyticController extends Controller
 
                     } elseif ($data->canal === 'PAP') {
 
-                        if ($this->month === '07') {
+                        if ($this->month === '08') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 1.3;
@@ -822,7 +822,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStars = 7;
                             }
-                        } elseif ($this->month === '08') {
+                        } elseif ($this->month === '07') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 2.50;
@@ -836,7 +836,7 @@ class SalesAnalyticController extends Controller
                         }
                     } elseif ($data->canal === 'LIDER') {
 
-                        if ($this->month === '07') {
+                        if ($this->month === '08') {
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 0.25;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
@@ -846,7 +846,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStars = 1.30;
                             }
-                        } elseif ($this->month === '08') {
+                        } elseif ($this->month === '07') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 0.6;
@@ -917,7 +917,7 @@ class SalesAnalyticController extends Controller
                     // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
                      if($data->canal === 'LIDER') {
 
-                        if ($this->month === '07') {
+                        if ($this->month === '08') {
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStarsSup = 0.25;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
@@ -927,7 +927,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStarsSup = 1.30;
                             }
-                        } elseif ($this->month === '08') {
+                        } elseif ($this->month === '07') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStarsSup = 0.6;
