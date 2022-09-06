@@ -30,7 +30,7 @@ class TestController extends Controller
 
         $meta->create([
            'colaborador_id' => $colaborador->id,
-            'mes_competencia' => '08',
+            'mes_competencia' => '07',
             'meta' => $request->input('meta'),
             'modified_by' => 1
         ]);

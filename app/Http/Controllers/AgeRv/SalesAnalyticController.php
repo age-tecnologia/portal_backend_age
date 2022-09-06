@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AgeRv;
 
+use App\Http\Controllers\AgeRv\Class\SalesSupervisor;
 use App\Http\Controllers\Controller;
 use App\Models\AgeRv\AccessPermission;
 use App\Models\AgeRv\Channel;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class SalesAnalyticController extends Controller
 {
 
-    private $channels;
+    protected $channels;
     private $dataChannels;
     private string $month;
     private string $year;
@@ -66,9 +67,10 @@ class SalesAnalyticController extends Controller
             $c->funcao === 'Diretoria' ||
             $c->funcao === 'Gerente geral') {
 
-
             return $this->master();
 
+        } elseif ($c->funcao === 'Supervisor') {
+            return $this->supervisor();
         } else {
             return response()->json(["Unauthorized"], 401);
         }
@@ -100,6 +102,8 @@ class SalesAnalyticController extends Controller
 
         $this->dataChannels = [];
 
+        $salesSup = new SalesSupervisor();
+
         foreach ($this->channels as $c => $value) {
 
             $supervisors = Collaborator::where('funcao_id', 3)
@@ -116,7 +120,7 @@ class SalesAnalyticController extends Controller
                 'salesBase' => $this->salesBase(),
                 'starsTotal' => $this->starsTotal(),
                 'supervisors' => $this->supervisors(),
-                'commission' => number_format($this->commissionChannel, 2, ',', '.')
+                'commission' => number_format($this->commissionChannel, 2, ',', '.'),
             ];
         }
 
@@ -440,7 +444,7 @@ class SalesAnalyticController extends Controller
                 'starsTotal' => $this->starsSupTotal,
                 'valueStar' => $this->valueStarSup($value),
                 'commission' => $this->commissionSup(),
-                'deflator' => $this->deflatorSup,
+                'deflator' => 0, //$this->deflatorSup,
                 'meta' => $this->metaSup,
                 'metaPercent' => number_format($this->metaPercent, 2),
             ];
@@ -511,6 +515,8 @@ class SalesAnalyticController extends Controller
                 return $item;
             }
         });
+
+        $sales = $sales->sortBy('nome_cliente');
 
         $this->salesSeller = count($sales);
 
@@ -782,8 +788,10 @@ class SalesAnalyticController extends Controller
         } else {
 
             if ($data->meta === 0) {
+                $this->valueStars = 0;
                 return "Meta zerada";
             } else {
+                $this->valueStars = 0;
                 $this->metaPercent = ($this->salesSeller / $data->meta) * 100;
                 $this->metaSeller = $data->meta;
 
@@ -811,7 +819,7 @@ class SalesAnalyticController extends Controller
 
                     } elseif ($data->canal === 'PAP') {
 
-                        if ($this->month === '08') {
+                        if ($this->month === '07') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 1.3;
@@ -822,7 +830,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStars = 7;
                             }
-                        } elseif ($this->month === '07') {
+                        } elseif ($this->month === '08') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 2.50;
@@ -836,7 +844,7 @@ class SalesAnalyticController extends Controller
                         }
                     } elseif ($data->canal === 'LIDER') {
 
-                        if ($this->month === '08') {
+                        if ($this->month === '07') {
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 0.25;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
@@ -846,7 +854,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStars = 1.30;
                             }
-                        } elseif ($this->month === '07') {
+                        } elseif ($this->month === '08') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 0.6;
@@ -917,7 +925,7 @@ class SalesAnalyticController extends Controller
                     // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
                      if($data->canal === 'LIDER') {
 
-                        if ($this->month === '08') {
+                        if ($this->month === '07') {
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStarsSup = 0.25;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
@@ -927,7 +935,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStarsSup = 1.30;
                             }
-                        } elseif ($this->month === '07') {
+                        } elseif ($this->month === '08') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStarsSup = 0.6;
@@ -955,13 +963,14 @@ class SalesAnalyticController extends Controller
 
         $commission = $this->starsSupTotal * $this->valueStarsSup;
 
-        if($this->salesSupCancelledsD7 > 0) {
-            $commission = $commission * 0.9;
-            $this->deflatorSup = -10;
-        } else {
-            $commission = $commission * 1.1;
-            $this->deflatorSup = 10;
-        }
+        // Removido a pedido da Liandra Buck
+//        if($this->salesSupCancelledsD7 > 0) {
+//            $commission = $commission * 0.9;
+//            $this->deflatorSup = -10;
+//        } else {
+//            $commission = $commission * 1.1;
+//            $this->deflatorSup = 10;
+//        }
 
         $this->commissionTotal += $commission;
         $this->commissionChannel += $commission;
@@ -970,4 +979,65 @@ class SalesAnalyticController extends Controller
     }
 
 
+    /*
+     *
+     *
+     * Modelo de visão SUPERVISOR
+     *
+     *
+     */
+
+    private function supervisor() {
+
+
+        $supervisor = Collaborator::where('user_id', auth()->user()->id)
+                                    ->first();
+
+        $collaborator = Collaborator::where('supervisor_id', $supervisor->id)
+                        ->select('nome')
+                        ->get();
+
+        return [
+            'supervisor' => $supervisor->nome,
+            'salesTotal' => $this->supervisorSalesTotals($collaborator),
+            'sellers' => $this->sellers($supervisor->nome),
+            'salesCancelled' => [
+                'count' => $this->salesSupCancelleds,
+                'extract' => $this->salesSupCancelledsExtract
+            ],
+            'starsTotal' => $this->starsSupTotal,
+            'valueStar' => $this->valueStarSup($supervisor->nome),
+            'commission' => $this->commissionSup(),
+            'deflator' => 0, //$this->deflatorSup,
+            'meta' => $this->metaSup,
+            'metaPercent' => number_format($this->metaPercent, 2),
+        ];
+
+
+    }
+
+    private function supervisorSalesTotals ($collaborator) {
+
+        // Trás a contagem de todas as vendas realizadas no mês filtrado.
+        $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
+            ->whereYear('data_vigencia', $this->year)
+            ->whereMonth('data_ativacao', $this->month)
+            ->whereYear('data_ativacao', $this->year)
+            ->whereMonth('data_contrato', '>=', '06')
+            ->whereIn('vendedor', $collaborator)
+            ->whereYear('data_contrato', $this->year)
+            ->where('status', '<>', 'Cancelado')
+            ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
+                'vendedor', 'supervisor', 'data_cancelamento', 'plano')
+            ->get();
+
+
+        $this->salesTotalsCount += count($this->salesTotals);
+
+        return [
+            'extract' => 0,// $this->salesTotals,
+            'count' => count($this->salesTotals)
+        ];
+
+    }
 }
