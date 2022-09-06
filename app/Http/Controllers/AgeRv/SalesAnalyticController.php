@@ -71,6 +71,8 @@ class SalesAnalyticController extends Controller
 
         } elseif ($c->funcao === 'Supervisor') {
             return $this->supervisor();
+        } elseif($c->funcao === 'Gerente') {
+            return $this->management();
         } else {
             return response()->json(["Unauthorized"], 401);
         }
@@ -989,10 +991,7 @@ class SalesAnalyticController extends Controller
     private function supervisor() {
 
 
-        $supervisor = Collaborator::where('user_id', auth()->user()->id)
-                                    ->first();
-
-        $collaborator = Collaborator::where('supervisor_id', $supervisor->id)
+        $collaborator = Collaborator::where('gestor_id', auth()->user()->id)
                         ->select('nome')
                         ->get();
 
@@ -1024,6 +1023,60 @@ class SalesAnalyticController extends Controller
             ->whereYear('data_ativacao', $this->year)
             ->whereMonth('data_contrato', '>=', '06')
             ->whereIn('vendedor', $collaborator)
+            ->whereYear('data_contrato', $this->year)
+            ->where('status', '<>', 'Cancelado')
+            ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
+                'vendedor', 'supervisor', 'data_cancelamento', 'plano')
+            ->get();
+
+
+        $this->salesTotalsCount += count($this->salesTotals);
+
+        return [
+            'extract' => 0,// $this->salesTotals,
+            'count' => count($this->salesTotals)
+        ];
+
+    }
+
+    /*
+     *
+     *
+     * Modelo de visão GERENTE
+     *
+     *
+     */
+
+    private function management() {
+
+
+        $collaborator = Collaborator::where('gestor_id', auth()->user()->id)
+            ->select('nome')
+            ->get();
+
+
+        return [
+            'salesTotal' => $this->managementSalesTotals($collaborator),
+            'supervisors' => $this->supervisors(),
+            'salesCancelled' => [
+                'count' => $this->salesSupCancelleds,
+                'extract' => $this->salesSupCancelledsExtract
+            ],
+            'starsTotal' => $this->starsSupTotal,
+        ];
+
+
+    }
+
+    private function managementSalesTotals ($collaborator) {
+
+        // Trás a contagem de todas as vendas realizadas no mês filtrado.
+        $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
+            ->whereYear('data_vigencia', $this->year)
+            ->whereMonth('data_ativacao', $this->month)
+            ->whereYear('data_ativacao', $this->year)
+            ->whereMonth('data_contrato', '>=', '06')
+            ->whereIn('supervisor', $collaborator)
             ->whereYear('data_contrato', $this->year)
             ->where('status', '<>', 'Cancelado')
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
