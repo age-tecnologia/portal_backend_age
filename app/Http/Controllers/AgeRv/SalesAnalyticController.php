@@ -423,6 +423,7 @@ class SalesAnalyticController extends Controller
             $this->valueStarsSup = 0;
             $this->deflatorSup = 0;
             $this->metaSup = 0;
+            $this->metaPercent = 0;
 
             $data[] = [
                 'supervisor' => $value,
@@ -440,6 +441,7 @@ class SalesAnalyticController extends Controller
                 'commission' => $this->commissionSup(),
                 'deflator' => $this->deflatorSup,
                 'meta' => $this->metaSup,
+                'metaPercent' => number_format($this->metaPercent, 2),
             ];
         }
 
@@ -471,6 +473,11 @@ class SalesAnalyticController extends Controller
         foreach($sellers as $item => $value) {
 
             $this->metaSeller = 0;
+            $this->valueStars = 0;
+            $this->metaPercent = 0;
+            $this->salesSeller = 0;
+            $this->d7Seller = 0;
+            $this->deflatorSeller = 0;
 
             $data[] = [
                 'seller' => $value,
@@ -480,7 +487,8 @@ class SalesAnalyticController extends Controller
                 'valueStar' => $this->valueStarSeller($value),
                 'commission' => $this->commissionSeller(),
                 'deflator' => $this->deflatorSeller,
-                'meta' => $this->metaSeller
+                'meta' => $this->metaSeller,
+                'metaPercent' => number_format($this->metaPercent, 2),
             ];
         }
 
@@ -933,7 +941,6 @@ class SalesAnalyticController extends Controller
             }
         }
     }
-
 
     private function commissionSup() {
 
