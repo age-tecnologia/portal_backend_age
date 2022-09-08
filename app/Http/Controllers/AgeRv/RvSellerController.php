@@ -653,6 +653,7 @@ class RvSellerController extends Controller
             ->where('status', '<>', 'Em Aprovação')
             ->get();
 
+
         $plans->each(function ($item) {
 
             // Se o mês do cadastro do contrato for MAIO, executa esse bloco.
@@ -801,6 +802,43 @@ class RvSellerController extends Controller
                 // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
             } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-09-01') &&
                 Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
+
+                // Verifica qual é o plano e atribui a estrela correspondente.
+                if (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
+                    $this->valueStar = 30;
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                    $this->valueStar = 15;
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA NÃO FIDELIZADO + DEEZER PREMIUM')) {
+                    $this->valueStar = 0;
+                } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                    $this->valueStar = 7;
+                } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                    $this->valueStar = 9;
+                } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                    $this->valueStar = 9;
+                } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
+                    $this->valueStar = 7;
+                } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
+                    $this->valueStar = 7;
+                } elseif (str_contains($item->plano, 'PLANO 480 MEGA NÃO FIDELIZADO')) {
+                    $this->valueStar = 0;
+                } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
+                    $this->valueStar = 9;
+                } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
+                    $this->valueStar = 15;
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                    $this->valueStar = 35;
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                    $this->valueStar = 35;
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                    $this->valueStar = 9;
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
+                    $this->valueStar = 12;
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                    $this->valueStar = 17;
+                }
+            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-10-01') &&
+                Carbon::parse($item->data_contrato) >= Carbon::parse('2022-09-01')) {
 
                 // Verifica qual é o plano e atribui a estrela correspondente.
                 if (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
