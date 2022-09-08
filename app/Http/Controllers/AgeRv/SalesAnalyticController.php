@@ -44,6 +44,7 @@ class SalesAnalyticController extends Controller
     private $deflatorSup;
     private $metaSup;
     private $metaSeller;
+    private $starsTeste = [];
 
 
 
@@ -60,7 +61,7 @@ class SalesAnalyticController extends Controller
                             ->first();
 
         $this->year = '2022';
-        $this->month = $request->input('month');
+        $this->month = '06';//$request->input('month');
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -134,8 +135,6 @@ class SalesAnalyticController extends Controller
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_ativacao', $this->month)
-            ->whereYear('data_ativacao', $this->year)
             ->whereMonth('data_contrato', '>=', '06')
             ->whereYear('data_contrato', $this->year)
             ->whereIn('supervisor', $supervisors)
@@ -207,6 +206,7 @@ class SalesAnalyticController extends Controller
     private function starsTotal()
     {
         $stars = 0;
+
 
         foreach($this->salesTotals as $sale => $item) {
             // Se o mês do cadastro do contrato for MAIO, executa esse bloco.
@@ -484,6 +484,7 @@ class SalesAnalyticController extends Controller
             $this->salesSeller = 0;
             $this->d7Seller = 0;
             $this->deflatorSeller = 0;
+            $this->starsTeste = [];
 
             $data[] = [
                 'seller' => $value,
@@ -495,6 +496,7 @@ class SalesAnalyticController extends Controller
                 'deflator' => $this->deflatorSeller,
                 'meta' => $this->metaSeller,
                 'metaPercent' => number_format($this->metaPercent, 2),
+                'teste' => $this->starsTeste
             ];
         }
 
@@ -575,6 +577,7 @@ class SalesAnalyticController extends Controller
 
         $result = $this->salesTotals->filter(function($item) use($name) {
            if($item->vendedor === $name) {
+
 
                // Se o mês do cadastro do contrato for MAIO, executa esse bloco.
                if (Carbon::parse($item->data_contrato) < Carbon::parse('2022-06-01') &&
@@ -814,7 +817,7 @@ class SalesAnalyticController extends Controller
 
                     } elseif ($data->canal === 'PAP') {
 
-                        if ($this->month === '07') {
+                        if ($this->month <= '07') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 1.3;
@@ -839,7 +842,7 @@ class SalesAnalyticController extends Controller
                         }
                     } elseif ($data->canal === 'LIDER') {
 
-                        if ($this->month === '07') {
+                        if ($this->month <= '07') {
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 0.25;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
@@ -920,7 +923,7 @@ class SalesAnalyticController extends Controller
                     // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
                      if($data->canal === 'LIDER') {
 
-                        if ($this->month === '07') {
+                        if ($this->month <= '07') {
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStarsSup = 0.25;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
@@ -1017,8 +1020,6 @@ class SalesAnalyticController extends Controller
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_ativacao', $this->month)
-            ->whereYear('data_ativacao', $this->year)
             ->whereMonth('data_contrato', '>=', '06')
             ->whereIn('vendedor', $collaborator)
             ->whereYear('data_contrato', $this->year)
@@ -1071,8 +1072,6 @@ class SalesAnalyticController extends Controller
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_ativacao', $this->month)
-            ->whereYear('data_ativacao', $this->year)
             ->whereMonth('data_contrato', '>=', '06')
             ->whereIn('supervisor', $collaborator)
             ->whereYear('data_contrato', $this->year)
