@@ -47,7 +47,7 @@ class SalesAnalyticController extends Controller
 
 
 
-    public function index()
+    public function index(Request $request)
     {
 
         // Trás o nível de permissão do usuário (master, admin) e a função (Diretoria, gerente).
@@ -60,7 +60,7 @@ class SalesAnalyticController extends Controller
                             ->first();
 
         $this->year = '2022';
-        $this->month = '08';
+        $this->month = $request->input('month');
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -353,7 +353,7 @@ class SalesAnalyticController extends Controller
                 }
 
                 // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
-            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-09-01') &&
+            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-10-01') &&
                 Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
 
                 // Verifica qual é o plano e atribui a estrela correspondente.
@@ -720,7 +720,7 @@ class SalesAnalyticController extends Controller
                    }
 
                    // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
-               } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-09-01') &&
+               } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-10-01') &&
                    Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
 
                    // Verifica qual é o plano e atribui a estrela correspondente.
@@ -798,7 +798,7 @@ class SalesAnalyticController extends Controller
                         // Verifica o mês e aplica a diferença na meta mínima
                         if ($this->month <= '07') {
                             $this->minMeta = 70;
-                        } elseif ($this->month === '08') {
+                        } elseif ($this->month >= '08') {
                             $this->minMeta = 60;
                         }
 
@@ -825,7 +825,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStars = 7;
                             }
-                        } elseif ($this->month === '08') {
+                        } elseif ($this->month >= '08') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 2.50;
@@ -849,7 +849,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStars = 1.30;
                             }
-                        } elseif ($this->month === '08') {
+                        } elseif ($this->month >= '08') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 0.6;
@@ -930,7 +930,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStarsSup = 1.30;
                             }
-                        } elseif ($this->month === '08') {
+                        } elseif ($this->month >= '08') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStarsSup = 0.6;
