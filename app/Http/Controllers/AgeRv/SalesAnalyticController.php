@@ -989,6 +989,10 @@ class SalesAnalyticController extends Controller
                         ->select('nome')
                         ->get();
 
+        $supervisor = Collaborator::where('user_id', auth()->user()->id)
+                                    ->where('funcao_id', 3)
+                                    ->first();
+
         return [
             'supervisor' => $supervisor->nome,
             'salesTotal' => $this->supervisorSalesTotals($collaborator),
