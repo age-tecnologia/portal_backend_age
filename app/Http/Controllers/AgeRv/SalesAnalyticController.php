@@ -142,7 +142,6 @@ class SalesAnalyticController extends Controller
             ->where('status', '<>', 'Cancelado')
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
                     'vendedor', 'supervisor', 'data_cancelamento', 'plano')
-            ->limit(100)
             ->get();
 
         $this->salesTotalsCount += count($this->salesTotals);
@@ -410,13 +409,7 @@ class SalesAnalyticController extends Controller
             return $item->supervisor;
         });
 
-        $data = [];
 
-        $supervisors->each(function($item) {
-            $data[] = [
-                $item
-            ];
-        });
 
         foreach($supervisors as $item => $value) {
 
@@ -494,7 +487,7 @@ class SalesAnalyticController extends Controller
 
             $data[] = [
                 'seller' => $value,
-                'salesTotal' => $this->salesSeller($value),
+                'salesTotal' => $this->salesSeller($value, $supervisor),
                 'salesCancelled' => $this->salesCancelledSeller($value),
                 'starsTotal' => $this->starsSellers($value),
                 'valueStar' => $this->valueStarSeller($value),
@@ -509,11 +502,11 @@ class SalesAnalyticController extends Controller
 
     }
 
-    private function salesSeller($name)
+    private function salesSeller($name, $supervisor)
     {
 
-        $sales = $this->salesTotals->filter(function($item) use($name) {
-            if($item->vendedor === $name) {
+        $sales = $this->salesTotals->filter(function($item) use($name, $supervisor) {
+            if($item->vendedor === $name && $item->supervisor === $supervisor) {
                 return $item;
             }
         });
