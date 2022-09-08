@@ -142,6 +142,7 @@ class SalesAnalyticController extends Controller
             ->where('status', '<>', 'Cancelado')
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
                     'vendedor', 'supervisor', 'data_cancelamento', 'plano')
+            ->limit(100)
             ->get();
 
         $this->salesTotalsCount += count($this->salesTotals);
