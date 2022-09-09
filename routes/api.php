@@ -81,6 +81,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::prefix('analytics')->group(function () {
             Route::get('/', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
+            Route::get('/rule', [\App\Http\Controllers\AgeRv\SalesAnalyticRuleBefore::class, 'index']);
         });
 
         Route::middleware('AccessMaster')->prefix('routines')->group(function () {

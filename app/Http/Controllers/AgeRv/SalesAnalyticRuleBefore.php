@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\AgeRv;
 
-use App\Http\Controllers\AgeRv\Class\SalesSupervisor;
 use App\Http\Controllers\Controller;
-use App\Models\AgeRv\AccessPermission;
 use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\VoalleSales;
@@ -12,9 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class SalesAnalyticController extends Controller
+class SalesAnalyticRuleBefore extends Controller
 {
-
     protected $channels;
     private $dataChannels;
     private string $month;
@@ -53,12 +50,12 @@ class SalesAnalyticController extends Controller
 
         // Trás o nível de permissão do usuário (master, admin) e a função (Diretoria, gerente).
         $c = DB::table('agerv_usuarios_permitidos as up')
-                            ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
-                            ->leftJoin('portal_users as u', 'up.user_id', '=', 'u.id')
-                            ->leftJoin('portal_nivel_acesso as na', 'u.nivel_acesso_id', '=', 'na.id')
-                            ->select('u.name', 'na.nivel', 'cf.funcao')
-                            ->where('u.id', auth()->user()->id)
-                            ->first();
+            ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
+            ->leftJoin('portal_users as u', 'up.user_id', '=', 'u.id')
+            ->leftJoin('portal_nivel_acesso as na', 'u.nivel_acesso_id', '=', 'na.id')
+            ->select('u.name', 'na.nivel', 'cf.funcao')
+            ->where('u.id', auth()->user()->id)
+            ->first();
 
         $this->year = '2022';
         $this->month = $request->input('month');
@@ -100,8 +97,8 @@ class SalesAnalyticController extends Controller
     private function channels() {
 
         $this->channels = Channel::select('id','canal')
-                                ->where('canal', '<>', 'lider')
-                                ->get();
+            ->where('canal', '<>', 'lider')
+            ->get();
 
         $this->dataChannels = [];
 
@@ -140,7 +137,7 @@ class SalesAnalyticController extends Controller
             ->whereIn('supervisor', $supervisors)
             ->where('status', '<>', 'Cancelado')
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
-                    'vendedor', 'supervisor', 'data_cancelamento', 'plano')
+                'vendedor', 'supervisor', 'data_cancelamento', 'plano')
             ->get();
 
         $this->salesTotalsCount += count($this->salesTotals);
@@ -191,7 +188,7 @@ class SalesAnalyticController extends Controller
 
             if($sale->situacao !== 'Cancelado') {
 
-              return $sale;
+                return $sale;
 
             }
 
@@ -576,193 +573,193 @@ class SalesAnalyticController extends Controller
         $this->starsSeller = 0;
 
         $result = $this->salesTotals->filter(function($item) use($name) {
-           if($item->vendedor === $name) {
+            if($item->vendedor === $name) {
 
 
-               // Se o mês do cadastro do contrato for MAIO, executa esse bloco.
-               if (Carbon::parse($item->data_contrato) < Carbon::parse('2022-06-01') &&
-                   Carbon::parse($item->data_contrato) >= Carbon::parse('2022-05-01')) {
+                // Se o mês do cadastro do contrato for MAIO, executa esse bloco.
+                if (Carbon::parse($item->data_contrato) < Carbon::parse('2022-06-01') &&
+                    Carbon::parse($item->data_contrato) >= Carbon::parse('2022-05-01')) {
 
-                   // Verifica qual é o plano e atribui a estrela correspondente.
-                   if (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
-                       $this->starsSeller += 5;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 960 MEGA ')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 360 MEGA')) {
-                       $this->starsSeller += 11;
-                   } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 15;
-                   } elseif (str_contains($item->plano, 'PLANO 480 MEGA - FIDELIZADO')) {
-                       $this->starsSeller += 15;
-                   } elseif (str_contains($item->plano, 'PLANO 720 MEGA ')) {
-                       $this->starsSeller += 25;
-                   } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 25;
-                   } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 17;
-                   } elseif (str_contains($item->plano, 'PLANO 960 MEGA')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO 960 MEGA TURBINADO + AGE TV + DEEZER PREMIUM')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
-                       $this->starsSeller += 12;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 17;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO + IP FIXO')) {
-                       $this->starsSeller += 20;
-                   }
+                    // Verifica qual é o plano e atribui a estrela correspondente.
+                    if (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                        $this->starsSeller += 5;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 960 MEGA ')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 360 MEGA')) {
+                        $this->starsSeller += 11;
+                    } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 15;
+                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA - FIDELIZADO')) {
+                        $this->starsSeller += 15;
+                    } elseif (str_contains($item->plano, 'PLANO 720 MEGA ')) {
+                        $this->starsSeller += 25;
+                    } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 25;
+                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 17;
+                    } elseif (str_contains($item->plano, 'PLANO 960 MEGA')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO 960 MEGA TURBINADO + AGE TV + DEEZER PREMIUM')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
+                        $this->starsSeller += 12;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 17;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO + IP FIXO')) {
+                        $this->starsSeller += 20;
+                    }
 
-                   // Se o mês do cadastro do contrato for JUNHO, executa esse bloco.
-               } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-07-01') &&
-                   Carbon::parse($item->data_contrato) >= Carbon::parse('2022-06-01')) {
+                    // Se o mês do cadastro do contrato for JUNHO, executa esse bloco.
+                } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-07-01') &&
+                    Carbon::parse($item->data_contrato) >= Carbon::parse('2022-06-01')) {
 
-                   // Verifica qual é o plano e atribui a estrela correspondente.
-                   if (str_contains($item->plano, 'COMBO EMPRESARIAL 600 MEGA + 1 FIXO BRASIL SEM FIDELIDADE')) {
-                       $this->starsSeller += 10;
-                   } elseif (str_contains($item->plano, 'COMBO EMPRESARIAL 600 MEGA + 2 FIXOS BRASIL SEM FIDELIDADE')) {
-                       $this->starsSeller += 13;
-                   } elseif (str_contains($item->plano, 'PLANO 120 MEGA')) {
-                       $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
-                       $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 960 MEGA ')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA SEM FIDELIDADE')) {
-                       $this->starsSeller += 0;
-                   } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 15;
-                   } elseif (str_contains($item->plano, 'PLANO 480 MEGA - FIDELIZADO')) {
-                       $this->starsSeller += 15;
-                   } elseif (str_contains($item->plano, 'PLANO 720 MEGA ')) {
-                       $this->starsSeller += 25;
-                   } elseif (str_contains($item->plano, 'PLANO 800 MEGA - COLABORADOR')) {
-                       $this->starsSeller += 17;
-                   } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 17;
-                   } elseif (str_contains($item->plano, 'PLANO 960 MEGA')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO 960 MEGA TURBINADO + AGE TV + DEEZER PREMIUM')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 17;
-                   }
+                    // Verifica qual é o plano e atribui a estrela correspondente.
+                    if (str_contains($item->plano, 'COMBO EMPRESARIAL 600 MEGA + 1 FIXO BRASIL SEM FIDELIDADE')) {
+                        $this->starsSeller += 10;
+                    } elseif (str_contains($item->plano, 'COMBO EMPRESARIAL 600 MEGA + 2 FIXOS BRASIL SEM FIDELIDADE')) {
+                        $this->starsSeller += 13;
+                    } elseif (str_contains($item->plano, 'PLANO 120 MEGA')) {
+                        $this->starsSeller += 7;
+                    } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                        $this->starsSeller += 7;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 960 MEGA ')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA SEM FIDELIDADE')) {
+                        $this->starsSeller += 0;
+                    } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 15;
+                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA - FIDELIZADO')) {
+                        $this->starsSeller += 15;
+                    } elseif (str_contains($item->plano, 'PLANO 720 MEGA ')) {
+                        $this->starsSeller += 25;
+                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA - COLABORADOR')) {
+                        $this->starsSeller += 17;
+                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 17;
+                    } elseif (str_contains($item->plano, 'PLANO 960 MEGA')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO 960 MEGA TURBINADO + AGE TV + DEEZER PREMIUM')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 17;
+                    }
 
-                   // Se o mês do cadastro do contrato for JULHO, executa esse bloco.
-               } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-08-01') &&
-                   Carbon::parse($item->data_contrato) >= Carbon::parse('2022-07-01')) {
+                    // Se o mês do cadastro do contrato for JULHO, executa esse bloco.
+                } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-08-01') &&
+                    Carbon::parse($item->data_contrato) >= Carbon::parse('2022-07-01')) {
 
-                   // Verifica qual é o plano e atribui a estrela correspondente.
-                   if (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
-                       $this->starsSeller += 30;
-                   } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
-                       $this->starsSeller += 15;
-                   } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
-                       $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 120 MEGA SEM FIDELIDADE')) {
-                       $this->starsSeller += 0;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA ')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA + DEEZER PREMIUM SEM FIDELIDADE')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 400 MEGA - COLABORADOR')) {
-                       $this->starsSeller += 0;
-                   } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 400 MEGA NÃO FIDELIZADO')) {
-                       $this->starsSeller += 0;
-                   } elseif (str_contains($item->plano, 'PLANO 480 MEGA - FIDELIZADO')) {
-                       $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 800 MEGA - CAMPANHA CONDOMÍNIO FIDELIZADO (AMBOS)')) {
-                       $this->starsSeller += 0;
-                   } elseif (str_contains($item->plano, 'PLANO 800 MEGA - COLABORADOR')) {
-                       $this->starsSeller += 0;
-                   } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 17;
-                   } elseif (str_contains($item->plano, 'PLANO 960 MEGA')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO 960 MEGA (LOJAS)')) {
-                       $this->starsSeller += 0;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + IP FIXO')) {
-                       $this->starsSeller += 38;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA SEM FIDELIDADE + IP FIXO')) {
-                       $this->starsSeller += 36;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
-                       $this->starsSeller += 12;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 15;
-                   }
+                    // Verifica qual é o plano e atribui a estrela correspondente.
+                    if (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
+                        $this->starsSeller += 30;
+                    } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                        $this->starsSeller += 15;
+                    } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                        $this->starsSeller += 7;
+                    } elseif (str_contains($item->plano, 'PLANO 120 MEGA SEM FIDELIDADE')) {
+                        $this->starsSeller += 0;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA ')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA + DEEZER PREMIUM SEM FIDELIDADE')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 400 MEGA - COLABORADOR')) {
+                        $this->starsSeller += 0;
+                    } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 7;
+                    } elseif (str_contains($item->plano, 'PLANO 400 MEGA NÃO FIDELIZADO')) {
+                        $this->starsSeller += 0;
+                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA - FIDELIZADO')) {
+                        $this->starsSeller += 7;
+                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 7;
+                    } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA - CAMPANHA CONDOMÍNIO FIDELIZADO (AMBOS)')) {
+                        $this->starsSeller += 0;
+                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA - COLABORADOR')) {
+                        $this->starsSeller += 0;
+                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 17;
+                    } elseif (str_contains($item->plano, 'PLANO 960 MEGA')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO 960 MEGA (LOJAS)')) {
+                        $this->starsSeller += 0;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + IP FIXO')) {
+                        $this->starsSeller += 38;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA SEM FIDELIDADE + IP FIXO')) {
+                        $this->starsSeller += 36;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
+                        $this->starsSeller += 12;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 15;
+                    }
 
-                   // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
-               } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-10-01') &&
-                   Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
+                    // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
+                } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-10-01') &&
+                    Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
 
-                   // Verifica qual é o plano e atribui a estrela correspondente.
-                   if (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
-                       $this->starsSeller += 30;
-                   } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
-                       $this->starsSeller += 15;
-                   } elseif (str_contains($item->plano, 'PLANO 1 GIGA NÃO FIDELIZADO + DEEZER PREMIUM')) {
-                       $this->starsSeller += 0;
-                   } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
-                       $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 480 MEGA NÃO FIDELIZADO')) {
-                       $this->starsSeller += 0;
-                   } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 15;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
-                       $this->starsSeller += 35;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 9;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
-                       $this->starsSeller += 12;
-                   } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 17;
-                   }
-               }
+                    // Verifica qual é o plano e atribui a estrela correspondente.
+                    if (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
+                        $this->starsSeller += 30;
+                    } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                        $this->starsSeller += 15;
+                    } elseif (str_contains($item->plano, 'PLANO 1 GIGA NÃO FIDELIZADO + DEEZER PREMIUM')) {
+                        $this->starsSeller += 0;
+                    } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                        $this->starsSeller += 7;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 7;
+                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 7;
+                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA NÃO FIDELIZADO')) {
+                        $this->starsSeller += 0;
+                    } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 15;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                        $this->starsSeller += 35;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 9;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
+                        $this->starsSeller += 12;
+                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                        $this->starsSeller += 17;
+                    }
+                }
 
-           }
+            }
         });
 
         $this->starsSupTotal += $this->starsSeller;
@@ -773,12 +770,12 @@ class SalesAnalyticController extends Controller
     private function valueStarSeller($name) {
 
         $data = DB::table('agerv_colaboradores as c')
-                    ->leftJoin('agerv_colaboradores_meta as cm', 'cm.colaborador_id', '=', 'c.id')
-                    ->leftJoin('agerv_colaboradores_canais as cc', 'c.tipo_comissao_id', '=', 'cc.id')
-                    ->where('c.nome', $name)
-                    ->where('cm.mes_competencia', $this->month)
-                    ->select('c.id', 'cc.canal', 'cm.meta')
-                    ->first();
+            ->leftJoin('agerv_colaboradores_meta as cm', 'cm.colaborador_id', '=', 'c.id')
+            ->leftJoin('agerv_colaboradores_canais as cc', 'c.tipo_comissao_id', '=', 'cc.id')
+            ->where('c.nome', $name)
+            ->where('cm.mes_competencia', $this->month)
+            ->select('c.id', 'cc.canal', 'cm.meta')
+            ->first();
 
         if (!isset($data->meta)) {
             $this->valueStars = 0;
@@ -796,14 +793,9 @@ class SalesAnalyticController extends Controller
                 if (isset($data->meta)) {
 
                     // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
-                     if ($data->canal === 'MCV') {
+                    if ($data->canal === 'MCV') {
 
-                        // Verifica o mês e aplica a diferença na meta mínima
-                        if ($this->month <= '07') {
                             $this->minMeta = 70;
-                        } elseif ($this->month >= '08') {
-                            $this->minMeta = 60;
-                        }
 
                         if ($this->metaPercent >= $this->minMeta && $this->metaPercent < 100) {
                             $this->valueStars = 0.90;
@@ -817,8 +809,6 @@ class SalesAnalyticController extends Controller
 
                     } elseif ($data->canal === 'PAP') {
 
-                        if ($this->month <= '07') {
-
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 1.3;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
@@ -828,21 +818,9 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStars = 7;
                             }
-                        } elseif ($this->month >= '08') {
 
-                            if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                                $this->valueStars = 2.50;
-                            } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                                $this->valueStars = 5;
-                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                                $this->valueStars = 7;
-                            } elseif ($this->metaPercent >= 141) {
-                                $this->valueStars = 10;
-                            }
-                        }
                     } elseif ($data->canal === 'LIDER') {
 
-                        if ($this->month <= '07') {
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStars = 0.25;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
@@ -852,19 +830,6 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStars = 1.30;
                             }
-                        } elseif ($this->month >= '08') {
-
-                            if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                                $this->valueStars = 0.6;
-                            } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                                $this->valueStars = 0.9;
-                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                                $this->valueStars = 1.5;
-                            } elseif ($this->metaPercent >= 141) {
-                                $this->valueStars = 3;
-                            }
-
-                        }
                     }
 
                     return $this->valueStars;
@@ -921,9 +886,8 @@ class SalesAnalyticController extends Controller
                 if (isset($data->meta)) {
 
                     // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
-                     if($data->canal === 'LIDER') {
+                    if($data->canal === 'LIDER') {
 
-                        if ($this->month <= '07') {
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                                 $this->valueStarsSup = 0.25;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
@@ -933,19 +897,7 @@ class SalesAnalyticController extends Controller
                             } elseif ($this->metaPercent >= 141) {
                                 $this->valueStarsSup = 1.30;
                             }
-                        } elseif ($this->month >= '08') {
 
-                            if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                                $this->valueStarsSup = 0.6;
-                            } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                                $this->valueStarsSup = 0.9;
-                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-                                $this->valueStarsSup = 1.5;
-                            } elseif ($this->metaPercent >= 141) {
-                                $this->valueStarsSup = 3;
-                            }
-
-                        }
                     }
 
                     return $this->valueStarsSup;
@@ -989,12 +941,12 @@ class SalesAnalyticController extends Controller
 
 
         $collaborator = Collaborator::where('gestor_id', auth()->user()->id)
-                        ->select('nome')
-                        ->get();
+            ->select('nome')
+            ->get();
 
         $supervisor = Collaborator::where('user_id', auth()->user()->id)
-                                    ->where('funcao_id', 3)
-                                    ->first();
+            ->where('funcao_id', 3)
+            ->first();
 
         return [
             'supervisor' => $supervisor->nome,
