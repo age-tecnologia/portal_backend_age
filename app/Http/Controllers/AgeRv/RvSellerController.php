@@ -393,7 +393,7 @@ class RvSellerController extends Controller
                 }
 
                 // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
-            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-09-01') &&
+            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-10-01') &&
                 Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
 
                 // Verifica qual é o plano e atribui a estrela correspondente.
@@ -800,7 +800,7 @@ class RvSellerController extends Controller
                 }
 
                 // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
-            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-09-01') &&
+            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-10-01') &&
                 Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
 
                 // Verifica qual é o plano e atribui a estrela correspondente.
@@ -999,12 +999,13 @@ class RvSellerController extends Controller
             $date = Carbon::parse("$year-$month-$i")->format('d/m/Y');
             $dayName = Carbon::parse("$year-$month-$i")->format('l');
 
-
-            if ($dayName !== 'Sunday') {
-                if ($dayName === 'Saturday') {
-                    $dayUtil = $dayUtil + 0.5;
-                } else {
-                    $dayUtil += 1;
+            if($date != '07/09/2022') {
+                if ($dayName !== 'Sunday') {
+                    if ($dayName === 'Saturday') {
+                        $dayUtil = $dayUtil + 0.5;
+                    } else {
+                        $dayUtil += 1;
+                    }
                 }
             }
 
@@ -1015,9 +1016,8 @@ class RvSellerController extends Controller
             ];
         }
 
-        $daysMissing = $dayUtil - $dateActual;
 
-        $dayUtilActual = $datesUtils[($dateActual - 1)];
+        $dayUtilActual = $datesUtils[$dateActual - 1];
 
 
         if (array_key_exists(($dateActual - 2), $datesUtils)) {
@@ -1033,6 +1033,8 @@ class RvSellerController extends Controller
 
 
         $this->metaPercent = $this->metaPercent / ($dateUtilActual - 1) * $dayUtil;
+
+        $daysMissing = $dayUtil - $dateUtilActual;
 
 
         // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.

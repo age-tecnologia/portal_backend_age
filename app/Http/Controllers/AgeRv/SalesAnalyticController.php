@@ -44,7 +44,7 @@ class SalesAnalyticController extends Controller
     private $deflatorSup;
     private $metaSup;
     private $metaSeller;
-    private $starsTeste = [];
+    private $salesSellerExtract = [];
 
 
 
@@ -485,6 +485,7 @@ class SalesAnalyticController extends Controller
             $this->d7Seller = 0;
             $this->deflatorSeller = 0;
             $this->starsTeste = [];
+            $this->salesSellerExtract = [];
 
             $data[] = [
                 'seller' => mb_convert_case($value, MB_CASE_TITLE, 'UTF-8'),
@@ -518,10 +519,18 @@ class SalesAnalyticController extends Controller
         $this->salesSeller = count($sales);
 
         $this->salesSup += count($sales);
-        $this->salesSupExtract[] = $sales;
+
+        $sales->each(function($item){
+            return $this->salesSupExtract[] = $item;
+        });
+
+        $sales->each(function($item) {
+           return $this->salesSellerExtract[] = $item;
+        });
+
 
         return [
-            'extract' => $sales,
+            'extract' => $this->salesSellerExtract,
             'count' => count($sales)
         ];
     }
