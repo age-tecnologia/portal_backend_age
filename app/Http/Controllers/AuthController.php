@@ -86,7 +86,11 @@ class AuthController extends Controller
                 }
 
             } else {
-                return response()->json(['error' => 'Unauthorized'], 401);
+
+                $username = $request->input('email');
+                $password = $request->input('password');
+
+                return $this->login($username, $password);
             }
 
         } catch (BindException $e) {
@@ -114,7 +118,7 @@ class AuthController extends Controller
         ];
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'aqui2'], 401);
         }
 
         return $this->respondWithToken($token);

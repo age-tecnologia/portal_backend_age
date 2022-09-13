@@ -20,7 +20,7 @@ class CollaboratorController extends Controller
                 ->leftJoin('agerv_colaboradores_canais as cc2', 'c.tipo_comissao_id', '=', 'cc2.id')
                 ->leftJoin('agerv_colaboradores as c2', 'c.supervisor_id', '=', 'c2.id')
                 ->leftJoin('portal_users as u2', 'c.gestor_id', '=', 'u2.id')
-                ->selectRaw('c.nome as collaborator, u.name as username, f.funcao as `function`,
+                ->selectRaw('c.id, c.nome as collaborator, u.name as username, f.funcao as `function`,
                             cc.canal as channel, cc2.canal as type_commission, c2.nome as supervisor,
                             u2.name as management, (SELECT meta FROM agerv_colaboradores_meta
                                                     WHERE colaborador_id = c.id
@@ -35,9 +35,7 @@ class CollaboratorController extends Controller
             $item->management = mb_convert_case($item->management, MB_CASE_TITLE, 'UTF-8');
         });
 
-        return $c;
-
-        return response()->json([$c], 201);
+        return response()->json($c, 201);
     }
 
 

@@ -23,17 +23,30 @@ class TestController extends Controller
 
     public function index(Request $request)
     {
-        $meta = new CollaboratorMeta();
-        $colaborador = Collaborator::where('nome', $request->input('name'))
-                        ->first();
+//        $meta = new CollaboratorMeta();
+//        $colaborador = Collaborator::where('nome', $request->input('name'))
+//                        ->first();
+//
+//
+//        $meta->create([
+//           'colaborador_id' => $colaborador->id,
+//            'mes_competencia' => '07',
+//            'meta' => $request->input('meta'),
+//            'modified_by' => 1
+//        ]);
 
 
-        $meta->create([
-           'colaborador_id' => $colaborador->id,
-            'mes_competencia' => '07',
-            'meta' => $request->input('meta'),
-            'modified_by' => 1
+        $u = new User();
+
+        $u->create([
+           'name' => 'Laisa',
+           'email' => 'laisa.oliveira@agetelecom.com.br',
+           'nivel_acesso_id' => 1,
+           'status_id' => 1,
+           'password' => Hash::make('age@2022@pap')
         ]);
+
+        return 'ok';
 
     }
 
