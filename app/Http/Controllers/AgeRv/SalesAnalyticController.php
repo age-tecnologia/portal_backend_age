@@ -652,6 +652,8 @@ class SalesAnalyticController extends Controller
                        $this->starsSeller += 15;
                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA - FIDELIZADO')) {
                        $this->starsSeller += 15;
+                   } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
+                       $this->starsSeller += 15;
                    } elseif (str_contains($item->plano, 'PLANO 720 MEGA ')) {
                        $this->starsSeller += 25;
                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA - COLABORADOR')) {
