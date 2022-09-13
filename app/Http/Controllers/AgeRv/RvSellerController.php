@@ -175,6 +175,10 @@ class RvSellerController extends Controller
             $this->deflator = 10;
         }
 
+        if($this->type === 'supervisor') {
+            $this->deflator = 0;
+        }
+
         return $this->deflator;
     }
 
