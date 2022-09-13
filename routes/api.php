@@ -79,14 +79,17 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'seller']);
         });
 
+        Route::middleware('AccessAdmin')->prefix('management')->group(function () {
+            Route::get('/collaborators', [\App\Http\Controllers\AgeRv\CollaboratorController::class, 'index']);
+        });
+
         Route::prefix('analytics')->group(function () {
             Route::get('/', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
-            Route::get('/rule', [\App\Http\Controllers\AgeRv\SalesAnalyticRuleBefore::class, 'index']);
         });
 
         Route::middleware('AccessMaster')->prefix('routines')->group(function () {
+            Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
         });
-        Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
 
     });
 
