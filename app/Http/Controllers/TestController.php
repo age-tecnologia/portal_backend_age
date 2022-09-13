@@ -39,8 +39,8 @@ class TestController extends Controller
         $u = new User();
 
         $u->create([
-           'name' => 'Laisa',
-           'email' => 'laisa.oliveira@agetelecom.com.br',
+           'name' => 'Moniele',
+           'email' => 'moniele.pereira@agetelecom.com.br',
            'nivel_acesso_id' => 1,
            'status_id' => 1,
            'password' => Hash::make('age@2022@pap')
