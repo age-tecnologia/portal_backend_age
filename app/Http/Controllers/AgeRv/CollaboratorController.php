@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\AgeRv;
 
 use App\Http\Controllers\Controller;
+use App\Models\AgeRv\AccessPermission;
+use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -53,7 +56,72 @@ class CollaboratorController extends Controller
 
     public function show($id)
     {
-        //
+        $collaborator = Collaborator::find($id);
+
+        if(! isset($collaborator)) {return response()->json(['error' => 'Não foi encontrado nenhum colaborador.'], 200);}
+        else {
+
+            return [
+                'nameCollaborator' => $collaborator->nome,
+                'usersAvaliable' => $this->getUsernames(),
+                'channelsAvaliable' => $this->getChannels(),
+                'supervisorsAvaliable' => $this->getSupervisors()
+            ];
+
+        }
+    }
+
+    private function getUsernames() {
+
+        try {
+
+            $collaborators = Collaborator::whereNotNull('user_id')->select('user_id')->get();
+
+            if($collaborators->isNotEmpty()) {
+                try {
+                    $users = User::select('name')->whereNotIn('id', $collaborators)->get();
+
+                    if(! empty($users)) {return $users;}
+                    else {throw new \Exception("Nenhum usuário corresponde a consulta.", 301);}
+
+                } catch (\Exception $e) {return $e->getMessage().' - '.$e->getCode();}
+            } else {throw new \Exception('Não há vinculo entre colaboradores e usuários.', 301);}
+
+        }   catch (\Exception $e) {return $e->getMessage().' - '.$e->getCode();}
+
+
+    }
+
+    private function getChannels() {
+        try {
+
+            $channels = Channel::select('canal')->get();
+
+            if($channels->isNotEmpty()) {return $channels;}
+            else {throw new \Exception('Nenhum resultado encontrado no banco.', 301);}
+
+        } catch(\Exception $e) {return $e->getMessage().' - '.$e->getCode();}
+    }
+
+    private function getSupervisors() {
+
+        try {
+
+            $supervisors = DB::table('agerv_usuarios_permitidos as up')
+                            ->leftJoin('portal_users as u', 'up.user_id', '=', 'u.id')
+                            ->whereIn('funcao_id', [33, 444])
+                            ->select('u.name')
+                            ->get();
+
+           if($supervisors->isNotEmpty()) {
+
+               return $supervisors;
+
+
+           } else {throw new \Exception('Nenhum supervisor ou gerente encontrado!', 301);}
+
+        } catch (\Exception $e) {return $e->getMessage().' - '.$e->getCode();}
+
     }
 
 

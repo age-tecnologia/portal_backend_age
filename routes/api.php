@@ -80,7 +80,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         });
 
         Route::middleware('AccessAdmin')->prefix('management')->group(function () {
-            Route::get('/collaborators', [\App\Http\Controllers\AgeRv\CollaboratorController::class, 'index']);
+            Route::resource('collaborators', \App\Http\Controllers\AgeRv\CollaboratorController::class);
         });
 
         Route::prefix('analytics')->group(function () {
