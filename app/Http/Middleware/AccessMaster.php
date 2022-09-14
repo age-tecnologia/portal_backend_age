@@ -16,7 +16,7 @@ class AccessMaster
      */
     public function handle(Request $request, Closure $next)
     {
-        if( auth()->user()->isMaster === 1) {
+        if( auth()->user()->nivel_acesso_id === 3) {
             return $next($request);
         } else {
             return response()->json(['Usuário não tem permissão para acessar o sistema!'], 403);

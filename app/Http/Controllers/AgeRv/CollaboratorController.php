@@ -8,6 +8,7 @@ use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
 use App\Models\User;
 use Carbon\Carbon;
+use Complex\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -63,12 +64,23 @@ class CollaboratorController extends Controller
 
             return [
                 'nameCollaborator' => $collaborator->nome,
+                'userLiked' => $this->getUserLiked($collaborator->user_id),
+                'channelLiked' => $collaborator->canal,
                 'usersAvaliable' => $this->getUsernames(),
                 'channelsAvaliable' => $this->getChannels(),
                 'supervisorsAvaliable' => $this->getSupervisors()
             ];
 
         }
+    }
+
+    private function getUserLiked($id)
+    {
+            $user = User::find($id);
+
+            if(isset($user->name)) {return $user;}
+            else {return null;}
+
     }
 
     private function getUsernames() {
@@ -95,7 +107,7 @@ class CollaboratorController extends Controller
     private function getChannels() {
         try {
 
-            $channels = Channel::select('canal')->get();
+            $channels = Channel::select('id','canal')->get();
 
             if($channels->isNotEmpty()) {return $channels;}
             else {throw new \Exception('Nenhum resultado encontrado no banco.', 301);}
@@ -109,11 +121,15 @@ class CollaboratorController extends Controller
 
             $supervisors = DB::table('agerv_usuarios_permitidos as up')
                             ->leftJoin('portal_users as u', 'up.user_id', '=', 'u.id')
-                            ->whereIn('funcao_id', [33, 444])
-                            ->select('u.name')
+                            ->whereIn('funcao_id', [3, 4])
+                            ->select('u.name', 'u.id')
                             ->get();
 
            if($supervisors->isNotEmpty()) {
+
+               $supervisors->each(function($item) {
+                   return $item->name = mb_convert_case($item->name, MB_CASE_TITLE, 'UTF-8');
+              });
 
                return $supervisors;
 

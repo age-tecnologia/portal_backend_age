@@ -1043,7 +1043,7 @@ class SalesAnalyticController extends Controller
         $this->salesTotalsCount += count($this->salesTotals);
 
         return [
-            'extract' => 0,// $this->salesTotals,
+            'extract' => $this->salesTotals,
             'count' => count($this->salesTotals)
         ];
 
