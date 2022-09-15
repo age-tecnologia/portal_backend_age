@@ -60,7 +60,7 @@ class SalesAnalyticController extends Controller
                             ->where('u.id', auth()->user()->id)
                             ->first();
 
-        $this->year = '2022';
+        $this->year = Carbon::now()->format('Y');
         $this->month = $request->input('month');
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
@@ -135,7 +135,7 @@ class SalesAnalyticController extends Controller
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_contrato', '>=', '06')
+            ->whereMonth('data_contrato', '>=', '04')
             ->whereYear('data_contrato', $this->year)
             ->whereIn('supervisor', $supervisors)
             ->where('status', '<>', 'Cancelado')
