@@ -141,7 +141,8 @@ class SalesAnalyticController extends Controller
             ->where('status', '<>', 'Cancelado')
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
                     'vendedor', 'supervisor', 'data_cancelamento', 'plano')
-            ->get();
+            ->get()
+            ->unique('id_contrato');
 
         $this->salesTotalsCount += count($this->salesTotals);
 
@@ -513,6 +514,27 @@ class SalesAnalyticController extends Controller
                 return $item;
             }
         });
+
+
+        $sales = $sales->filter(function($sale) use($name){
+            if($sale->situacao === 'Cancelado') {
+
+                $dateActivation = Carbon::parse($sale->data_ativacao); // Transformando em data.
+                $dateCancel = Carbon::parse($sale->data_cancelamento); // Transformando em data.
+
+                // Verificando se o cancelamento foi em mais de 7 dias.
+                if ($dateActivation->diffInDays($dateCancel) > 7) {
+                    if($sale->vendedor === $name) {
+                        return $sale;
+                    }
+                }
+            } else {
+                return $sale;
+            }
+        });
+
+
+
 
         $sales = $sales->sortBy('nome_cliente');
 
@@ -1037,7 +1059,8 @@ class SalesAnalyticController extends Controller
             ->where('status', '<>', 'Cancelado')
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
                 'vendedor', 'supervisor', 'data_cancelamento', 'plano')
-            ->get();
+            ->get()
+            ->unique('id_contrato');
 
 
         $this->salesTotalsCount += count($this->salesTotals);
@@ -1089,7 +1112,8 @@ class SalesAnalyticController extends Controller
             ->where('status', '<>', 'Cancelado')
             ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
                 'vendedor', 'supervisor', 'data_cancelamento', 'plano')
-            ->get();
+            ->get()
+            ->unique('id_contrato');
 
 
         $this->salesTotalsCount += count($this->salesTotals);
