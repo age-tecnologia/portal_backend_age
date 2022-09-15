@@ -81,6 +81,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::middleware('AccessAdmin')->prefix('management')->group(function () {
             Route::resource('collaborators', \App\Http\Controllers\AgeRv\CollaboratorController::class);
+            Route::post('new-user', [\App\Http\Controllers\UsersController::class, 'newUserAgeRv']);
         });
 
         Route::prefix('analytics')->group(function () {
