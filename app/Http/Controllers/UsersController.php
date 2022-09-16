@@ -87,7 +87,7 @@ class UsersController extends Controller
     {
         try {
 
-            $collab = User::findOrFail($id);
+            $user = User::findOrFail($id);
 
             $password = \Illuminate\Support\Str::random(12);
 
@@ -98,7 +98,7 @@ class UsersController extends Controller
                 ]);
 
                 return [
-                  'e-mail' => $user->email,
+                  'email' => $user->email,
                   'password' => $password
                 ];
 
