@@ -83,6 +83,32 @@ class UsersController extends Controller
         } catch (\Exception $e) {return response()->json([$e->getMessage()], 200);}
     }
 
+    public function newPasswordAgeRv($id)
+    {
+        try {
+
+            $collab = User::findOrFail($id);
+
+            $password = \Illuminate\Support\Str::random(12);
+
+            if(isset($user->name)) {
+
+                $user->update([
+                    'password' => Hash::make($password)
+                ]);
+
+                return [
+                  'e-mail' => $user->email,
+                  'password' => $password
+                ];
+
+            } else {
+                throw new \Exception('Não foi possível alterar a senha do usuário', 301);
+            }
+
+        } catch (\Exception $e) {return $e->getMessage();}
+    }
+
 
     public function show($id)
     {
