@@ -323,8 +323,6 @@ class SalesAnalyticController extends Controller
                     $stars += 7;
                 } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
                     $stars += 9;
-                } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
-                    $stars += 9;
                 } elseif (str_contains($item->plano, 'PLANO 800 MEGA - CAMPANHA CONDOMÍNIO FIDELIZADO (AMBOS)')) {
                     $stars += 0;
                 } elseif (str_contains($item->plano, 'PLANO 800 MEGA - COLABORADOR')) {
@@ -487,6 +485,7 @@ class SalesAnalyticController extends Controller
             $this->deflatorSeller = 0;
             $this->starsTeste = [];
             $this->salesSellerExtract = [];
+            $this->starsSeller = 0;
 
             $data[] = [
                 'seller' => mb_convert_case($value, MB_CASE_TITLE, 'UTF-8'),
@@ -723,8 +722,6 @@ class SalesAnalyticController extends Controller
                        $this->starsSeller += 7;
                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
                        $this->starsSeller += 7;
-                   } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
-                       $this->starsSeller += 9;
                    } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
                        $this->starsSeller += 9;
                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA - CAMPANHA CONDOMÍNIO FIDELIZADO (AMBOS)')) {
@@ -992,7 +989,19 @@ class SalesAnalyticController extends Controller
 
     private function commissionSup() {
 
-        $commission = $this->starsSupTotal * $this->valueStarsSup;
+        $commission = 3000;
+
+        if ($this->metaPercent >= 70 && $this->metaPercent < 80) {
+            $commission = $commission * 0.5;
+        } elseif ($this->metaPercent >= 80 && $this->metaPercent < 90) {
+            $commission = $commission * 0.6;
+        } elseif ($this->metaPercent >= 90 && $this->metaPercent < 100) {
+            $commission = $commission * 0.8;
+        } elseif ($this->metaPercent >= 100) {
+            $commission = $commission * ($this->metaPercent / 100);
+        } else {
+            $commission = 0;
+        }
 
         // Removido a pedido da Liandra Buck
 //        if($this->salesSupCancelledsD7 > 0) {
