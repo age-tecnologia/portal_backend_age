@@ -864,11 +864,13 @@ class SalesAnalyticController extends Controller
                         } elseif ($this->month >= '08') {
 
                             if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-                                $this->valueStars = 3.5;
+                                $this->valueStars = 2.50;
                             } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-                                $this->valueStars = 6;
-                            } elseif ($this->metaPercent >= 120) {
+                                $this->valueStars = 5;
+                            } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
                                 $this->valueStars = 7;
+                            } elseif ($this->metaPercent >= 141) {
+                                $this->valueStars = 10;
                             }
                         }
                     } elseif ($data->canal === 'LIDER') {
