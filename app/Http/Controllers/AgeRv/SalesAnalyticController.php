@@ -45,6 +45,7 @@ class SalesAnalyticController extends Controller
     private $metaSup;
     private $metaSeller;
     private $salesSellerExtract = [];
+    private $rule;
 
 
 
@@ -62,6 +63,8 @@ class SalesAnalyticController extends Controller
 
         $this->year = Carbon::now()->format('Y');
         $this->month = $request->input('month');
+
+        $this->rule = $request->input('rule');
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -989,18 +992,23 @@ class SalesAnalyticController extends Controller
 
     private function commissionSup() {
 
-        $commission = 3000;
+        $commission = $this->starsSupTotal * $this->valueStarsSup;
 
-        if ($this->metaPercent >= 70 && $this->metaPercent < 80) {
-            $commission = $commission * 0.5;
-        } elseif ($this->metaPercent >= 80 && $this->metaPercent < 90) {
-            $commission = $commission * 0.6;
-        } elseif ($this->metaPercent >= 90 && $this->metaPercent < 100) {
-            $commission = $commission * 0.8;
-        } elseif ($this->metaPercent >= 100) {
-            $commission = $commission * ($this->metaPercent / 100);
-        } else {
-            $commission = 0;
+        if($this->rule === 'new') {
+            $commission = 3000;
+
+            if ($this->metaPercent >= 70 && $this->metaPercent < 80) {
+                $commission = $commission * 0.5;
+            } elseif ($this->metaPercent >= 80 && $this->metaPercent < 90) {
+                $commission = $commission * 0.6;
+            } elseif ($this->metaPercent >= 90 && $this->metaPercent < 100) {
+                $commission = $commission * 0.8;
+            } elseif ($this->metaPercent >= 100) {
+                $commission = $commission * ($this->metaPercent / 100);
+            } else {
+                $commission = 0;
+            }
+
         }
 
         // Removido a pedido da Liandra Buck
@@ -1014,6 +1022,7 @@ class SalesAnalyticController extends Controller
 
         $this->commissionTotal += $commission;
         $this->commissionChannel += $commission;
+
 
         return number_format($commission, 2, ',', '.');
     }
