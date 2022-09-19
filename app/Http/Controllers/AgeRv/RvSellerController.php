@@ -86,7 +86,11 @@ class RvSellerController extends Controller
         $this->collaboratorId = $collaborator->id;
 
         $this->year = $request->input('year'); // Recupera o ano filtrado.
-        $this->month = $request->input('month'); // Recupera o mês filtrado.
+        if($request->input('month') < '08') {
+            return "você não pode acessar esses perídoos.";
+        } else {
+            $this->month = $request->input('month');
+        } // Recupera o mês filtrado.
 
 
         return response()->json([

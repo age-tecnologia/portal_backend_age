@@ -26,7 +26,7 @@ class CollaboratorController extends Controller
                 ->leftJoin('portal_users as u2', 'c.gestor_id', '=', 'u2.id')
                 ->selectRaw('c.id, c.nome as collaborator, u.name as username, f.funcao as `function`,
                             cc.canal as channel, cc2.canal as type_commission, c2.nome as supervisor,
-                            u2.name as management, u.email, u.id as user_id, (SELECT meta FROM agerv_colaboradores_meta
+                            u2.name as management, u.email, u.id as user_id, u.isAD, (SELECT meta FROM agerv_colaboradores_meta
                                                     WHERE colaborador_id = c.id
                                                     AND mes_competencia = '.Carbon::now()->format('m').') as meta')
                 ->get();
