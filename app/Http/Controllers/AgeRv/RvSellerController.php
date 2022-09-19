@@ -518,7 +518,7 @@ class RvSellerController extends Controller
             // Verifica o mês e aplica a diferença na meta mínima
             if ($this->month <= '07') {
                 $this->minMeta = 70;
-            } elseif ($this->month === '08') {
+            } elseif ($this->month >= '08') {
                 $this->minMeta = 60;
             } else {
                 $this->minMeta = 60;
@@ -547,7 +547,7 @@ class RvSellerController extends Controller
                 } elseif ($this->metaPercent >= 141) {
                     $this->valueStars = 7;
                 }
-            } elseif ($this->month === '08') {
+            } elseif ($this->month >= '08') {
 
                 if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                     $this->valueStars = 2.50;
@@ -571,7 +571,7 @@ class RvSellerController extends Controller
                 } elseif ($this->metaPercent >= 141) {
                     $this->valueStars = 1.30;
                 }
-            } elseif ($this->month === '08') {
+            } elseif ($this->month >= '08') {
 
                 if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                     $this->valueStars = 0.6;
@@ -1061,7 +1061,7 @@ class RvSellerController extends Controller
             // Verifica o mês e aplica a diferença na meta mínima
             if ($this->month <= '07') {
                 $this->minMeta = 70;
-            } elseif ($this->month === '08') {
+            } elseif ($this->month >= '08') {
                 $this->minMeta = 60;
             }
 

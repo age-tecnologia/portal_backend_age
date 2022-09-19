@@ -23,30 +23,33 @@ class TestController extends Controller
 
     public function index(Request $request)
     {
-//        $meta = new CollaboratorMeta();
-//        $colaborador = Collaborator::where('nome', $request->input('name'))
-//                        ->first();
+        $meta = new CollaboratorMeta();
+        $colaborador = Collaborator::where('canal_id', 2)
+                        ->get();
+
+        $colaborador->each(function($item) use($meta) {
+            $meta->create([
+                'colaborador_id' => $item->id,
+                'mes_competencia' => '09',
+                'meta' => 22,
+                'modified_by' => 1
+            ]);
+        });
+
+
+
+
+//        $u = new User();
 //
-//
-//        $meta->create([
-//           'colaborador_id' => $colaborador->id,
-//            'mes_competencia' => '07',
-//            'meta' => $request->input('meta'),
-//            'modified_by' => 1
+//        $u->create([
+//           'name' => 'Daniela',
+//           'email' => 'financeiro@agetelecom.com.br',
+//           'nivel_acesso_id' => 1,
+//           'status_id' => 1,
+//           'password' => Hash::make('94OGg06TQBjakr6')
 //        ]);
-
-
-        $u = new User();
-
-        $u->create([
-           'name' => 'Daniela',
-           'email' => 'financeiro@agetelecom.com.br',
-           'nivel_acesso_id' => 1,
-           'status_id' => 1,
-           'password' => Hash::make('94OGg06TQBjakr6')
-        ]);
-
-        return 'ok';
+//
+//        return 'ok';
 
     }
 

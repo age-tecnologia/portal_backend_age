@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AgeRv\AccessPermission;
 use App\Models\AgeRv\Collaborator;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -56,6 +57,14 @@ class UsersController extends Controller
                             'isAD' => 0,
                             'status_id' => 1,
                             'password' => Hash::make($password)
+                        ]);
+
+
+                        $access = AccessPermission::create([
+                            'user_id' => $user->id,
+                            'funcao_id' => $collaborator->funcao_id,
+                            'setor_id' => 1,
+                            'nivel_acesso_id' => 1,
                         ]);
 
                         $collaborator->update([

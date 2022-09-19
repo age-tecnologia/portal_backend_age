@@ -28,7 +28,7 @@ class CollaboratorController extends Controller
                             cc.canal as channel, cc2.canal as type_commission, c2.nome as supervisor,
                             u2.name as management, u.email, u.id as user_id, u.isAD, (SELECT meta FROM agerv_colaboradores_meta
                                                     WHERE colaborador_id = c.id
-                                                    AND mes_competencia = '.Carbon::now()->format('m').') as meta')
+                                                    AND mes_competencia = '.Carbon::now()->format('m').' limit 1 ) as meta')
                 ->get();
 
 
