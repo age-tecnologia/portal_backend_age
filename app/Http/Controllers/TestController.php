@@ -24,14 +24,14 @@ class TestController extends Controller
     public function index(Request $request)
     {
         $meta = new CollaboratorMeta();
-        $colaborador = Collaborator::where('canal_id', 2)
+        $colaborador = Collaborator::where('tipo_comissao_id', 3)
                         ->get();
 
         $colaborador->each(function($item) use($meta) {
             $meta->create([
                 'colaborador_id' => $item->id,
-                'mes_competencia' => '09',
-                'meta' => 22,
+                'mes_competencia' => '06',
+                'meta' => 200,
                 'modified_by' => 1
             ]);
         });

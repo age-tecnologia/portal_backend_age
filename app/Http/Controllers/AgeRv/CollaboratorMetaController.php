@@ -3,81 +3,95 @@
 namespace App\Http\Controllers\AgeRv;
 
 use App\Http\Controllers\Controller;
+use App\Models\AgeRv\CollaboratorMeta;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Mockery\Exception;
+use PhpOffice\PhpSpreadsheet\Writer\Ods\Meta;
 
 class CollaboratorMetaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        try {
+
+            $meta = CollaboratorMeta::where('colaborador_id', $request->input('id'))
+                ->where('mes_competencia', Carbon::now()->format('m'))
+                ->first();
+
+            if(! isset($meta->meta)) {
+
+                $meta = new CollaboratorMeta();
+
+                $meta->create([
+                    'colaborador_id' => $request->input('id'),
+                    'mes_competencia' => Carbon::now()->format('m'),
+                    'meta' => $request->input('meta'),
+                    'modified_by' => auth()->user()->id
+                ]);
+
+            } else {throw new Exception('O colaborador já possui meta vinculada.', 403);}
+
+        } catch (Exception $e) {return response()->json([$e->getMessage()], $e->getCode());}
+
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
-        //
+        try {
+
+            $meta = CollaboratorMeta::where('colaborador_id', $id)
+                ->orderBy('mes_competencia', 'desc')
+                ->get(['id', 'mes_competencia', 'meta']);
+
+            if($meta->isNotEmpty()) {
+                return $meta;
+            } else { throw new Exception('Nenhuma meta cadastrada para este colaborador.', 404);}
+
+        } catch (Exception $e) {return response()->json([$e->getMessage()], $e->getCode());}
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
-        //
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
-        //
+        try {
+
+            $meta = CollaboratorMeta::where('colaborador_id', $id)
+                ->where('mes_competencia', Carbon::now()->format('m'))
+                ->first();
+
+            if(! isset($meta->meta)) {
+                throw new Exception('Nenhuma meta atribuída ao mês vigente.', 403);
+            } else {
+                $meta->update([
+                    'meta' => $request->input('meta')
+                ]);
+            }
+
+        } catch (Exception $e) {return response()->json([$e->getMessage()], $e->getCode());}
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
         //
