@@ -37,7 +37,7 @@ class CollaboratorMetaController extends Controller
 
                 $meta->create([
                     'colaborador_id' => $request->input('id'),
-                    'mes_competencia' => Carbon::now()->format('m'),
+                    'mes_competencia' => '06',//Carbon::now()->format('m'),
                     'meta' => $request->input('meta'),
                     'modified_by' => auth()->user()->id
                 ]);
@@ -77,7 +77,7 @@ class CollaboratorMetaController extends Controller
         try {
 
             $meta = CollaboratorMeta::where('colaborador_id', $id)
-                ->where('mes_competencia', Carbon::now()->format('m'))
+                ->where('mes_competencia', '06')//Carbon::now()->format('m'))
                 ->first();
 
             if(! isset($meta->meta)) {
