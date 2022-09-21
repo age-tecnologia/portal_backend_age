@@ -63,6 +63,26 @@ return [
             ]) : [],
         ],
 
+        'mysqlTake' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL_MYSQL_TAKE'),
+            'host' => env( 'TUNNELER_LOCAL_ADDRESS' ),
+            'port' => env( 'TUNNELER_LOCAL_PORT' ),
+            'database' => env('DB_DATABASE_MYSQL_TAKE', 'forge'),
+            'username' => env('DB_USERNAME_MYSQL_TAKE', 'forge'),
+            'password' => env('DB_PASSWORD_MYSQL_TAKE', ''),
+            'unix_socket' => env('DB_SOCKET_MYSQL_TAKE', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'report' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL_REPORT'),

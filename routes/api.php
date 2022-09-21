@@ -48,7 +48,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         ];
     });
 
-    Route::middleware('AccessAgeReport')->prefix('agerreport')->group(function () {
+    Route::middleware('AccessAgeReport')->prefix('agereport')->group(function () {
 
         Route::get('/Access', function () {
             return true;
@@ -56,6 +56,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
         Route::get('report/dici', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'dici']);
+        Route::get('report/take', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'interactionHumansTakeBlip']);
     });
 
 

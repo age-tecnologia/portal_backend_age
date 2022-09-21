@@ -82,4 +82,34 @@ class ReportAllController extends Controller
     {
 
     }
+
+    public function interactionHumansTakeBlip()
+    {
+        set_time_limit(1000);
+
+        $query = 'select * from relatorio_personalizado_Age_Telecom_1 limit 1';
+
+        $result = DB::connection('mysqlTake')->select($query);
+
+        return $result;
+
+
+        $headers = [
+            'ID do cliente',
+            'ID do contrato',
+            'Nº do contrato',
+            'Título',
+            'Criado em',
+            'ID do criador',
+            'ID do dici file',
+            'Modificado',
+            'Competência',
+            'Modificado por',
+            'ID do serviço_produto',
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'interacao_humana_take_blip.xlsx');
+
+
+    }
 }
