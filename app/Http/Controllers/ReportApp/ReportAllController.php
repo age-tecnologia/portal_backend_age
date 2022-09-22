@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AgeReport\ReportPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Excel;
 
 class ReportAllController extends Controller
 {
@@ -95,32 +96,23 @@ class ReportAllController extends Controller
 
     }
 
-    public function interactionHumansTakeBlip()
+    public function condominiums()
     {
-        set_time_limit(1000);
+        $query =    'select
+                    aap.title as "condomínio",
+                    count(*) as "Clientes"
+                    from authentication_contracts ac
+                    left join authentication_access_points aap on aap.id  = ac.condominium_id
+                    group by aap.title';
 
-        $query = 'select * from relatorio_personalizado_Age_Telecom_1 limit 1';
-
-        $result = DB::connection('mysqlTake')->select($query);
-
-        return $result;
-
+        $data = DB::connection('pgsql')->select($query);
 
         $headers = [
-            'ID do cliente',
-            'ID do contrato',
-            'Nº do contrato',
-            'Título',
-            'Criado em',
-            'ID do criador',
-            'ID do dici file',
-            'Modificado',
-            'Competência',
-            'Modificado por',
-            'ID do serviço_produto',
+          'Condomínio',
+          'Clientes'
         ];
 
-        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'interacao_humana_take_blip.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'condominios.xlsx');
 
 
     }
