@@ -127,7 +127,7 @@ class ReportAllController extends Controller
                     a.beginning_date as "data abertura",
                     p2.name as "Cliente",
                     p2.neighborhood  as "região"
-                    from assignments a
+                    from erp.assignments a
                     left join erp.assignment_incidents ai on ai.assignment_id = a.id
                     left join erp.incident_types it on it.id = ai.incident_type_id
                     left join erp.incident_status is2 on is2.id = ai.incident_status_id
