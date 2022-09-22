@@ -52,7 +52,7 @@ class ReportAllController extends Controller
     public function dici()
     {
 
-        set_time_limit(1000);
+        set_time_limit(2000);
         ini_set('memory_limit', '2048M');
 
         $query = 'select
@@ -69,7 +69,7 @@ class ReportAllController extends Controller
                 dfd.service_product_id as "ID do serviço_produto"
                 from erp.dici_file_details dfd
                 left join erp.dici_files df on dfd.dici_file_id  = df.id
-                where EXTRACT (MONTH FROM dfd.created) = \'07\' limit 10';
+                where EXTRACT (MONTH FROM dfd.created) = \'07\'';
 
         $result = DB::connection('pgsql')->select($query);
 
