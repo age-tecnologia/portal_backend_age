@@ -135,7 +135,7 @@ class ReportAllController extends Controller
                     left join erp.solicitation_classifications sc on sc.id = ai.solicitation_classification_id
                     left join erp.people p2 on p2.id = a.requestor_id
                     left join erp.people p1 on p1.id = a.responsible_id
-                    where it.id in (1030, 1058, 1020, 1011, 1067, 1061) LIMIT 36000';
+                    where it.id in (1030, 1058, 1020, 1011, 1067, 1061) LIMIT 50';
 
         $result = DB::connection('pgsql')->select($query);
 
