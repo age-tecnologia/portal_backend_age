@@ -17,7 +17,7 @@ class ReportAllController extends Controller
         $reports = DB::table('agereport_relatorios as r')
                     ->leftJoin('agereport_relatorios_permissoes as rp', 'r.id', 'rp.relatorio_id')
                     ->where('rp.user_id', auth()->user()->id)
-                    ->get(['r.nome', 'r.nome_arquivo', 'r.url']);
+                    ->get(['r.nome', 'r.nome_arquivo', 'r.url', 'r.isPeriodo']);
 
         return $reports;
     }
@@ -156,15 +156,27 @@ class ReportAllController extends Controller
 
     }
 
-    public function takeBlip()
+    public function takeBlip(Request $request)
     {
 
         set_time_limit(1000);
         ini_set('memory_limit', '2048M');
 
-        $query = 'select * from relatorio_personalizado_Age_Telecon_1';
+        if($request->has('firstPeriod') && ! $request->has('lastPeriod')) {
+            $query = 'select * from relatorio_personalizado_Age_Telecon_1
+                        where data_de_atendimento >= \''.$request->input('firstPeriod').'\'';
+        } elseif($request->has('lastPeriod') && ! $request->has('firstPeriod')) {
+            $query = 'select * from relatorio_personalizado_Age_Telecon_1
+                        where data_de_atendimento <= \''.$request->input('lastPeriod').'\'';
+        } elseif($request->has('firstPeriod') && $request->has('lastPeriod')) {
+            $query = 'select * from relatorio_personalizado_Age_Telecon_1
+                        where data_de_atendimento >= \''.$request->input('firstPeriod').'\' and data_de_atendimento <= \''.$request->input('lastPeriod').'\'';
+        } else {
+            $query = 'select * from relatorio_personalizado_Age_Telecon_1';
+        }
 
         $result = DB::connection('mysql_take')->select($query);
+
 
         $headers = [
             'id_ticket_humano',
@@ -187,5 +199,8 @@ class ReportAllController extends Controller
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'dici.xlsx');
+
+
+
     }
 }
