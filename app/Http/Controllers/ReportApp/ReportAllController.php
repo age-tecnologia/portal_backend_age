@@ -119,6 +119,9 @@ class ReportAllController extends Controller
 
     public function technical_control()
     {
+        set_time_limit(1000);
+        ini_set('memory_limit', '2048M');
+
         $query = 'select
                     a.title as "Protocolo des",
                     it.title as "Protocolo tipo",
