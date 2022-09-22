@@ -101,11 +101,11 @@ class ReportAllController extends Controller
         $query =    'select
                     aap.title as "condomínio",
                     count(*) as "Clientes"
-                    from authentication_contracts ac
-                    left join authentication_access_points aap on aap.id  = ac.condominium_id
+                    from erp.authentication_contracts ac
+                    left join erp.authentication_access_points aap on aap.id  = ac.condominium_id
                     group by aap.title';
 
-        $data = DB::connection('pgsql')->select($query);
+        $result = DB::connection('pgsql')->select($query);
 
         $headers = [
           'Condomínio',
