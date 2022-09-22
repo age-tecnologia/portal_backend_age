@@ -162,7 +162,7 @@ class ReportAllController extends Controller
         set_time_limit(1000);
         ini_set('memory_limit', '2048M');
 
-        $query = 'select * from relatorio_personalizado_Age_Telecon_1 limit 10';
+        $query = 'select * from relatorio_personalizado_Age_Telecon_1';
 
         $result = DB::connection('mysql_take')->select($query);
 
