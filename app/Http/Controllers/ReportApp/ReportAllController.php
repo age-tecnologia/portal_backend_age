@@ -155,4 +155,33 @@ class ReportAllController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'controle_tecnico.xlsx');
 
     }
+
+    public function takeBlip()
+    {
+        $query = 'select * from relatorio_personalizado_Age_Telecon_1 limit 10';
+
+        $result = DB::connection('mysql_take')->select($query);
+
+        $headers = [
+            'id_ticket_humano',
+            'id_atendimento',
+            'data_de_entrada_no_bot',
+            'data_de_atendimento',
+            'data_inicial_do_atendimento_humano',
+            'Fila_Destino',
+            'Tempo_de_Espera_Fila',
+            'Tempo_de_Primeira_resposta',
+            'Tempo_de_Conversacao',
+            'Tempo_Total',
+            'Telefone',
+            'Tags',
+            'Status',
+            'bot',
+            'Numero_de_contrato_ou_CPF',
+            'Protocolo',
+            'transferido_Y_N'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'dici.xlsx');
+    }
 }
