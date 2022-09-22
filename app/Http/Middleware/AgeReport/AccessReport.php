@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\AgeReport;
 
+use App\Models\AgeReport\AccessPermission;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,12 @@ class AccessReport
      */
     public function handle(Request $request, Closure $next)
     {
-        return $next($request);
+        $access = AccessPermission::whereUserId(auth()->user()->id)->first();
+
+        if(isset($access->id)) {
+            return $next($request);
+        } else {
+            return response()->json(['Usuário não tem permissão para acessar o sistema!'], 403);
+        }
     }
 }

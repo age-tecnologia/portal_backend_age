@@ -4,11 +4,23 @@ namespace App\Http\Controllers\ReportApp;
 
 use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
+use App\Models\AgeReport\ReportPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ReportAllController extends Controller
 {
+
+    public function getAll()
+    {
+        $reports = DB::table('agereport_relatorios as r')
+                    ->leftJoin('agereport_relatorios_permissoes as rp', 'r.id', 'rp.relatorio_id')
+                    ->where('rp.user_id', auth()->user()->id)
+                    ->get(['r.nome', 'r.nome_arquivo', 'r.url']);
+
+        return $reports;
+    }
+
     public function list_connections()
     {
         $query = 'select p.name as "Usuário Cliente",

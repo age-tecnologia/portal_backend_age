@@ -54,6 +54,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             return true;
         });
 
+        Route::Get('report/reports', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'getAll']);
         Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
         Route::get('report/dici', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'dici']);
         Route::get('report/take', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'interactionHumansTakeBlip']);
@@ -89,6 +90,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::prefix('analytics')->group(function () {
             Route::get('/', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
+            Route::get('/simulator', [\App\Http\Controllers\AgeRv\Management\SimulatorController::class, 'index']);
         });
 
         Route::middleware('AccessMaster')->prefix('routines')->group(function () {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41ad6b42761b42f2ae8b50c333f23fa9",
+    "content-hash": "f29de5e281ed6a9da9ff5a36a844f0db",
     "packages": [
         {
             "name": "brick/math",
@@ -4023,62 +4023,6 @@
                 }
             ],
             "time": "2022-08-05T17:58:37+00:00"
-        },
-        {
-            "name": "stechstudio/laravel-ssh-tunnel",
-            "version": "3.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/stechstudio/laravel-ssh-tunnel.git",
-                "reference": "a1862f02388f60e5ed47939eb785bdc5c80fb8ff"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/stechstudio/laravel-ssh-tunnel/zipball/a1862f02388f60e5ed47939eb785bdc5c80fb8ff",
-                "reference": "a1862f02388f60e5ed47939eb785bdc5c80fb8ff",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^5.5|^6.0|^7.0|^8.0|^9.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "STS\\Tunneler\\TunnelerServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [],
-                "psr-4": {
-                    "STS\\Tunneler\\": "src"
-                },
-                "classmap": []
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bubba Hines",
-                    "email": "rob@stechstudio.com"
-                }
-            ],
-            "description": "Easy creation & maintenance of an SSH Tunnel for Laravel/Lumen",
-            "keywords": [
-                "laravel",
-                "lumen",
-                "mysql",
-                "ssh",
-                "tunnel"
-            ],
-            "support": {
-                "issues": "https://github.com/stechstudio/laravel-ssh-tunnel/issues",
-                "source": "https://github.com/stechstudio/laravel-ssh-tunnel/tree/3.2.0"
-            },
-            "time": "2022-02-10T14:57:44+00:00"
         },
         {
             "name": "stella-maris/clock",
