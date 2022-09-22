@@ -116,4 +116,40 @@ class ReportAllController extends Controller
 
 
     }
+
+    public function technical_control()
+    {
+        $query = 'select
+                    a.title as "Protocolo des",
+                    it.title as "Protocolo tipo",
+                    p1.name as "Técnico",
+                    is2.title as "Status",
+                    a.beginning_date as "data abertura",
+                    p2.name as "Cliente",
+                    p2.neighborhood  as "região"
+                    from assignments a
+                    left join erp.assignment_incidents ai on ai.assignment_id = a.id
+                    left join erp.incident_types it on it.id = ai.incident_type_id
+                    left join erp.incident_status is2 on is2.id = ai.incident_status_id
+                    left join erp.solicitation_problems sp on sp.id = ai.solicitation_problem_id
+                    left join erp.solicitation_classifications sc on sc.id = ai.solicitation_classification_id
+                    left join erp.people p2 on p2.id = a.requestor_id
+                    left join erp.people p1 on p1.id = a.responsible_id
+                    where it.id in (1030, 1058, 1020, 1011, 1067, 1061)';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Protocolo_des',
+            'Protocolo_tipo',
+            'Técnico',
+            'Status',
+            'Data_abertura',
+            'Cliente',
+            'Região'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'controle_tecnico.xlsx');
+
+    }
 }
