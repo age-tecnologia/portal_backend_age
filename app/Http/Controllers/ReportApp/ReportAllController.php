@@ -266,7 +266,7 @@ class ReportAllController extends Controller
                     from erp.contracts c
                     left join erp.authentication_contracts ac on ac.contract_id = c.id
                     left join erp.people p on p.id = c.client_id
-                    left join erp.ervice_products sp on sp.id = ac.service_product_id
+                    left join erp.service_products sp on sp.id = ac.service_product_id
                     where c.v_stage = \'Aprovado\'';
 
         $result = DB::connection('pgsql')->select($query);
