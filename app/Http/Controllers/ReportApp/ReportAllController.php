@@ -244,4 +244,47 @@ class ReportAllController extends Controller
 
 
     }
+
+    public function sales()
+    {
+
+        set_time_limit(1000);
+        ini_set('memory_limit', '2048M');
+
+
+        $query = 'select
+                    c.id  as "Contrato",
+                    p.name as "Nome cliente",
+                    sp.title as "Plano",
+                    ac.neighborhood as "Região",
+                    c.amount as "Valor do plano",
+                    c.date as "Data venda",
+                    c.beginning_date as "vigência/instalação",
+                    c.v_stage as "Estágio",
+                    c.v_status as "Status",
+                    ac."user" as "Conexão"
+                    from contracts c
+                    left join erp.authentication_contracts ac on ac.contract_id = c.id
+                    left join erp.people p on p.id = c.client_id
+                    left join erp.ervice_products sp on sp.id = ac.service_product_id
+                    where c.v_stage = \'Aprovado\'';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Contrato',
+            'Nome cliente',
+            'Plano',
+            'Região',
+            'Valor do plano',
+            'Data venda',
+            'vigência/instalação',
+            'Estágio',
+            'Status',
+            'Conexão'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'vendas.xlsx');
+
+    }
 }

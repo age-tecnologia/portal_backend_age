@@ -24,37 +24,18 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
-        return $request->json('fields');
-
-        $fields = [
-            0 => [
-                'first' => 10,
-                'last' => 20,
-                'value' => 1
-            ],
-            1 => [
-                'first' => 21,
-                'last' => 30,
-                'value' => 3
-            ],
-            2 => [
-                'first' => 31,
-                'last' => 40,
-                'value' => 5
-            ],
-            3 => [
-                'first' => 41,
-                'last' => null,
-                'value' => 7
-            ]
-        ];
-
-        $metaPercent = 42;
+        $metaPercent = 39;
         $valueStar = 0;
 
-        foreach($fields as $field => $value)  {
-            if ($metaPercent >= $value['first'] && $metaPercent < $value['last']) {
-                $valueStar = $value['value'];
+        foreach($request->json('fields') as $field => $value)  {
+            if($value['last'] === null) {
+                if ($metaPercent >= $value['first']) {
+                    $valueStar = $value['value'];
+                }
+            } else {
+                if ($metaPercent >= $value['first'] && $metaPercent < $value['last']) {
+                    $valueStar = $value['value'];
+                }
             }
         }
 
