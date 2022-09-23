@@ -16,10 +16,14 @@ class SimulatorController extends Controller
     private $channels;
     private $channel;
     private $salesData;
+    private $salesChannelCount;
     private $salesCollaborator;
     private $salesCollaboratorData;
+    private $salesD7;
     private $starsCollaborator;
+    private $valueStarCollaborator;
     private $salesChannel;
+    private $rulesRange;
 
 
     public function index(Request $request)
@@ -35,6 +39,7 @@ class SimulatorController extends Controller
 
         $this->month = $request->has('month') ? $request->input('month') : Carbon::now()->format('m');
         $this->year = $request->has('year') ? $request->input('year') : Carbon::now()->format('Y');
+        $this->rulesRange = $request->json('rulesRange') ? $request->input('rulesRange') : 'Sem faixa de meta.';
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -63,11 +68,12 @@ class SimulatorController extends Controller
         foreach($this->channels as $key => $channel) {
 
             $this->channel = $channel->canal;
+            $this->salesChannelCount = 0;
 
             $result[] = [
                 'channel' => $this->channel,
-                'sales' => count($this->salesData),
-                'collaborators' => $this->collaborators($channel->id)
+                'collaborators' => $this->collaborators($channel->id),
+                'sales' => $this->salesChannelCount,
             ];
 
         }
@@ -84,7 +90,7 @@ class SimulatorController extends Controller
             ->whereYear('data_contrato', $this->year)
             ->where('status', '<>', 'Cancelado')
             ->selectRaw('LOWER(vendedor) as vendedor, id_contrato,status, situacao, data_contrato, data_ativacao, data_vigencia,
-                    supervisor, data_cancelamento, plano')
+                    LOWER(supervisor) as supervisor, data_cancelamento, plano')
             ->get()
             ->unique('id_contrato');
     }
@@ -103,7 +109,8 @@ class SimulatorController extends Controller
                 'name' => $collab->nome,
                 'sales' => $this->salesCollaborator($collab->nome),
                 'stars' => $this->starsCollaborator(),
-                'valueStar' => $this->valueStarCollaborator($collab->nome)
+                'valueStar' => $this->valueStarCollaborator($collab->nome),
+                'commission' => $this->commissionCollaborator()
             ];
         }
 
@@ -114,9 +121,10 @@ class SimulatorController extends Controller
     {
         $this->salesCollaborator = 0;
         $this->salesCollaboratorData = null;
+        $this->salesD7 = 0;
 
         $result = $this->salesData->filter(function ($sale) use($name) {
-            if($sale->vendedor === $name) {
+            if($sale->vendedor === $name || $sale->supervisor === $name) {
 
                 if($sale->situacao === 'Cancelado') {
                     $dateActivation = Carbon::parse($sale->data_ativacao); // Transformando em data.
@@ -125,6 +133,8 @@ class SimulatorController extends Controller
                     // Verificando se o cancelamento foi em menos de 7 dias, se sim, não contabiliza.
                     if ($dateActivation->diffInDays($dateCancel) >= 7) {
                         return $sale;
+                    } else {
+                        $this->salesD7 += 1;
                     }
                 } else {
                     return $sale;
@@ -134,6 +144,7 @@ class SimulatorController extends Controller
         });
 
         $this->salesCollaboratorData = $result;
+        $this->salesChannelCount += count($result);
 
         return count($result);
     }
@@ -343,6 +354,8 @@ class SimulatorController extends Controller
             ->select('c.id', 'cc.canal', 'cm.meta')
             ->first();
 
+        $this->valueStarCollaborator = 0;
+
         if (!isset($data->meta)) {
             return "Sem meta";
         } else {
@@ -352,73 +365,42 @@ class SimulatorController extends Controller
             } else {
 
                 $metaPercent = (count($this->salesCollaboratorData) / $data->meta) * 100;
+                $this->valueStarCollaborator = 0;
 
-                return $metaPercent;
 
-                foreach($request->json('fields') as $field => $value)  {
-                    if($value['last'] === null) {
-                        if ($metaPercent >= $value['first']) {
-                            $valueStar = $value['value'];
-                        }
-                    } else {
-                        if ($metaPercent >= $value['first'] && $metaPercent < $value['last']) {
-                            $valueStar = $value['value'];
+                foreach($this->rulesRange as $field => $value)  {
+                    if($this->channel === $field) {
+                        foreach($value as $key => $value) {
+                            if($value['last'] === null) {
+                                if ($metaPercent >= $value['first']) {
+                                    $this->valueStarCollaborator = $value['value'];
+                                }
+                            } else {
+                                if ($metaPercent >= $value['first'] && $metaPercent < $value['last']) {
+                                    $this->valueStarCollaborator = $value['value'];
+                                }
+                            }
                         }
                     }
                 }
 
-
-
-//                if (isset($data->meta)) {
-//
-//                    // Bloco responsável pela meta mínima e máxima, aplicando valor às estrelas.
-//                    if ($data->canal === 'MCV') {
-//
-//                        $this->minMeta = 70;
-//
-//                        if ($this->metaPercent >= $this->minMeta && $this->metaPercent < 100) {
-//                            $this->valueStars = 0.90;
-//                        } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-//                            $this->valueStars = 1.20;
-//                        } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-//                            $this->valueStars = 2;
-//                        } elseif ($this->metaPercent >= 141) {
-//                            $this->valueStars = 4.5;
-//                        }
-//
-//                    } elseif ($data->canal === 'PAP') {
-//
-//                        if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-//                            $this->valueStars = 1.3;
-//                        } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-//                            $this->valueStars = 3;
-//                        } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-//                            $this->valueStars = 5;
-//                        } elseif ($this->metaPercent >= 141) {
-//                            $this->valueStars = 7;
-//                        }
-//
-//                    } elseif ($data->canal === 'LIDER') {
-//
-//                        if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
-//                            $this->valueStars = 0.25;
-//                        } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
-//                            $this->valueStars = 0.40;
-//                        } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
-//                            $this->valueStars = 0.80;
-//                        } elseif ($this->metaPercent >= 141) {
-//                            $this->valueStars = 1.30;
-//                        }
-//                    }
-//
-//                    return $this->valueStars;
-//
-//                } else {
-//                    return "Nenhum colaborador ativo";
-//                }
+                return $this->valueStarCollaborator;
             }
         }
 
 
+    }
+
+    public function commissionCollaborator()
+    {
+        $commission = ($this->starsCollaborator * $this->valueStarCollaborator);
+
+        if($this->salesD7 > 0) {
+            $commission = $commission * 0.9;
+        } else {
+            $commission = $commission * 1.1;
+        }
+
+        return number_format($commission, 2, ',', '.');
     }
 }
