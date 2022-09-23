@@ -24,22 +24,29 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
-        $metaPercent = 39;
-        $valueStar = 0;
+        return "low code é lixo";
 
-        foreach($request->json('fields') as $field => $value)  {
-            if($value['last'] === null) {
-                if ($metaPercent >= $value['first']) {
-                    $valueStar = $value['value'];
-                }
-            } else {
-                if ($metaPercent >= $value['first'] && $metaPercent < $value['last']) {
-                    $valueStar = $value['value'];
-                }
-            }
-        }
-
-        return $valueStar;
+//        $metaPercent = 39;
+//        $valueStar = 0;
+//        $channel = 'MCV';
+//
+//        foreach($request->json('fields') as $field => $value)  {
+//
+//            if($channel === $field) {
+//                if($value['last'] === null) {
+//                    if ($metaPercent >= $value['first']) {
+//                        $valueStar = $value['value'];
+//                    }
+//                } else {
+//                    if ($metaPercent >= $value['first'] && $metaPercent < $value['last']) {
+//                        $valueStar = $value['value'];
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        return $valueStar;
 
 
 //        $meta = new CollaboratorMeta();

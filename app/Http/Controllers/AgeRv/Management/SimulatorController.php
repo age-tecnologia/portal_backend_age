@@ -355,6 +355,18 @@ class SimulatorController extends Controller
 
                 return $metaPercent;
 
+                foreach($request->json('fields') as $field => $value)  {
+                    if($value['last'] === null) {
+                        if ($metaPercent >= $value['first']) {
+                            $valueStar = $value['value'];
+                        }
+                    } else {
+                        if ($metaPercent >= $value['first'] && $metaPercent < $value['last']) {
+                            $valueStar = $value['value'];
+                        }
+                    }
+                }
+
 
 
 //                if (isset($data->meta)) {
