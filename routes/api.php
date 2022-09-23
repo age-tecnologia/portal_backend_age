@@ -60,6 +60,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('report/technical-control', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'technical_control']);
         Route::get('report/dici', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'dici']);
         Route::get('report/take-blip', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'takeBlip']);
+        Route::get('report/base-clients', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'base_clients']);
     });
 
 

@@ -98,6 +98,7 @@ class ReportAllController extends Controller
 
     public function condominiums()
     {
+
         $query =    'select
                     aap.title as "condomínio",
                     count(*) as "Clientes"
@@ -200,6 +201,46 @@ class ReportAllController extends Controller
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'dici.xlsx');
 
+
+
+    }
+
+    public function base_clients()
+    {
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+        $query = 'select
+                    ac.contract_id as "Contrato",
+                    p.name as "Nome cliente",
+                    sp.title as "Plano",
+                    ac.neighborhood as "Região",
+                    c.amount as "Valor do plano",
+                    c.beginning_date as "vigência",
+                    c.v_stage as "Estágio",
+                    c.v_status as "Status",
+                    ac."user" as "Conexao"
+                    from erp.authentication_contracts ac
+                    left join erp.contracts c on c.id = ac.contract_id
+                    left join erp.people p on p.id = c.client_id
+                    left join erp.service_products sp on sp.id = ac.service_product_id
+                    where ac.user != \'\'';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Contrato',
+            'Nome cliente',
+            'Plano',
+            'Região',
+            'Valor do plano',
+            'Vigência',
+            'Estágio',
+            'Status',
+            'Conexão'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'clientes_base.xlsx');
 
 
     }

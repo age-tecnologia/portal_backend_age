@@ -758,7 +758,6 @@ class SalesAnalyticRuleBefore extends Controller
                         $this->starsSeller += 17;
                     }
                 }
-
             }
         });
 
