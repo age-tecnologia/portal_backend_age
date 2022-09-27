@@ -54,7 +54,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             return true;
         });
 
-        Route::Get('report/reports', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'getAll']);
+        Route::get('report/reports', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'getAll']);
         Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
         Route::get('report/condominiums', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'condominiums']);
         Route::get('report/technical-control', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'technical_control']);
