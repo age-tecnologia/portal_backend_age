@@ -20,10 +20,14 @@ class SimulatorController extends Controller
     private $salesCollaborator;
     private $salesCollaboratorData;
     private $salesD7;
+    private $metaPercentCollaborator;
     private $starsCollaborator;
     private $valueStarCollaborator;
     private $salesChannel;
+    private $commissionChannel;
     private $rulesRange;
+    private $metaPercentRuleSupervisor;
+    private $metaPercentSupervisor;
 
 
     public function index(Request $request)
@@ -39,7 +43,12 @@ class SimulatorController extends Controller
 
         $this->month = $request->has('month') ? $request->input('month') : Carbon::now()->format('m');
         $this->year = $request->has('year') ? $request->input('year') : Carbon::now()->format('Y');
-        $this->rulesRange = $request->json('rulesRange') ? $request->input('rulesRange') : 'Sem faixa de meta.';
+
+        if(! $request->has('rulesRange')) {
+            return response()->json(['Nenhuma regra de negócio enviada.'], 404);
+        }
+
+        $this->rulesRange = $request->json('rulesRange');
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -67,14 +76,16 @@ class SimulatorController extends Controller
 
         foreach($this->channels as $key => $channel) {
 
-            $this->channel = $channel->canal;
-            $this->salesChannelCount = 0;
+                $this->channel = $channel->canal;
+                $this->salesChannelCount = 0;
+                $this->commissionChannel = 0;
 
-            $result[] = [
-                'channel' => $this->channel,
-                'collaborators' => $this->collaborators($channel->id),
-                'sales' => $this->salesChannelCount,
-            ];
+                $result[] = [
+                    'channel' => $this->channel,
+                    'collaborators' => $this->collaborators($channel->id),
+                    'sales' => $this->salesChannelCount,
+                    'commission' => number_format($this->commissionChannel, 2, ',', '.')
+                ];
 
         }
 
@@ -105,13 +116,30 @@ class SimulatorController extends Controller
         $result = [];
 
         foreach($collaborators as $key => $collab) {
-            $result[] = [
-                'name' => $collab->nome,
-                'sales' => $this->salesCollaborator($collab->nome),
-                'stars' => $this->starsCollaborator(),
-                'valueStar' => $this->valueStarCollaborator($collab->nome),
-                'commission' => $this->commissionCollaborator()
-            ];
+
+            if($this->channel === 'LIDER') {
+
+                $result[] = [
+                    'name' => $collab->nome,
+                    'sales' => $this->salesCollaborator($collab->nome),
+                    'commission' => $this->commissionSupervisor($collab->nome),
+                    'metaPercent' => number_format($this->metaPercentSupervisor, 2, ','),
+                    'metaRule' => number_format($this->metaPercentRuleSupervisor, 2, ',')
+                ];
+
+            } else {
+
+                $result[] = [
+                    'name' => $collab->nome,
+                    'sales' => $this->salesCollaborator($collab->nome),
+                    'stars' => $this->starsCollaborator(),
+                    'valueStar' => $this->valueStarCollaborator($collab->nome),
+                    'commission' => $this->commissionCollaborator(),
+                    'metaPercent' => number_format($this->metaPercentCollaborator, 2, ',')
+                ];
+
+            }
+
         }
 
         return $result;
@@ -355,6 +383,7 @@ class SimulatorController extends Controller
             ->first();
 
         $this->valueStarCollaborator = 0;
+        $this->metaPercentCollaborator = 0;
 
         if (!isset($data->meta)) {
             return "Sem meta";
@@ -364,7 +393,7 @@ class SimulatorController extends Controller
                 return "Meta zerada";
             } else {
 
-                $metaPercent = (count($this->salesCollaboratorData) / $data->meta) * 100;
+                $this->metaPercentCollaborator = (count($this->salesCollaboratorData) / $data->meta) * 100;
                 $this->valueStarCollaborator = 0;
 
 
@@ -372,11 +401,11 @@ class SimulatorController extends Controller
                     if($this->channel === $field) {
                         foreach($value as $key => $value) {
                             if($value['last'] === null) {
-                                if ($metaPercent >= $value['first']) {
+                                if ($this->metaPercentCollaborator >= $value['first']) {
                                     $this->valueStarCollaborator = $value['value'];
                                 }
                             } else {
-                                if ($metaPercent >= $value['first'] && $metaPercent < $value['last']) {
+                                if ($this->metaPercentCollaborator >= $value['first'] && $this->metaPercentCollaborator < $value['last']) {
                                     $this->valueStarCollaborator = $value['value'];
                                 }
                             }
@@ -401,6 +430,62 @@ class SimulatorController extends Controller
             $commission = $commission * 1.1;
         }
 
+        $this->commissionChannel += $commission;
+
         return number_format($commission, 2, ',', '.');
+    }
+
+    public function commissionSupervisor($name)
+    {
+        $target = 3000;
+
+        $data = DB::table('agerv_colaboradores as c')
+            ->leftJoin('agerv_colaboradores_meta as cm', 'cm.colaborador_id', '=', 'c.id')
+            ->leftJoin('agerv_colaboradores_canais as cc', 'c.tipo_comissao_id', '=', 'cc.id')
+            ->where('c.nome', $name)
+            ->where('cm.mes_competencia', $this->month)
+            ->select('c.id', 'cc.canal', 'cm.meta')
+            ->first();
+
+        $this->metaPercentRuleSupervisor = 0;
+        $this->metaPercentSupervisor = 0;
+
+        if (!isset($data->meta)) {
+            return "Sem meta";
+        } else {
+
+            if ($data->meta === 0) {
+                return "Meta zerada";
+            } else {
+
+                $this->metaPercentSupervisor = (count($this->salesCollaboratorData) / $data->meta) * 100;
+
+                foreach($this->rulesRange as $field => $value)  {
+                    if($this->channel === $field) {
+                        foreach($value as $key => $value) {
+                            if($value['last'] === null) {
+                                if ($this->metaPercentSupervisor >= $value['first']) {
+                                    $this->metaPercentRuleSupervisor = $this->metaPercentSupervisor;
+                                }
+                            } else {
+                                if ($this->metaPercentSupervisor >= $value['first'] && $this->metaPercentSupervisor < $value['last']) {
+                                    $this->metaPercentRuleSupervisor = $value['value'];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        $commission = ($target * $this->metaPercentRuleSupervisor) / 100;
+
+        $this->commissionChannel += $commission;
+
+        return number_format($commission, 2, ',', '.');
+
+
     }
 }

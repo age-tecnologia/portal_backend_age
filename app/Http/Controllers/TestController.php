@@ -24,13 +24,18 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
-        $metaPercent = 39;
-        $valueStar = 0;
-        $channel = 'MCV';
+
+        return $request->input('rulesRange');
 
 
-        return $valueStar;
 
+//        $metaPercent = 39;
+//        $valueStar = 0;
+//        $channel = 'MCV';
+//
+//
+//        return $valueStar;
+//
 
 //        $meta = new CollaboratorMeta();
 //        $colaborador = Collaborator::where('tipo_comissao_id', 3)
