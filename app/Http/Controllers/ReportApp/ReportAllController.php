@@ -290,6 +290,10 @@ class ReportAllController extends Controller
 
     public function contracts_assigments()
     {
+
+        set_time_limit(1000);
+        ini_set('memory_limit', '2048M');
+
         $query = 'select
                  p.name as "Cliente",      -- es.person-id
                  es.description as "Descrição",
