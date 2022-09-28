@@ -323,7 +323,7 @@ class ReportAllController extends Controller
             'Deletado'
         ];
 
-        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'controle_tecnico.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'contratos_assinados.xlsx');
 
     }
 }
