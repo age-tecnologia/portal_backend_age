@@ -287,4 +287,39 @@ class ReportAllController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'vendas.xlsx');
 
     }
+
+    public function contracts_assigments()
+    {
+        $query = 'select
+                 p.name as "Cliente",      -- es.person-id
+                 es.description as "Descrição",
+                CASE
+                    WHEN es.status = 3 THEN \'Concluído\'
+                    WHEN es.status = 2 THEN \'Aguardando Assinatura\'
+                    WHEN es.status = 1 THEN \'Em construção\'
+                    WHEN es.status = 5 THEN \'Cancelado\'
+                    WHEN es.status = 6 THEN \'Expirado\'
+                    WHEN es.status = 7 THEN \'Concluído com Pendência\'
+                 END as "Status",
+                 es.created as "Data criação",
+                 p2.name as "Enviado por",  -- es.created
+                 es.deleted as "Deletado"
+                from erp.electronic_signatures es
+                left join erp.people p on p.id = es.person_id
+                left join erp.people p2 on p2.id = es.created_by';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Cliente',
+            'Descrição',
+            'Status',
+            'Data criação',
+            'Enviado por',
+            'Deletado'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'controle_tecnico.xlsx');
+
+    }
 }
