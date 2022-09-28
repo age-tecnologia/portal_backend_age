@@ -28,6 +28,7 @@ class SimulatorController extends Controller
     private $rulesRange;
     private $metaPercentRuleSupervisor;
     private $metaPercentSupervisor;
+    private $teste = [];
 
 
     public function index(Request $request)
@@ -44,11 +45,13 @@ class SimulatorController extends Controller
         $this->month = $request->has('month') ? $request->input('month') : Carbon::now()->format('m');
         $this->year = $request->has('year') ? $request->input('year') : Carbon::now()->format('Y');
 
+
         if(! $request->has('rulesRange')) {
             return response()->json(['Nenhuma regra de negócio enviada.'], 404);
         }
 
-        $this->rulesRange = $request->json('rulesRange');
+        $this->rulesRange = $request->input('rulesRange');
+
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
@@ -79,12 +82,13 @@ class SimulatorController extends Controller
                 $this->channel = $channel->canal;
                 $this->salesChannelCount = 0;
                 $this->commissionChannel = 0;
+                $this->teste = [];
 
-                $result[] = [
+            $result[] = [
                     'channel' => $this->channel,
                     'collaborators' => $this->collaborators($channel->id),
                     'sales' => $this->salesChannelCount,
-                    'commission' => number_format($this->commissionChannel, 2, ',', '.')
+                    'commission' => number_format($this->commissionChannel, 2, ',', '.'),
                 ];
 
         }
@@ -95,11 +99,14 @@ class SimulatorController extends Controller
     public function sales() : void
     {
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
-        $this->salesData = VoalleSales::whereMonth('data_vigencia', $this->month)
+        $this->salesData = VoalleSales::
+            whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_contrato', '>=', '04')
+            ->whereMonth('data_contrato', '>', '04')
             ->whereYear('data_contrato', $this->year)
-            ->where('status', '<>', 'Cancelado')
+            ->whereYear('data_ativacao', $this->year)
+            ->whereMonth('data_ativacao', '>=', '06')
+            ->where('status', 'Aprovado')
             ->selectRaw('LOWER(vendedor) as vendedor, id_contrato,status, situacao, data_contrato, data_ativacao, data_vigencia,
                     LOWER(supervisor) as supervisor, data_cancelamento, plano')
             ->get()
@@ -108,14 +115,19 @@ class SimulatorController extends Controller
 
     public function collaborators($channelId)
     {
-        $collaborators = Collaborator::whereTipoComissaoId($channelId)
-                                    ->where('nome', '<>', ' ')
-                                    ->selectRaw('LOWER(nome) as nome')
-                                    ->get('nome');
+
+        $collaborators = DB::table('agerv_colaboradores as c')
+                            ->leftJoin('agerv_colaboradores_canais as cc', 'c.tipo_comissao_id', '=', 'cc.id')
+                            ->where('c.tipo_comissao_id', $channelId)
+                            ->selectRaw('LOWER(c.nome) as nome, cc.canal as canal')
+                            ->distinct()
+                            ->get();
+
 
         $result = [];
 
         foreach($collaborators as $key => $collab) {
+
 
             if($this->channel === 'LIDER') {
 
@@ -127,7 +139,7 @@ class SimulatorController extends Controller
                     'metaRule' => number_format($this->metaPercentRuleSupervisor, 2, ',')
                 ];
 
-            } else {
+            } elseif ($this->channel === $collab->canal) {
 
                 $result[] = [
                     'name' => $collab->nome,
@@ -148,7 +160,7 @@ class SimulatorController extends Controller
     public function salesCollaborator($name)
     {
         $this->salesCollaborator = 0;
-        $this->salesCollaboratorData = null;
+        $this->salesCollaboratorData = 0;
         $this->salesD7 = 0;
 
         $result = $this->salesData->filter(function ($sale) use($name) {
@@ -173,6 +185,8 @@ class SimulatorController extends Controller
 
         $this->salesCollaboratorData = $result;
         $this->salesChannelCount += count($result);
+
+
 
         return count($result);
     }
