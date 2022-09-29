@@ -295,7 +295,7 @@ class ReportAllController extends Controller
 
         $query = 'select
                  c2.id as "Contrato",
-                 c2.v_status as "Status",
+                 c2.v_status as "Status_contrato",
                  c2.v_stage as "Situação",
                  p.name as "Cliente",      -- es.person-id
                  es.description as "Descrição",
