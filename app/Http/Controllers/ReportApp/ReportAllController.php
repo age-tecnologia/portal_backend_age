@@ -320,7 +320,7 @@ class ReportAllController extends Controller
 
         $headers = [
             'Contrato',
-            'Status',
+            'Status Contrato',
             'Situação',
             'Cliente',
             'Descrição',
