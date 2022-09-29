@@ -15,9 +15,9 @@ class ReportAllController extends Controller
     public function getAll()
     {
         $reports = DB::table('agereport_relatorios as r')
-                    ->leftJoin('agereport_relatorios_permissoes as rp', 'r.id', 'rp.relatorio_id')
-                    ->where('rp.user_id', auth()->user()->id)
-                    ->get(['r.nome', 'r.nome_arquivo', 'r.url', 'r.isPeriodo']);
+            ->leftJoin('agereport_relatorios_permissoes as rp', 'r.id', 'rp.relatorio_id')
+            ->where('rp.user_id', auth()->user()->id)
+            ->get(['r.nome', 'r.nome_arquivo', 'r.url', 'r.isPeriodo']);
 
         return $reports;
     }
@@ -99,7 +99,7 @@ class ReportAllController extends Controller
     public function condominiums()
     {
 
-        $query =    'select
+        $query = 'select
                     aap.title as "condomínio",
                     count(*) as "Clientes"
                     from erp.authentication_contracts ac
@@ -109,8 +109,8 @@ class ReportAllController extends Controller
         $result = DB::connection('pgsql')->select($query);
 
         $headers = [
-          'Condomínio',
-          'Clientes'
+            'Condomínio',
+            'Clientes'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'condominios.xlsx');
@@ -163,15 +163,15 @@ class ReportAllController extends Controller
         set_time_limit(1000);
         ini_set('memory_limit', '2048M');
 
-        if($request->has('firstPeriod') && ! $request->has('lastPeriod')) {
+        if ($request->has('firstPeriod') && !$request->has('lastPeriod')) {
             $query = 'select * from relatorio_personalizado_Age_Telecon_1
-                        where data_de_atendimento >= \''.$request->input('firstPeriod').'\'';
-        } elseif($request->has('lastPeriod') && ! $request->has('firstPeriod')) {
+                        where data_de_atendimento >= \'' . $request->input('firstPeriod') . '\'';
+        } elseif ($request->has('lastPeriod') && !$request->has('firstPeriod')) {
             $query = 'select * from relatorio_personalizado_Age_Telecon_1
-                        where data_de_atendimento <= \''.$request->input('lastPeriod').'\'';
-        } elseif($request->has('firstPeriod') && $request->has('lastPeriod')) {
+                        where data_de_atendimento <= \'' . $request->input('lastPeriod') . '\'';
+        } elseif ($request->has('firstPeriod') && $request->has('lastPeriod')) {
             $query = 'select * from relatorio_personalizado_Age_Telecon_1
-                        where data_de_atendimento >= \''.$request->input('firstPeriod').'\' and data_de_atendimento <= \''.$request->input('lastPeriod').'\'';
+                        where data_de_atendimento >= \'' . $request->input('firstPeriod') . '\' and data_de_atendimento <= \'' . $request->input('lastPeriod') . '\'';
         } else {
             $query = 'select * from relatorio_personalizado_Age_Telecon_1';
         }
@@ -200,7 +200,6 @@ class ReportAllController extends Controller
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'dici.xlsx');
-
 
 
     }
@@ -295,10 +294,13 @@ class ReportAllController extends Controller
         ini_set('memory_limit', '2048M');
 
         $query = 'select
+                 c2.id as "Contrato",
+                 c2.v_status as "Status",
+                 c2.v_stage as "Situação",
                  p.name as "Cliente",      -- es.person-id
                  es.description as "Descrição",
                 CASE
-                    WHEN es.status = 3 THEN \'Concluído\'
+                    WHEN es.status = 3 THEN \'Assinado\'
                     WHEN es.status = 2 THEN \'Aguardando Assinatura\'
                     WHEN es.status = 1 THEN \'Em construção\'
                     WHEN es.status = 5 THEN \'Cancelado\'
@@ -309,12 +311,17 @@ class ReportAllController extends Controller
                  p2.name as "Enviado por",  -- es.created
                  es.deleted as "Deletado"
                 from erp.electronic_signatures es
+                left join erp.contracts c on c.id = es.contract_id
                 left join erp.people p on p.id = es.person_id
-                left join erp.people p2 on p2.id = es.created_by';
+                left join erp.people p2 on p2.id = es.created_by
+                left join erp.contracts c2 on c2.client_id = p.id';
 
         $result = DB::connection('pgsql')->select($query);
 
         $headers = [
+            'Contrato',
+            'Status',
+            'Situação',
             'Cliente',
             'Descrição',
             'Status',
@@ -326,4 +333,5 @@ class ReportAllController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'contratos_assinados.xlsx');
 
     }
+
 }
