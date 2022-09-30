@@ -136,7 +136,7 @@ class SalesAnalyticController extends Controller
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_contrato', '>=', '04')
+            ->whereMonth('data_contrato', '>=', '02')
             ->whereYear('data_contrato', $this->year)
             ->whereIn('supervisor', $supervisors)
             ->where('status', '<>', 'Cancelado')
@@ -1054,7 +1054,7 @@ class SalesAnalyticController extends Controller
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_contrato', '>=', '06')
+            ->whereMonth('data_contrato', '>=', '02')
             ->whereIn('vendedor', $collaborator)
             ->whereYear('data_contrato', $this->year)
             ->where('status', '<>', 'Cancelado')
@@ -1107,7 +1107,7 @@ class SalesAnalyticController extends Controller
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_contrato', '>=', '06')
+            ->whereMonth('data_contrato', '>=', '02')
             ->whereIn('supervisor', $collaborator)
             ->whereYear('data_contrato', $this->year)
             ->where('status', '<>', 'Cancelado')
