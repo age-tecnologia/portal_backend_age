@@ -60,6 +60,7 @@ class SalesAnalyticController extends Controller
                             ->where('u.id', auth()->user()->id)
                             ->first();
 
+
         $this->year = Carbon::now()->format('Y');
         $this->month = $request->input('month');
 
