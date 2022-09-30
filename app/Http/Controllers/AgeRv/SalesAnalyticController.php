@@ -612,8 +612,7 @@ class SalesAnalyticController extends Controller
 
 
                // Se o mês do cadastro do contrato for MAIO, executa esse bloco.
-               if (Carbon::parse($item->data_contrato) < Carbon::parse('2022-06-01') &&
-                   Carbon::parse($item->data_contrato) >= Carbon::parse('2022-05-01')) {
+               if (Carbon::parse($item->data_contrato) < Carbon::parse('2022-06-01')) {
 
                    // Verifica qual é o plano e atribui a estrela correspondente.
                    if (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
