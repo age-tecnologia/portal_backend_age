@@ -197,7 +197,8 @@ class ReportAllController extends Controller
             'bot',
             'Numero_de_contrato_ou_CPF',
             'Protocolo',
-            'transferido_Y_N'
+            'transferido_Y_N',
+            'Canal'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'dici.xlsx');
@@ -378,6 +379,41 @@ class ReportAllController extends Controller
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'totals_calls.xlsx');
+
+    }
+
+    public function contratcs_so_open()
+    {
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+        $query = 'select
+                    c.contract_id as "Contrato",
+                    c.assignment_id as "Protocolo",
+                    c.activation_date as "Data ativação",
+                    c.created as "Data criação",
+                    p."name"  as "Colaborador",
+                    c2.v_stage as "Estágio",
+                    c2.v_status as "status"
+                    from erp.contract_assignment_activations c
+                    left join erp.people p on p.id = c.person_id
+                    left join erp.contracts c2 on c2.id = c.contract_id
+                    where c2.invoice_type = 1';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Contrato',
+            'Protocolo',
+            'Data ativação',
+            'Data criação',
+            'Colaborador',
+            'Estágio',
+            'Status'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'contracts_so_opens.xlsx');
+
 
     }
 
