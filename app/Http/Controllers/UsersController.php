@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\AgeRv\AccessPermission;
 use App\Models\AgeRv\Collaborator;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Psy\Util\Str;
 
@@ -14,7 +16,21 @@ class UsersController extends Controller
 
     public function index()
     {
-        //
+        $users = DB::table('portal_users as u')
+                    ->leftJoin('portal_status as s', 'u.status_id', 's.id')
+                    ->leftJoin('portal_nivel_acesso as na', 'u.nivel_acesso_id', 'na.id')
+                    ->get(['u.id', 'u.name', 'u.email', 'u.isAD', 'u.created_at', 's.nome as status', 'na.nivel']);
+
+        $users->each(function ($item) {
+           return $item->created_at = Carbon::parse($item->created_at)->format('d/m/Y');
+        });
+
+        $users->each(function ($item) {
+            return $item->name = mb_convert_case($item->name, MB_CASE_TITLE, 'UTF-8');
+        });
+
+
+        return response()->json($users, 200);
     }
 
 

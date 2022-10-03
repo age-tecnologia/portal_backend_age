@@ -15,6 +15,7 @@ class User extends Authenticatable implements JWTSubject
 
     protected $connection = 'mysql';
     protected $table = 'portal_users';
+    protected $dateFormat = 'd/m/Y';
 
     /**
      * The attributes that are mass assignable.
@@ -45,6 +46,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'created_at' => 'datetime:d/m/Y'
     ];
 
     /**

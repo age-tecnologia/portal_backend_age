@@ -48,6 +48,12 @@ Route::group(['middleware' => 'auth:api'], function () {
         ];
     });
 
+    Route::middleware('AccessAdmin')->prefix('admin')->group(function () {
+
+        Route::resource('users', \App\Http\Controllers\UsersController::class);
+
+    });
+
     Route::middleware('AccessAgeReport')->prefix('agereport')->group(function () {
 
         Route::get('/Access', function () {
