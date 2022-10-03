@@ -93,7 +93,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::resource('meta', \App\Http\Controllers\AgeRv\CollaboratorMetaController::class);
         });
 
-        Route::prefix('analyticss')->group(function () {
+        Route::prefix('analytics')->group(function () {
             Route::get('/', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
             Route::post('/simulator', [\App\Http\Controllers\AgeRv\Management\SimulatorController::class, 'index']);
         });
