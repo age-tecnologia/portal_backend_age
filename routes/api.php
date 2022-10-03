@@ -106,3 +106,4 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 });
 
+Route::get('/bi', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
