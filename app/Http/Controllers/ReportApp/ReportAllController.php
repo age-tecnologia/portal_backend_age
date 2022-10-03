@@ -163,18 +163,19 @@ class ReportAllController extends Controller
         set_time_limit(1000);
         ini_set('memory_limit', '2048M');
 
-        if ($request->has('firstPeriod') && !$request->has('lastPeriod')) {
+        if ($request->input('firstPeriod') !== null && $request->input('lastPeriod') === null) {
             $query = 'select * from relatorio_personalizado_Age_Telecon_1
                         where data_de_atendimento >= \'' . $request->input('firstPeriod') . '\'';
-        } elseif ($request->has('lastPeriod') && !$request->has('firstPeriod')) {
+        } elseif ($request->input('firstPeriod') === null && $request->input('lastPeriod') !== null) {
             $query = 'select * from relatorio_personalizado_Age_Telecon_1
                         where data_de_atendimento <= \'' . $request->input('lastPeriod') . '\'';
-        } elseif ($request->has('firstPeriod') && $request->has('lastPeriod')) {
+        } elseif ($request->input('firstPeriod') !== null && $request->input('lastPeriod') !== null) {
             $query = 'select * from relatorio_personalizado_Age_Telecon_1
                         where data_de_atendimento >= \'' . $request->input('firstPeriod') . '\' and data_de_atendimento <= \'' . $request->input('lastPeriod') . '\'';
         } else {
             $query = 'select * from relatorio_personalizado_Age_Telecon_1';
         }
+
 
         $result = DB::connection('mysql_take')->select($query);
 
@@ -331,6 +332,52 @@ class ReportAllController extends Controller
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'contratos_assinados.xlsx');
+
+    }
+
+    // TakeBlip
+    public function totals_calls(Request $request)
+    {
+
+        if ($request->input('firstPeriod') !== null && $request->input('lastPeriod') === null) {
+            $query = 'select e.EXTRAS_VALUE as "Canal",
+                    count(*) as "Quantidade"
+                    from Eventos e
+                    where EXTRAS_key = \'canal\' group by EXTRAS_VALUE ORDER BY "Quantidade" desc
+                    and e.DATA_HORA >= \''.$request->input('firstPeriod').'\'';
+
+        } elseif ($request->input('firstPeriod') === null && $request->input('lastPeriod') !== null) {
+
+            $query = 'select e.EXTRAS_VALUE as "Canal",
+                    count(*) as "Quantidade"
+                    from Eventos e
+                    where EXTRAS_key = \'canal\' group by EXTRAS_VALUE ORDER BY "Quantidade" desc
+                    and e.DATA_HORA <= \''.$request->input('lastPeriod').'\'';
+
+        } elseif ($request->input('firstPeriod') !== null && $request->input('lastPeriod') !== null) {
+
+            $query = 'select e.EXTRAS_VALUE as "Canal",
+                    count(*) as "Quantidade"
+                    from Eventos e
+                    where EXTRAS_key = \'canal\'
+                    and e.DATA_HORA BETWEEN \''.$request->input('firstPeriod').'\' and \''.$request->input('lastPeriod').'\'
+                    group by EXTRAS_VALUE ORDER BY "Quantidade" desc';
+
+        } else {
+            $query = 'select e.EXTRAS_VALUE as "Canal",
+                    count(*) as "Quantidade"
+                    from Eventos e
+                    where EXTRAS_key = \'canal\' group by EXTRAS_VALUE ORDER BY "Quantidade" desc';
+        }
+
+        $result = DB::connection('mysql_take')->select($query);
+
+        $headers = [
+            'Canal',
+            'Quantidade'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'totals_calls.xlsx');
 
     }
 

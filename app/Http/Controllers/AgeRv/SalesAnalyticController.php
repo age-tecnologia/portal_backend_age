@@ -64,7 +64,6 @@ class SalesAnalyticController extends Controller
         $this->year = Carbon::now()->format('Y');
         $this->month = $request->input('month');
 
-        return $this->master();
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
