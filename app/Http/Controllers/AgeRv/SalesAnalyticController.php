@@ -62,7 +62,7 @@ class SalesAnalyticController extends Controller
 
 
         $this->year = Carbon::now()->format('Y');
-        $this->month = '07'; //$request->input('month');
+        $this->month = $request->input('month');
 
         return $this->master();
 
