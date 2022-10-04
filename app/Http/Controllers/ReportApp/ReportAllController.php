@@ -421,7 +421,8 @@ class ReportAllController extends Controller
     {
         $query = 'select
                     p.name as "Nome",
-                    t.title as "Equipe"
+                    t.title as "Equipe",
+                    t.active as "Ativo"
                     from erp.people p
                     left join erp.teams t ON t.id = p.default_team_id
                     where t.title  notnull';
@@ -430,7 +431,8 @@ class ReportAllController extends Controller
 
         $headers = [
             'Nome',
-            'Equipe'
+            'Equipe',
+            'Ativo'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'teams.xlsx');
