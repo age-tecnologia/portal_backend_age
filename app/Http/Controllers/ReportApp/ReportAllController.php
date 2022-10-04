@@ -417,4 +417,24 @@ class ReportAllController extends Controller
 
     }
 
+    public function teams_voalle()
+    {
+        $query = 'select
+                    p.name as "Nome",
+                    t.title as "Equipe"
+                    from erp.people p
+                    left join erp.teams t ON t.id = p.default_team_id
+                    where t.title  notnull';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Nome',
+            'Equipe'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'teams.xlsx');
+
+    }
+
 }

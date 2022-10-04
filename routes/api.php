@@ -71,6 +71,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('report/contracts-assigments', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contracts_assigments']);
         Route::get('report/totals-calls', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'totals_calls']);
         Route::get('report/contracts-so-opens', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contratcs_so_open']);
+        Route::get('report/teams-voalle', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'teams_voalle']);
     });
 
 
