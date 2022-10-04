@@ -420,12 +420,13 @@ class ReportAllController extends Controller
     public function teams_voalle()
     {
         $query = 'select
-                    p.name as "Nome",
-                    t.title as "Equipe",
-                    t.active as "Ativo"
-                    from erp.people p
-                    left join erp.teams t ON t.id = p.default_team_id
-                    where t.title  notnull';
+                vu.name as " name",
+                t.title as "tilte",
+                vu.active as "Ativo",
+                vu.deleted as "Delete"
+                from v_users vu
+                left join teams t on t.id = vu.team_id
+                where t.title notnull';
 
         $result = DB::connection('pgsql')->select($query);
 
