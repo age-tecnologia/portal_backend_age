@@ -424,8 +424,8 @@ class ReportAllController extends Controller
                 t.title as "tilte",
                 vu.active as "Ativo",
                 vu.deleted as "Delete"
-                from v_users vu
-                left join teams t on t.id = vu.team_id
+                from erp.v_users vu
+                left join erp.teams t on t.id = vu.team_id
                 where t.title notnull';
 
         $result = DB::connection('pgsql')->select($query);
