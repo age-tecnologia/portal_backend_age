@@ -525,7 +525,7 @@ class SalesAnalyticController extends Controller
                 $dateCancel = Carbon::parse($sale->data_cancelamento); // Transformando em data.
 
                 // Verificando se o cancelamento foi em mais de 7 dias.
-                if ($dateActivation->diffInDays($dateCancel) > 7) {
+                if ($dateActivation->diffInDays($dateCancel) >= 7) {
                     if($sale->vendedor === $name) {
                         return $sale;
                     }
