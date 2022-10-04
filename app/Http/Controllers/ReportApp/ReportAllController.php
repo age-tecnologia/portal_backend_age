@@ -433,7 +433,8 @@ class ReportAllController extends Controller
         $headers = [
             'Nome',
             'Equipe',
-            'Ativo'
+            'Ativo',
+            'Deletado'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'teams.xlsx');
