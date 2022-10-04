@@ -76,7 +76,7 @@ class AuthController extends Controller
 
                     $user->create([
                         'name' => $separeName[0],
-                        'email' => mb_convert_case($username, MB_CASE_LOWER, 'utf-8'),
+                        'email' => $username,
                         'isAD' => 1,
                         'password' => Hash::make($password),
                     ]);
