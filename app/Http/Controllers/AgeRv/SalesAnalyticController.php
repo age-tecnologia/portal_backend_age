@@ -137,7 +137,7 @@ class SalesAnalyticController extends Controller
         // Trás a contagem de todas as vendas realizadas no mês filtrado.
         $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_contrato', '>=', '02')
+            ->whereMonth('data_contrato', '>=', '01')
             ->whereYear('data_contrato', $this->year)
             ->whereIn('supervisor', $supervisors)
             ->where('status', '<>', 'Cancelado')
