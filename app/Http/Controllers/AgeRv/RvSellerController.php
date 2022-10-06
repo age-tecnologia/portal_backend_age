@@ -401,7 +401,7 @@ class RvSellerController extends Controller
                 }
 
                 // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
-            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-10-01') &&
+            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-11-01') &&
                 Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
 
                 // Verifica qual é o plano e atribui a estrela correspondente.
