@@ -845,7 +845,7 @@ class RvSellerController extends Controller
                 } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
                     $this->valueStar = 17;
                 }
-            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-10-01') &&
+            } elseif (Carbon::parse($item->data_contrato) < Carbon::parse('2022-11-01') &&
                 Carbon::parse($item->data_contrato) >= Carbon::parse('2022-09-01')) {
 
                 // Verifica qual é o plano e atribui a estrela correspondente.
