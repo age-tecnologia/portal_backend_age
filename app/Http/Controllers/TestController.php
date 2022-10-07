@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ReportExport;
 use App\Exports\UsersExport;
+use App\Http\Controllers\AgeRv\_aux\sales\Stars;
 use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\CollaboratorMeta;
@@ -20,12 +21,41 @@ use Maatwebsite\Excel\Excel;
 
 class TestController extends Controller
 {
+    protected $year;
+    protected $month;
+    private $salesTotals;
+
 
     public function index(Request $request)
     {
 
+        $this->year = '2022';
+        $this->month = '08';
 
-        return $request->input('rulesRange');
+        // Trás a contagem de todas as vendas realizadas no mês filtrado.
+        $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
+            ->whereYear('data_vigencia', $this->year)
+            ->whereMonth('data_contrato', '>=', '01')
+            ->whereYear('data_contrato', $this->year)
+            ->where('status', '<>', 'Cancelado')
+            ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
+                'vendedor', 'supervisor', 'data_cancelamento', 'plano')
+            ->limit(10)
+            ->get()
+            ->unique('id_contrato');
+
+        $stars = new Stars();
+        $result = 0;
+
+
+        foreach($this->salesTotals as $sales) {
+            $result += $stars->starsValues($sales);
+        }
+
+        return $result;
+
+
+
 
 
 
