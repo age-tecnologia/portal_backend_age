@@ -104,6 +104,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::prefix('analytics')->group(function () {
             Route::get('/', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
+            Route::get('/payment', [\App\Http\Controllers\AgeRv\SalesRulesController::class, 'index']);
             Route::post('/simulator', [\App\Http\Controllers\AgeRv\Management\SimulatorController::class, 'index']);
         });
 
