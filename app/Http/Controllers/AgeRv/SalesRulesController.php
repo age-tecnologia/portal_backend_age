@@ -40,5 +40,4 @@ class SalesRulesController extends Controller
         }
     }
 
-
 }

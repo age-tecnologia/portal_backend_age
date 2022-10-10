@@ -91,11 +91,6 @@ class ReportAllController extends Controller
 
     }
 
-    public function default()
-    {
-
-    }
-
     public function condominiums()
     {
 
@@ -438,6 +433,39 @@ class ReportAllController extends Controller
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'teams.xlsx');
+
+    }
+
+    public function contracts_address()
+    {
+        $query = 'select
+                    c.id as  "contracts",
+                    p.name as "Nome",
+                    pa.neighborhood as "Região",
+                    pa.street as "Endereço",
+                    pa.number as "Número",
+                    pa.address_complement as "Complemento",
+                    c.v_status as "Status",
+                    c.v_stage as "Estágio"
+                    from erp.contracts c
+                    left join erp.people p on p.id = c.client_id
+                    left join erp.people_addresses pa on pa.id = c.people_address_id';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+          'Contratos',
+          'Nome',
+          'Região',
+          'Endereço',
+          'Número',
+          'Complemento',
+          'Status',
+          'Estágio'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'contracts_address.xlsx');
+
 
     }
 
