@@ -438,6 +438,10 @@ class ReportAllController extends Controller
 
     public function contracts_address()
     {
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+
         $query = 'select
                     c.id as  "contracts",
                     p.name as "Nome",
