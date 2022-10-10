@@ -29,29 +29,6 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
-        $this->year = '2022';
-        $this->month = '08';
-
-        // Trás a contagem de todas as vendas realizadas no mês filtrado.
-        $this->salesTotals = VoalleSales::whereMonth('data_vigencia', $this->month)
-            ->whereYear('data_vigencia', $this->year)
-            ->whereMonth('data_contrato', '>=', '01')
-            ->whereYear('data_contrato', $this->year)
-            ->where('status', '<>', 'Cancelado')
-            ->select('id_contrato', 'nome_cliente', 'status', 'situacao', 'data_contrato', 'data_ativacao', 'data_vigencia',
-                'vendedor', 'supervisor', 'data_cancelamento', 'plano')
-            ->get()
-            ->unique('id_contrato');
-
-        $stars = new Stars();
-        $result = 0;
-
-
-        foreach($this->salesTotals as $sales) {
-            $result += $stars->starsValues($sales);
-        }
-
-        return $result;
 
 
 
