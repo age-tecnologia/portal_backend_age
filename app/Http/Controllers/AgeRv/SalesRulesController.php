@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AgeRv;
 
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\Master;
+use App\Http\Controllers\AgeRv\_aux\sales\analytics\Supervisor;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,7 +18,8 @@ class SalesRulesController extends Controller
             ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
             ->leftJoin('portal_users as u', 'up.user_id', '=', 'u.id')
             ->leftJoin('portal_nivel_acesso as na', 'u.nivel_acesso_id', '=', 'na.id')
-            ->select('u.name', 'na.nivel', 'cf.funcao')
+            ->leftJoin('agerv_colaboradores as c', 'c.user_id', '=', 'u.id')
+            ->select('u.name', 'na.nivel', 'cf.funcao', 'c.nome', 'c.id')
             ->where('u.id', auth()->user()->id)
             ->first();
 
@@ -35,6 +37,10 @@ class SalesRulesController extends Controller
 
             return $master->response();
 
+        } elseif ($c->funcao === 'Supervisor') {
+            $supervisor = new Supervisor($this->month, $this->year, $c->nome, $c->id);
+
+            return $supervisor->response();
         } else {
             return response()->json(["Unauthorized"], 401);
         }

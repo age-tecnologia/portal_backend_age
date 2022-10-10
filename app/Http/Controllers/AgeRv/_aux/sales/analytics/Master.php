@@ -21,9 +21,6 @@ class Master
     private $channels;
     private $collaborators;
     private $collaboratorData;
-    private $collaboratorSalesValid;
-    private $collaboratorMeta;
-    private $collaboratorMetaPercent;
     private $month;
     private $year;
 

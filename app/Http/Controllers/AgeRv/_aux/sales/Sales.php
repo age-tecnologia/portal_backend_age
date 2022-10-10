@@ -14,7 +14,7 @@ class Sales
     public function __construct($name, $data)
     {
 
-        $this->name = $name;
+        $this->name = mb_convert_case($name, MB_CASE_LOWER, 'UTF-8');
         $this->data = $data;
 
         $this->response();

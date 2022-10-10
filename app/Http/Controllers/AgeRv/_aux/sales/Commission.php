@@ -27,7 +27,7 @@ class Commission
 
     private function response() {
 
-        if($this->channelId === 3 && $this->month >= '10') {
+        if($this->channelId === 3 && $this->month >= '09') {
             $target = 3000;
 
             return $this->commission = $target * $this->valueStar;
