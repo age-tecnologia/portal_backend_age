@@ -18,7 +18,7 @@ class SalesRulesController extends Controller
             ->leftJoin('portal_users as u', 'up.user_id', '=', 'u.id')
             ->leftJoin('portal_nivel_acesso as na', 'u.nivel_acesso_id', '=', 'na.id')
             ->select('u.name', 'na.nivel', 'cf.funcao')
-            ->where('u.id', 1)
+            ->where('u.id', auth()->user()->id)
             ->first();
 
 
@@ -35,10 +35,6 @@ class SalesRulesController extends Controller
 
             return $master->response();
 
-        } elseif ($c->funcao === 'Supervisor') {
-            return $this->supervisor();
-        } elseif($c->funcao === 'Gerente') {
-            return $this->management();
         } else {
             return response()->json(["Unauthorized"], 401);
         }

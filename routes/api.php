@@ -108,6 +108,8 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::post('/simulator', [\App\Http\Controllers\AgeRv\Management\SimulatorController::class, 'index']);
         });
 
+        Route::resource('commission', \App\Http\Controllers\AgeRv\CommissionController::class);
+
         Route::middleware('AccessMaster')->prefix('routines')->group(function () {
             Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
         });
