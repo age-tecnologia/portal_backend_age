@@ -10,6 +10,7 @@ use App\Http\Controllers\AgeRv\_aux\sales\Sales;
 use App\Http\Controllers\AgeRv\_aux\sales\Stars;
 use App\Http\Controllers\AgeRv\_aux\sales\ValueStar;
 use App\Models\AgeRv\Channel;
+use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\VoalleSales;
 
 class Supervisor
@@ -70,8 +71,54 @@ class Supervisor
             'valueStar' => $valueStar->getValueStar(),
             'stars' => $stars->getStars(),
             'mediator' => 0,
-            'commission' => number_format($commission->getCommission(), 2, ',', '.')
+            'commission' => number_format($commission->getCommission(), 2, ',', '.'),
+            'sellers' => $this->sellers()
         ];
+
+        return $data;
+    }
+
+    private function sellers() {
+
+        $sellers = $this->data->unique(['vendedor']);
+
+        $sellers = $sellers->map(function ($item) {
+           return $item->vendedor;
+        });
+
+        $data = [];
+
+        $sellers = Collaborator::whereIn('nome', $sellers)->get()->unique(['nome']);
+
+        foreach($sellers as $key => $value) {
+
+            $sales = new Sales($value->nome, $this->data);
+            $cancel = new Cancel($sales->getExtractData());
+            $meta = new Meta($value->id, $this->month, $this->year);
+            $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
+            $valueStar = new ValueStar($metaPercent->getMetaPercent(), $value->canal_id, $this->month, $this->year);
+            $stars = new Stars($sales->getExtractValids());
+            $commission = new Commission($value->canal_id, $valueStar->getValueStar(), $stars->getStars(),
+            $cancel->getCountCancel(), $this->month, $this->year);
+
+            $data[] = [
+                'name' => $value->nome,
+                'sales' => [
+                    'count' => $sales->getCountValids(),
+                    'extract' => $sales->getExtractValidsArray()
+                ],
+                'cancel' => [
+                    'count' => $cancel->getCountCancel(),
+                    'extract' => $cancel->getExtractCancel()
+                ],
+                'meta' => $meta->getMeta(),
+                'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),
+                'valueStar' => $valueStar->getValueStar(),
+                'stars' => $stars->getStars(),
+                'mediator' => 0,
+                'commission' => number_format($commission->getCommission(), 2, ',', '.'),
+            ];
+        }
 
         return $data;
     }

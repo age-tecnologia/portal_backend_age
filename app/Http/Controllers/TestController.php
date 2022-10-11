@@ -29,9 +29,46 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
+        $array = [
+            'Ana Karina De Sousa Lisboa',
+            'Carolina Lima Correa',
+            'Daiane Ribeiro Silva',
+            'Daniel Moreira Silva',
+            'Derick Richarlington Santos De Jesus',
+            'Elem Aparecida De Sousa Laura',
+            'Fabio Diego Coelho Branco',
+            'Fernanda Cristynna Da Silva Machado',
+            'Francisco Paz De Andrade Junior',
+            'Heldionara Marques Nogueira',
+            'Helen Beatriz Pereira Costa',
+            'Juliano Leno Borges Da Silva',
+            'Kariny Nobrega Oliveira',
+            'Luane Lira Da Silva',
+            'Maria Natividade Brandao Neta',
+            'Pamela Vieira Vogado',
+            'Patricia Quirino Gomes Ferreira',
+            'Rebeca Souza Costa',
+            'Taynara Tolentino De Sousa',
+            'Thalia Isabella Santos',
+            'Witoria Silva Frota',
+        ];
+
+        $c = Collaborator::whereIn('nome', $array)->get('id');
+
+        $m = CollaboratorMeta::whereIn('colaborador_id', $c)->where('mes_competencia', '08')->get();
+
+        return $m;
 
 
+        foreach($c as $key => $value) {
+            $m = CollaboratorMeta::where('colaborador_id', $value->id)->where('mes_competencia', '08')->first();
 
+            $m->update([
+                'meta' => 11
+            ]);
+        }
+
+        return $m;
 
 
 

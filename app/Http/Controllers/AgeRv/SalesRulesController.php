@@ -31,7 +31,8 @@ class SalesRulesController extends Controller
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
             $c->funcao === 'Diretoria' ||
-            $c->funcao === 'Gerente geral') {
+            $c->funcao === 'Gerente geral' ||
+            $c->funcao === 'Financeiro') {
 
             $master = new Master($this->month, $this->year);
 
