@@ -337,6 +337,9 @@ class ReportAllController extends Controller
     public function totals_calls(Request $request)
     {
 
+        $firstPeriod = Carbon::parse($request->input('firstPeriod'))->format('Y-m-d H');
+        $lastPeriod = Carbon::parse($request->input('lastPeriod'))->format('Y-m-d H');
+
         if ($request->input('firstPeriod') !== null && $request->input('lastPeriod') === null) {
             $query = 'select e.EXTRAS_VALUE as "Canal",
                     count(*) as "Quantidade"
@@ -358,7 +361,7 @@ class ReportAllController extends Controller
                     count(*) as "Quantidade"
                     from Eventos e
                     where EXTRAS_key = \'canal\'
-                    and e.DATA_HORA BETWEEN \''.$request->input('firstPeriod').' 00:00:00 \' and \''.$request->input('lastPeriod').' 23:59:59\'
+                    and e.DATA_HORA BETWEEN \''.$firstPeriod.'\' and \''.$lastPeriod.'\'
                     group by EXTRAS_VALUE ORDER BY "Quantidade" desc';
 
         }  else {
