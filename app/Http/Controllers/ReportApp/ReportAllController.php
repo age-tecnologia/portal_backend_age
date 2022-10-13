@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ReportApp;
 use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\AgeReport\ReportPermission;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Excel;
@@ -351,16 +352,16 @@ class ReportAllController extends Controller
                     where EXTRAS_key = \'canal\' group by EXTRAS_VALUE ORDER BY "Quantidade" desc
                     and e.DATA_HORA <= \''.$request->input('lastPeriod').'\'';
 
-        } elseif ($request->input('firstPeriod') !== null && $request->input('lastPeriod') !== null) {
+        }  elseif ($request->input('firstPeriod') !== null && $request->input('lastPeriod') !== null) {
 
             $query = 'select e.EXTRAS_VALUE as "Canal",
                     count(*) as "Quantidade"
                     from Eventos e
                     where EXTRAS_key = \'canal\'
-                    and e.DATA_HORA BETWEEN \''.$request->input('firstPeriod').'\' and \''.$request->input('lastPeriod').'\'
+                    and e.DATA_HORA BETWEEN \''.$request->input('firstPeriod').' 00:00:00 \' and \''.$request->input('lastPeriod').' 23:59:59\'
                     group by EXTRAS_VALUE ORDER BY "Quantidade" desc';
 
-        } else {
+        }  else {
             $query = 'select e.EXTRAS_VALUE as "Canal",
                     count(*) as "Quantidade"
                     from Eventos e
