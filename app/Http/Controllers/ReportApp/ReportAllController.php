@@ -182,6 +182,7 @@ class ReportAllController extends Controller
             'data_de_atendimento',
             'data_inicial_do_atendimento_humano',
             'Fila_Destino',
+            'Agente',
             'Tempo_de_Espera_Fila',
             'Tempo_de_Primeira_resposta',
             'Tempo_de_Conversacao',
@@ -196,7 +197,7 @@ class ReportAllController extends Controller
             'Canal'
         ];
 
-        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'dici.xlsx');
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'takeblip.xlsx');
 
 
     }
