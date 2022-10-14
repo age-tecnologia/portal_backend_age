@@ -150,9 +150,9 @@ class RvSellerController extends Controller
                 // Verificando se o cancelamento foi em menos de 7 dias, se sim, atualiza o banco com inválida.
                 if ($dateActivation->diffInDays($dateCancel) < 7) {
                     $update = VoalleSales::findOrFail($item->id);
-                    $update->update([
-                        'status' => 'Inválida'
-                    ]);
+//                    $update->update([
+//                        'status' => 'Inválida'
+//                    ]);
                 }
             }
         });
@@ -251,7 +251,7 @@ class RvSellerController extends Controller
             ->whereMonth('data_contrato', '>=', '06')
             ->whereYear('data_contrato', $this->year)
             ->where('status', 'Aprovado')
-            ->orWhere('status', 'Inválido')
+            ->orWhere('status', 'Cancelado')
             ->get();
 
         // Percorre todos os dados, verificando qual o plano vendido e atribui as estrelas devidas.
@@ -971,7 +971,7 @@ class RvSellerController extends Controller
 
     public function extractCancelsD7()
     {
-        $data = VoalleSales::where('status', 'Inválida')
+        $data = VoalleSales::where('status', 'Cancelado')
             ->where($this->type, $this->username)
             ->whereMonth('data_vigencia', $this->month)
             ->whereYear('data_vigencia', $this->year)
