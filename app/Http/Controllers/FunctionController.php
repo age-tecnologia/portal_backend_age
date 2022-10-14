@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LevelAccess;
+use App\Models\FunctionUser;
 use Illuminate\Http\Request;
 
-class LevelAccessController extends Controller
+class FunctionController extends Controller
 {
 
     public function index()
     {
-        $levels = LevelAccess::all(['id', 'nivel']);
+        $functions = FunctionUser::all(['id', 'funcao']);
 
-        return response()->json($levels, 201);
+        return response()->json($functions, 201);
     }
 
 
@@ -33,7 +33,6 @@ class LevelAccessController extends Controller
         //
     }
 
-
     public function edit($id)
     {
         //
@@ -44,6 +43,7 @@ class LevelAccessController extends Controller
     {
         //
     }
+
 
     public function destroy($id)
     {

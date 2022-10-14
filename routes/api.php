@@ -109,6 +109,9 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::post('/simulator', [\App\Http\Controllers\AgeRv\Management\SimulatorController::class, 'index']);
         });
 
+        Route::resource('level', \App\Http\Controllers\LevelAccessController::class);
+        Route::resource('function', \App\Http\Controllers\FunctionController::class);
+
         Route::resource('commission', \App\Http\Controllers\AgeRv\CommissionController::class);
 
         Route::middleware('AccessMaster')->prefix('routines')->group(function () {
