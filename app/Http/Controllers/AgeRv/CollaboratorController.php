@@ -141,7 +141,6 @@ class CollaboratorController extends Controller
 
     }
 
-
     public function edit($id)
     {
         //
@@ -157,5 +156,13 @@ class CollaboratorController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function showList(Request $request)
+    {
+
+        $collaborators = Collaborator::where('nome', 'LIKE', '%'.$request->input('name').'%')->limit(5)->get();
+
+        return response()->json($collaborators, 201);
     }
 }

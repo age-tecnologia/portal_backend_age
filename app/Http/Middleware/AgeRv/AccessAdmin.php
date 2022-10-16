@@ -22,7 +22,7 @@ class AccessAdmin
 
         if((isset($collaborator->id)) ||
             auth()->user()->nivel_acesso_id === 2 ||
-            auth()->user()->isMaster === 3 ) {
+            auth()->user()->nivel_acesso_id === 3 ) {
             return $next($request);
         } else {
             return response()->json(['Usuário não tem permissão para acessar o sistema!'], 403);
