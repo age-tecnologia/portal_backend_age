@@ -150,9 +150,9 @@ class RvSellerController extends Controller
                 // Verificando se o cancelamento foi em menos de 7 dias, se sim, atualiza o banco com inválida.
                 if ($dateActivation->diffInDays($dateCancel) < 7) {
                     $update = VoalleSales::findOrFail($item->id);
-                    $update->update([
-                        'status' => 'Inválida'
-                    ]);
+//                    $update->update([
+//                        'status' => 'Inválida'
+//                    ]);
                 }
             }
         });
