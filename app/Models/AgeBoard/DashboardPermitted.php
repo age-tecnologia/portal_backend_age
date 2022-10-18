@@ -10,4 +10,9 @@ class DashboardPermitted extends Model
     use HasFactory;
 
     protected $table = 'ageboard_dashboard_permissoes';
+
+    public function itens()
+    {
+        return $this->hasMany(ItemPermitted::class, 'dashboard_id', 'id');
+    }
 }
