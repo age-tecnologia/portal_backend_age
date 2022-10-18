@@ -73,6 +73,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('report/contracts-so-opens', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contratcs_so_open']);
         Route::get('report/teams-voalle', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'teams_voalle']);
         Route::get('report/contracts-address', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contracts_address']);
+        Route::get('report/human-care', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'human_care']);
+        Route::get('report/new-assigments', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'new_assigments']);
     });
 
 
@@ -138,6 +140,8 @@ Route::group(['middleware' => 'auth:api'], function () {
                 'function' => $accesPermissions->funcao
             ];
         });
+
+        Route::resource('dashboards', \App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class);
 
     });
 

@@ -3,14 +3,21 @@
 namespace App\Http\Controllers\AgeBoard;
 
 use App\Http\Controllers\Controller;
+use App\Models\AgeBoard\Dashboard;
+use App\Models\AgeBoard\DashboardPermitted;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class PermmittedsDashboardController extends Controller
 {
-
     public function index()
     {
-        //
+        $dashboard = Dashboard::all();
+        $dashboardPermitted = DashboardPermitted::all();
+
+        return [
+            $dashboard,
+            $dashboardPermitted
+        ];
     }
 
     public function create()

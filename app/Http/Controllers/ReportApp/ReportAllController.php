@@ -478,4 +478,84 @@ class ReportAllController extends Controller
 
     }
 
+    public function human_care()
+    {
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+
+        $query = 'select `relatorio_personalizado_Age_Telecon_1`.`id_ticket_humano`
+                    AS `id_ticket_humano`,`relatorio_personalizado_Age_Telecon_1`.`id_atendimento`
+                    AS `id_atendimento`,`relatorio_personalizado_Age_Telecon_1`.`data_de_entrada_no_bot`
+                    AS `data_de_entrada_no_bot`,`relatorio_personalizado_Age_Telecon_1`.`data_de_atendimento`
+                    AS `data_de_atendimento`,`relatorio_personalizado_Age_Telecon_1`.`data_inicial_do_atendimento_humano`
+                    AS `data_inicial_do_atendimento_humano`,`relatorio_personalizado_Age_Telecon_1`.`Fila_Destino`
+                    AS `Fila_Destino`,`relatorio_personalizado_Age_Telecon_1`.`Agente`
+                    AS `Agente`,`relatorio_personalizado_Age_Telecon_1`.`Tempo_de_Espera_Fila`
+                    AS `Tempo_de_Espera_Fila`,`relatorio_personalizado_Age_Telecon_1`.`Tempo_de_Primeira_resposta`
+                    AS `Tempo_de_Primeira_resposta`,`relatorio_personalizado_Age_Telecon_1`.`Tempo_de_Conversacao`
+                    AS `Tempo_de_Conversacao`,`relatorio_personalizado_Age_Telecon_1`.`Tempo_Total`
+                    AS `Tempo_Total`,`relatorio_personalizado_Age_Telecon_1`.`Telefone`
+                    AS `Telefone`,`relatorio_personalizado_Age_Telecon_1`.`Tags`
+                    AS `Tags`,`relatorio_personalizado_Age_Telecon_1`.`Status`
+                    AS `Status`,`relatorio_personalizado_Age_Telecon_1`.`bot`
+                    AS `bot`,`relatorio_personalizado_Age_Telecon_1`.`Numero_de_contrato_ou_CPF`
+                    AS `Numero_de_contrato_ou_CPF`,`relatorio_personalizado_Age_Telecon_1`.`Protocolo`
+                    AS `Protocolo`,`relatorio_personalizado_Age_Telecon_1`.`transferido_Y_N`
+                    AS `transferido_Y_N`,`relatorio_personalizado_Age_Telecon_1`.`canal`
+                    AS `canal` from `relatorio_personalizado_Age_Telecon_1`
+                   where (`relatorio_personalizado_Age_Telecon_1`.`bot` <> \'AtendimentoNovaAssinatura\')';
+
+        $result = DB::connection('mysql_take')->select($query);
+
+        $headers = [
+            'id_ticket_humano',
+            'id_atendimento',
+            'data_de_entrada_no_bot',
+            'data_de_atendimento',
+            'data_inicial_do_atendimento_humano',
+            'Fila_Destino',
+            'Tempo_de_Espera_Fila',
+            'Tempo_de_Primeira_resposta',
+            'Tempo_de_Conversacao',
+            'Tempo_Total',
+            'Telefone',
+            'Tags',
+            'Status',
+            'bot',
+            'Numero_de_contrato_ou_CPF',
+            'Protocolo',
+            'transferido_Y_N',
+            'canal',
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'human_care.xlsx');
+
+    }
+
+    public function new_assigments()
+    {
+        $query = 'select
+                cast(`Eventos`.`DATA_HORA` as date) AS `DATA`,
+                `Eventos`.`EXTRAS_VALUE` AS
+                `canal`,count(0) AS `nova_assinatura`
+                from `Eventos`
+                where ((`Eventos`.`EXTRAS_KEY` = \'CANAL\') and (not(`Eventos`.`TICKET` in (select `Eventos`.`TICKET` from `Eventos`
+                where (`Eventos`.`EXTRAS_KEY` = \'CPF\') group by `Eventos`.`TICKET`))))
+                group by `Eventos`.`EXTRAS_VALUE`,cast(`Eventos`.`DATA_HORA` as date)';
+
+        $result = DB::connection('mysql_take')->select($query);
+
+        $headers = [
+            'Data',
+            'Canal',
+            'Nova_assinatura'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'new_assigments.xlsx');
+
+
+
+    }
+
 }

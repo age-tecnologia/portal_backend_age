@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Models\AgeBoard;
+namespace App\Models\AgeControl;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Dashboard extends Model
+class Users extends Model
 {
     use HasFactory;
-
-    protected $table = 'ageboard_dashboards';
 }
