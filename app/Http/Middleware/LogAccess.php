@@ -22,7 +22,7 @@ class LogAccess
         $log->create([
             'endereco_ip' => $request->ip(),
             'rota_solicitada' => $request->path(),
-            'user_id' => auth()->user()->id ? auth()->user()->id : 0
+            'user_id' => auth()->user() ? auth()->user()->id : 0
         ]);
 
         return $next($request);
