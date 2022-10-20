@@ -15,136 +15,139 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('teste', [\App\Http\Controllers\TestController::class, 'index']);
-
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'auth'
-], function ($router) {
-
-    Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
-    Route::post('login_ad', [\App\Http\Controllers\AuthController::class, 'login_ad']);
-    Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
-    Route::post('refresh', [\App\Http\Controllers\AuthController::class, 'refresh']);
-    Route::post('me', [\App\Http\Controllers\AuthController::class, 'me']);
-});
-
-Route::group(['middleware' => 'auth:api'], function () {
-
-    Route::get('/validatedToken', function () {
-
-        $access = null;
-        $levelAccess = \App\Models\LevelAccess::
-        where('id', auth()->user()->nivel_acesso_id)
-            ->first();
-
-        return [
-            'levelAccess' => $levelAccess->nivel,
-            'status' => true
-        ];
+Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(function () {
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return $request->user();
     });
 
-    Route::middleware('AccessAdmin')->prefix('admin')->group(function () {
+    Route::get('teste', [\App\Http\Controllers\TestController::class, 'index']);
 
-        Route::resource('users', \App\Http\Controllers\UsersController::class);
+    Route::group([
+        'middleware' => 'api',
+        'prefix' => 'auth'
+    ], function ($router) {
 
+        Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
+        Route::post('login_ad', [\App\Http\Controllers\AuthController::class, 'login_ad']);
+        Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+        Route::post('refresh', [\App\Http\Controllers\AuthController::class, 'refresh']);
+        Route::post('me', [\App\Http\Controllers\AuthController::class, 'me']);
     });
 
-    Route::middleware('AccessAgeReport')->prefix('agereport')->group(function () {
+    Route::group(['middleware' => 'auth:api'], function () {
 
-        Route::get('/Access', function () {
-            return true;
-        });
+        Route::get('/validatedToken', function () {
 
-        Route::get('report/reports', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'getAll']);
-        Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
-        Route::get('report/condominiums', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'condominiums']);
-        Route::get('report/technical-control', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'technical_control']);
-        Route::get('report/dici', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'dici']);
-        Route::get('report/take-blip', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'takeBlip']);
-        Route::get('report/base-clients', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'base_clients']);
-        Route::get('report/sales', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'sales']);
-        Route::get('report/contracts-assigments', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contracts_assigments']);
-        Route::get('report/totals-calls', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'totals_calls']);
-        Route::get('report/contracts-so-opens', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contratcs_so_open']);
-        Route::get('report/teams-voalle', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'teams_voalle']);
-        Route::get('report/contracts-address', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contracts_address']);
-        Route::get('report/human-care', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'human_care']);
-        Route::get('report/new-assigments', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'new_assigments']);
-        Route::get('report/base-clients-active', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'base_clients_active']);
-    });
-
-
-    Route::middleware('AccessAgeRv')->prefix('agerv')->group(function () {
-
-        Route::get('/Access', function () {
-            $accesPermissions = \Illuminate\Support\Facades\DB::table('agerv_usuarios_permitidos as up')
-                                ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
-                                ->leftJoin('portal_nivel_acesso as na', 'up.nivel_acesso_id', '=', 'na.id')
-                                ->where('user_id', auth()->user()->id)
-                                ->select('cf.funcao', 'na.nivel')
-                                ->first();
             $access = null;
-            return [
-                'levelAccess' => $accesPermissions->nivel,
-                'function' => $accesPermissions->funcao
-            ];
-        });
-
-        Route::prefix('dashboard')->group(function () {
-            Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'seller']);
-        });
-
-        Route::middleware('AccessAdmin')->prefix('management')->group(function () {
-            Route::resource('collaborators', \App\Http\Controllers\AgeRv\CollaboratorController::class);
-            Route::get('collaborator/list/', [\App\Http\Controllers\AgeRv\CollaboratorController::class, 'showList']);
-            Route::post('new-user', [\App\Http\Controllers\UsersController::class, 'newUserAgeRv']);
-            Route::get('new-password/{id}', [\App\Http\Controllers\UsersController::class, 'newPasswordAgeRv']);
-            Route::resource('meta', \App\Http\Controllers\AgeRv\CollaboratorMetaController::class);
-        });
-
-        Route::prefix('analytics')->group(function () {
-            Route::get('/', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
-            Route::get('/payment', [\App\Http\Controllers\AgeRv\SalesRulesController::class, 'index']);
-            Route::post('/simulator', [\App\Http\Controllers\AgeRv\Management\SimulatorController::class, 'index']);
-        });
-
-        Route::resource('level', \App\Http\Controllers\LevelAccessController::class);
-        Route::resource('function', \App\Http\Controllers\FunctionController::class);
-
-        Route::resource('commission', \App\Http\Controllers\AgeRv\CommissionController::class);
-
-        Route::middleware('AccessMaster')->prefix('routines')->group(function () {
-            Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
-        });
-
-    });
-
-    Route::middleware('AccessAgeBoard')->prefix('ageboard')->group(function () {
-
-        Route::get('/Access', function () {
-            $accesPermissions = \Illuminate\Support\Facades\DB::table('ageboard_usuarios_permitidos as up')
-                ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
-                ->leftJoin('portal_nivel_acesso as na', 'up.nivel_acesso_id', '=', 'na.id')
-                ->where('user_id', auth()->user()->id)
-                ->select('cf.funcao', 'na.nivel')
+            $levelAccess = \App\Models\LevelAccess::
+            where('id', auth()->user()->nivel_acesso_id)
                 ->first();
 
-            $access = null;
-
             return [
-                'levelAccess' => $accesPermissions->nivel,
-                'function' => $accesPermissions->funcao
+                'levelAccess' => $levelAccess->nivel,
+                'status' => true
             ];
         });
 
-        Route::resource('dashboards', \App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class);
+        Route::middleware('AccessAdmin')->prefix('admin')->group(function () {
+
+            Route::resource('users', \App\Http\Controllers\UsersController::class);
+
+        });
+
+        Route::middleware('AccessAgeReport')->prefix('agereport')->group(function () {
+
+            Route::get('/Access', function () {
+                return true;
+            });
+
+            Route::get('report/reports', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'getAll']);
+            Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
+            Route::get('report/condominiums', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'condominiums']);
+            Route::get('report/technical-control', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'technical_control']);
+            Route::get('report/dici', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'dici']);
+            Route::get('report/take-blip', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'takeBlip']);
+            Route::get('report/base-clients', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'base_clients']);
+            Route::get('report/sales', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'sales']);
+            Route::get('report/contracts-assigments', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contracts_assigments']);
+            Route::get('report/totals-calls', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'totals_calls']);
+            Route::get('report/contracts-so-opens', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contratcs_so_open']);
+            Route::get('report/teams-voalle', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'teams_voalle']);
+            Route::get('report/contracts-address', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'contracts_address']);
+            Route::get('report/human-care', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'human_care']);
+            Route::get('report/new-assigments', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'new_assigments']);
+            Route::get('report/base-clients-active', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'base_clients_active']);
+        });
+
+
+        Route::middleware('AccessAgeRv')->prefix('agerv')->group(function () {
+
+            Route::get('/Access', function () {
+                $accesPermissions = \Illuminate\Support\Facades\DB::table('agerv_usuarios_permitidos as up')
+                    ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
+                    ->leftJoin('portal_nivel_acesso as na', 'up.nivel_acesso_id', '=', 'na.id')
+                    ->where('user_id', auth()->user()->id)
+                    ->select('cf.funcao', 'na.nivel')
+                    ->first();
+                $access = null;
+                return [
+                    'levelAccess' => $accesPermissions->nivel,
+                    'function' => $accesPermissions->funcao
+                ];
+            });
+
+            Route::prefix('dashboard')->group(function () {
+                Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'seller']);
+            });
+
+            Route::middleware('AccessAdmin')->prefix('management')->group(function () {
+                Route::resource('collaborators', \App\Http\Controllers\AgeRv\CollaboratorController::class);
+                Route::get('collaborator/list/', [\App\Http\Controllers\AgeRv\CollaboratorController::class, 'showList']);
+                Route::post('new-user', [\App\Http\Controllers\UsersController::class, 'newUserAgeRv']);
+                Route::get('new-password/{id}', [\App\Http\Controllers\UsersController::class, 'newPasswordAgeRv']);
+                Route::resource('meta', \App\Http\Controllers\AgeRv\CollaboratorMetaController::class);
+            });
+
+            Route::prefix('analytics')->group(function () {
+                Route::get('/', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
+                Route::get('/payment', [\App\Http\Controllers\AgeRv\SalesRulesController::class, 'index']);
+                Route::post('/simulator', [\App\Http\Controllers\AgeRv\Management\SimulatorController::class, 'index']);
+            });
+
+            Route::resource('level', \App\Http\Controllers\LevelAccessController::class);
+            Route::resource('function', \App\Http\Controllers\FunctionController::class);
+
+            Route::resource('commission', \App\Http\Controllers\AgeRv\CommissionController::class);
+
+            Route::middleware('AccessMaster')->prefix('routines')->group(function () {
+                Route::resource('/voalle-sales', \App\Http\Controllers\AgeRv\VoalleSalesController::class);
+            });
+
+        });
+
+        Route::middleware('AccessAgeBoard')->prefix('ageboard')->group(function () {
+
+            Route::get('/Access', function () {
+                $accesPermissions = \Illuminate\Support\Facades\DB::table('ageboard_usuarios_permitidos as up')
+                    ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
+                    ->leftJoin('portal_nivel_acesso as na', 'up.nivel_acesso_id', '=', 'na.id')
+                    ->where('user_id', auth()->user()->id)
+                    ->select('cf.funcao', 'na.nivel')
+                    ->first();
+
+                $access = null;
+
+                return [
+                    'levelAccess' => $accesPermissions->nivel,
+                    'function' => $accesPermissions->funcao
+                ];
+            });
+
+            Route::resource('dashboards', \App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class);
+
+        });
 
     });
 
-});
 
+});

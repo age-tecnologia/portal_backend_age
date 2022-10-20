@@ -7,6 +7,7 @@ use App\Http\Middleware\AgeBoard\AccessAgeBoard;
 use App\Http\Middleware\AgeReport\AccessReport;
 use App\Http\Middleware\AgeRv\AccessAdmin;
 use App\Http\Middleware\AgeRv\AccessAgeRv;
+use App\Http\Middleware\LogAccess;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -73,5 +74,6 @@ class Kernel extends HttpKernel
         'AccessAgeReport' => AccessReport::class,
         'AccessAdmin' => AccessAdmin::class,
         'AccessAgeBoard' => AccessAgeBoard::class,
+        'LogAccess' => LogAccess::class
     ];
 }
