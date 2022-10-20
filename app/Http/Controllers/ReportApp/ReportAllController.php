@@ -560,6 +560,11 @@ class ReportAllController extends Controller
 
     public function base_clients_active()
     {
+
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+
         $query = 'select
                     ac.contract_id as "Contrato",
                     p.name as "Nome cliente",
