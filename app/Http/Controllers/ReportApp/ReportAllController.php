@@ -558,4 +558,34 @@ class ReportAllController extends Controller
 
     }
 
+    public function base_clients_active()
+    {
+        $query = 'select
+                    ac.contract_id as "Contrato",
+                    p.name as "Nome cliente",
+                    lower(p.email)  as "E-mail",
+                    c.v_stage,
+                    c.v_status
+                    from erp.authentication_contracts ac
+                    left join erp.contracts c on c.id = ac.contract_id
+                    left join erp.people p on p.id = c.client_id
+                    left join erp.service_products sp on sp.id = ac.service_product_id
+                    where ac.user != \'\'
+                    and ac.user like \'ALCL%\'
+                    and c.v_status = \'Normal\'
+                    order by p.name';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+          'Contrato',
+          'Nome cliente',
+          'E-mail',
+          'Status',
+          'Situacao',
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'base_clients_active.xlsx');
+    }
+
 }
