@@ -10,5 +10,5 @@ class LogAccess extends Model
     use HasFactory;
 
     protected $table = 'log_access';
-    protected $fillable = ['endereco_ip', 'rota_solicitada'];
+    protected $fillable = ['endereco_ip', 'rota_solicitada', 'user_id'];
 }

@@ -20,8 +20,9 @@ class LogAccess
         $log = new \App\Models\LogAccess();
 
         $log->create([
-            'endereco_ip' => $_SERVER['REMOTE_ADDR'],
+            'endereco_ip' => $request->ip(),
             'rota_solicitada' => $request->path(),
+            'user_id' => auth()->user()->id ? auth()->user()->id : 0
         ]);
 
         return $next($request);
