@@ -569,6 +569,9 @@ class ReportAllController extends Controller
                     ac.contract_id as "Contrato",
                     p.name as "Nome cliente",
                     lower(p.email)  as "E-mail",
+                    p.street as "Endereço",
+                    p.number as "Número",
+                    p.neighborhood as "Cidade",
                     c.v_stage,
                     c.v_status
                     from erp.authentication_contracts ac
@@ -586,6 +589,9 @@ class ReportAllController extends Controller
           'Contrato',
           'Nome cliente',
           'E-mail',
+            'Endereço',
+            'Número',
+            'Cidade',
           'Status',
           'Situacao',
         ];
