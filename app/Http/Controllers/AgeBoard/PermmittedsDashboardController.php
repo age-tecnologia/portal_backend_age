@@ -35,10 +35,11 @@ class PermmittedsDashboardController extends Controller
     public function itensPermmitteds($id)
     {
         $itemPermitted = DB::table('ageboard_dashboards_itens as di')
-            ->leftJoin('ageboard_dashboards_itens_permissoes as dip', 'di.id', '=', 'dip.dashboard_id')
+            ->leftJoin('ageboard_dashboards_itens_permissoes as dip', 'di.id', '=', 'dip.item_id')
             ->where('dip.dashboard_id', $id)
             ->where('dip.user_id', auth()->user()->id)
             ->get(['di.id', 'di.item', 'di.iframe']);
+
 
         return $itemPermitted;
     }

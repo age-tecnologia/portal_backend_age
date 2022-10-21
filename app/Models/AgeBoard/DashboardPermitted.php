@@ -11,8 +11,4 @@ class DashboardPermitted extends Model
 
     protected $table = 'ageboard_dashboard_permissoes';
 
-    public function itens()
-    {
-        return $this->hasMany(ItemPermitted::class, 'dashboard_id', 'id');
-    }
 }
