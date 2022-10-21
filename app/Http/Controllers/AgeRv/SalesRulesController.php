@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AgeRv;
 
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\Master;
+use App\Http\Controllers\AgeRv\_aux\sales\analytics\Seller;
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\Supervisor;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -42,6 +43,13 @@ class SalesRulesController extends Controller
             $supervisor = new Supervisor($this->month, $this->year, $c->nome, $c->id);
 
             return $supervisor->response();
+
+        }  elseif ($c->funcao === 'Vendedor') {
+
+            $seller = new Seller($this->month, $this->year, $c->nome, $c->id);
+
+            return $seller->response();
+
         } else {
             return response()->json(["Unauthorized"], 401);
         }

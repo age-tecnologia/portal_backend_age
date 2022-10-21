@@ -30,7 +30,7 @@ class ValueStar
                 $this->minMeta = 70;
             } elseif (($this->month === '08' || $this->month === '09') && $this->year === '2022') {
                 $this->minMeta = 60;
-            } elseif ($this->month === '10' && $this->year === '2022') {
+            } elseif ($this->month >= '10' && $this->year === '2022') {
                 $this->minMeta = 70;
             }
 

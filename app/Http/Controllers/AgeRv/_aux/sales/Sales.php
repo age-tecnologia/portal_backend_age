@@ -28,8 +28,13 @@ class Sales
             }
         });
 
+
         $this->collaboratorSalesValid = $this->collaboratorData->filter(function ($sale) {
-            if(Carbon::parse($sale->data_ativacao)->diffInDays($sale->data_cancelamento) >= 7) {
+            if($sale->situacao === 'Cancelado') {
+                if(Carbon::parse($sale->data_ativacao)->diffInDays(Carbon::parse($sale->data_cancelamento)) >= 7) {
+                    return $sale;
+                }
+            } else {
                 return $sale;
             }
         });
