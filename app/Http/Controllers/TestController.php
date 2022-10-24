@@ -29,16 +29,36 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
-        $query = $request->input('query');
+        $this->month = $request->input('month');
+        $this->year = $request->input('year');
 
-        $query = Str::replaceFirst('#', $request->input('first'), $query);
-        $query = Str::replaceLast('#', $request->input('last'), $query);
+        $data = VoalleSales::where(function ($query) {
+                            $query->whereMonth('data_ativacao','>=', ($this->month - 1))->whereMonth('data_vigencia', $this->month)->whereYear('data_ativacao', $this->year);
+                            })
+                            ->whereStatus('Aprovado')
+                            ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
+                                                            id_contrato,
+                                                            status, situacao,
+                                                            data_contrato, data_ativacao, data_vigencia, data_cancelamento,
+                                                            plano,
+                                                            nome_cliente')
+                            ->get()->unique(['id_contrato']);
 
-        return $query;
+        foreach($data as $item => $value) {
+            return $value->vendedor;
+        }
 
-        $result = DB::connection('mysql')->select($query);
 
-        return $result;
+//        $query = $request->input('query');
+//
+//        $query = Str::replaceFirst('#', $request->input('first'), $query);
+//        $query = Str::replaceLast('#', $request->input('last'), $query);
+//
+//        return $query;
+//
+//        $result = DB::connection('mysql')->select($query);
+//
+//        return $result;
 
     }
 

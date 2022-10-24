@@ -599,4 +599,51 @@ class ReportAllController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'base_clients_active.xlsx');
     }
 
+    public function productive_retenction()
+    {
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+        $query = 'select
+                a.title as "Protocolo des",
+                vu.name as "Atendente Origem",
+                cs.title as "Catalago de Servido" ,
+                csi.title as "itens de serviço",
+                csc.title  as "Sub item",
+                sp.title as "Problema",
+                sc.title as "Contexto",
+                a.beginning_date as "data abertura",
+                p2.name as "Cliente"
+                from erp.assignments a
+                left join erp.assignment_incidents ai on ai.assignment_id = a.id
+                left join erp.incident_types it on it.id = ai.incident_type_id
+                left join erp.catalog_services cs on cs.id = ai.catalog_service_id
+                left join erp.catalog_services_items csi on csi.id = ai.catalog_service_item_id
+                left join erp.catalog_service_item_classes csc on csc.id = ai.catalog_service_item_class_id
+                left join erp.solicitation_problems sp on sp.id = ai.solicitation_problem_id
+                left join erp.solicitation_classifications sc on sc.id = ai.solicitation_classification_id
+                left join erp.people p on p.id = a.responsible_id
+                left join erp.people p2 on p2.id = a.requestor_id
+                left join erp.v_users vu on vu.id = a.created_by
+                where it.id = 1068';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+          'Descrição do protocolo',
+          'Atendente origem',
+          'Catálogo de serviço',
+          'Sub item',
+          'Problema',
+          'Contexto',
+          'Data da abertura',
+          'Cliente'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'productive_retenction.xlsx');
+
+
+
+    }
+
 }
