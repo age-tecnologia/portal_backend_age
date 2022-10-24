@@ -29,25 +29,6 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
-//        $this->month = $request->input('month');
-//        $this->year = $request->input('year');
-//
-//        $data = VoalleSales::where(function ($query) {
-//                            $query->whereMonth('data_ativacao','>=', ($this->month - 1))->whereMonth('data_vigencia', $this->month)->whereYear('data_ativacao', $this->year);
-//                            })
-//                            ->whereStatus('Aprovado')
-//                            ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
-//                                                            id_contrato,
-//                                                            status, situacao,
-//                                                            data_contrato, data_ativacao, data_vigencia, data_cancelamento,
-//                                                            plano,
-//                                                            nome_cliente')
-//                            ->get()->unique(['id_contrato']);
-//
-//        foreach($data as $item => $value) {
-//            return $value->vendedor;
-//        }
-
 
 //        $query = $request->input('query');
 //

@@ -30,17 +30,28 @@ class Master
         $this->year = $year;
 
 
-        $this->data = VoalleSales::where(function ($query) {
-                                    $query->whereMonth('data_ativacao','>=', ($this->month - 1))->whereMonth('data_vigencia', $this->month)->whereYear('data_ativacao', $this->year);
-                                })
-                                ->whereStatus('Aprovado')
-                                ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
-                                            id_contrato,
-                                            status, situacao,
-                                            data_contrato, data_ativacao, data_vigencia, data_cancelamento,
-                                            plano,
-                                            nome_cliente')
-                                ->get()->unique(['id_contrato']);
+//        $this->data = VoalleSales::where(function ($query) {
+//                                    $query->whereMonth('data_ativacao','>=', ($this->month - 1))->whereMonth('data_vigencia', $this->month)->whereYear('data_ativacao', $this->year);
+//                                })
+//                                ->whereStatus('Aprovado')
+//                                ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
+//                                            id_contrato,
+//                                            status, situacao,
+//                                            data_contrato, data_ativacao, data_vigencia, data_cancelamento,
+//                                            plano,
+//                                            nome_cliente')
+//                                ->get()->unique(['id_contrato']);
+
+        $this->data = \App\Models\AgeRv\Commission::where('mes_competencia', $this->month)
+                                                    ->where('ano_competencia', $this->year)
+                                                    ->whereStatus('Aprovado')
+                                                    ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
+                                                                                    id_contrato,
+                                                                                    status, situacao,
+                                                                                    data_contrato, data_ativacao, data_vigencia, data_cancelamento,
+                                                                                    plano,
+                                                                                    nome_cliente')
+                                                    ->get()->unique(['id_contrato']);
 
         $this->channels = Channel::get(['id', 'canal']);
     }
