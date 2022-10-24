@@ -29,6 +29,16 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
+        $query = $request->input('query');
+
+        $query = Str::replaceFirst('#', $request->input('first'), $query);
+        $query = Str::replaceLast('#', $request->input('last'), $query);
+
+        return $query;
+
+        $result = DB::connection('mysql')->select($query);
+
+        return $result;
 
     }
 

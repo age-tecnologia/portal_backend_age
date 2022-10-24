@@ -66,6 +66,8 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                 return true;
             });
 
+            Route::resource('users-permiteds', \App\Http\Controllers\ReportApp\AccessUsersController::class);
+
             Route::get('report/reports', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'getAll']);
             Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
             Route::get('report/condominiums', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'condominiums']);

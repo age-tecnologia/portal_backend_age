@@ -18,7 +18,7 @@ class ReportAllController extends Controller
         $reports = DB::table('agereport_relatorios as r')
             ->leftJoin('agereport_relatorios_permissoes as rp', 'r.id', 'rp.relatorio_id')
             ->where('rp.user_id', auth()->user()->id)
-            ->get(['r.nome', 'r.nome_arquivo', 'r.url', 'r.isPeriodo']);
+            ->get(['r.nome', 'r.nome_arquivo', 'r.url', 'r.isPeriodo', 'r.id']);
 
         return $reports;
     }
