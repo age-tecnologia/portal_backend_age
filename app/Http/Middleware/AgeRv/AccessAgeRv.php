@@ -20,7 +20,6 @@ class AccessAgeRv
         $collaborator = AccessPermission::where('user_id', auth()->user()->id)->first();
         $level = auth()->user()->nivel_acesso_id;
 
-
         if((isset($collaborator->id)) ||
             $level === 2 ||
             $level === 3) {

@@ -91,17 +91,29 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
         Route::middleware('AccessAgeRv')->prefix('agerv')->group(function () {
 
             Route::get('/Access', function () {
-                $accesPermissions = \Illuminate\Support\Facades\DB::table('agerv_usuarios_permitidos as up')
-                    ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
-                    ->leftJoin('portal_nivel_acesso as na', 'up.nivel_acesso_id', '=', 'na.id')
-                    ->where('user_id', auth()->user()->id)
-                    ->select('cf.funcao', 'na.nivel')
-                    ->first();
-                $access = null;
-                return [
-                    'levelAccess' => $accesPermissions->nivel,
-                    'function' => $accesPermissions->funcao
-                ];
+
+                $level = auth()->user()->nivel_acesso_id;
+
+                if($level === 2 || $level === 3) {
+
+                    return [
+                        'levelAccess' => 'Admin',
+                        'function' => 'Admin'
+                    ];
+
+                } else {
+                    $accesPermissions = \Illuminate\Support\Facades\DB::table('agerv_usuarios_permitidos as up')
+                        ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
+                        ->leftJoin('portal_nivel_acesso as na', 'up.nivel_acesso_id', '=', 'na.id')
+                        ->where('user_id', auth()->user()->id)
+                        ->select('cf.funcao', 'na.nivel')
+                        ->first();
+                    $access = null;
+                    return [
+                        'levelAccess' => $accesPermissions->nivel,
+                        'function' => $accesPermissions->funcao
+                    ];
+                }
             });
 
             Route::prefix('dashboard')->group(function () {

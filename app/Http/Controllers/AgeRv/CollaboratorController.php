@@ -161,7 +161,7 @@ class CollaboratorController extends Controller
     public function showList(Request $request)
     {
 
-        $collaborators = Collaborator::where('nome', 'LIKE', '%'.$request->input('name').'%')->limit(5)->get();
+        $collaborators = Collaborator::where('nome', 'LIKE', '%'.$request->json('name').'%')->limit(5)->get();
 
         return response()->json($collaborators, 201);
     }
