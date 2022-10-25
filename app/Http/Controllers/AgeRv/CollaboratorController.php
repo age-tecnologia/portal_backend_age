@@ -162,7 +162,7 @@ class CollaboratorController extends Controller
     {
         header("Access-Control-Allow-Origin: *");
 
-        $collaborators = Collaborator::where('nome', 'LIKE', '%'.$request->json('name').'%')->limit(5)->get();
+        $collaborators = Collaborator::where('nome', 'LIKE', '%'.$request->input('name').'%')->limit(5)->get();
 
         return response()->json($collaborators, 201);
     }
