@@ -18,11 +18,12 @@ class AccessAgeRv
     public function handle(Request $request, Closure $next)
     {
         $collaborator = AccessPermission::where('user_id', auth()->user()->id)->first();
+        $level = auth()->user()->nivel_acesso_id;
+
 
         if((isset($collaborator->id)) ||
-            auth()->user()->isAdmin === 1 ||
-            auth()->user()->isMaster === 1 ||
-            auth()->user()->isCommittee === 1 ) {
+            $level === 2 ||
+            $level === 3) {
             return $next($request);
         } else {
             return response()->json(['Usuário não tem permissão para acessar o sistema!'], 403);
