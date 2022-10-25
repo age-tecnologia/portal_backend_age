@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ReportApp;
 
 use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
+use App\Models\AgeReport\Report;
 use App\Models\AgeReport\ReportPermission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -15,6 +16,14 @@ class ReportAllController extends Controller
 
     public function getAll()
     {
+        $level = auth()->user()->nivel_acesso_id;
+
+        if($level === 2 || $level === 3) {
+            $reports = Report::all(['nome', 'nome_arquivo', 'url', 'isPeriodo', 'id']);
+
+            return $reports;
+        }
+
         $reports = DB::table('agereport_relatorios as r')
             ->leftJoin('agereport_relatorios_permissoes as rp', 'r.id', 'rp.relatorio_id')
             ->where('rp.user_id', auth()->user()->id)
