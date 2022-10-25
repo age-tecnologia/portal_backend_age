@@ -160,6 +160,7 @@ class CollaboratorController extends Controller
 
     public function showList(Request $request)
     {
+        header("Access-Control-Allow-Origin: *");
 
         $collaborators = Collaborator::where('nome', 'LIKE', '%'.$request->json('name').'%')->limit(5)->get();
 
