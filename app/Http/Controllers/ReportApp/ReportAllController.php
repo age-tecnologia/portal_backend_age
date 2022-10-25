@@ -606,6 +606,7 @@ class ReportAllController extends Controller
 
         $query = 'select
                 a.title as "Protocolo des",
+                ai.protocol as "Nº protocolo",
                 vu.name as "Atendente Origem",
                 cs.title as "Catalago de Servido" ,
                 csi.title as "itens de serviço",
@@ -613,7 +614,8 @@ class ReportAllController extends Controller
                 sp.title as "Problema",
                 sc.title as "Contexto",
                 a.beginning_date as "data abertura",
-                p2.name as "Cliente"
+                p2.name as "Cliente",
+                p2.id as "ID cliente"
                 from erp.assignments a
                 left join erp.assignment_incidents ai on ai.assignment_id = a.id
                 left join erp.incident_types it on it.id = ai.incident_type_id
