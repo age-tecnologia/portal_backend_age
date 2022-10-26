@@ -657,4 +657,37 @@ class ReportAllController extends Controller
 
     }
 
+
+    public function contracts_seller()
+    {
+        $query = 'select
+                c.id as "N° contrato",
+                p.name as "Cliente",
+                c.date as "Dt cadastro",
+                c.cancellation_date as "Dt cancelamento",
+                c.v_stage as "Status",
+                c.v_status as "Situação",
+                p1.name as "Vendedor 1",
+                p2.name as "Vendedor 2"
+                from erp.contracts c
+                left join erp.people p on p.id = c.client_id
+                left join erp.people p1 on p1.id = c.seller_1_id
+                left join erp.people p2 on p2.id = c.seller_2_id';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Nº do contrato',
+            'Cliente',
+            'Data do cadastro',
+            'Data do cancelamento',
+            'Status',
+            'Situacao',
+            'Vendedor',
+            'Supervisor'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'contracts_seller.xlsx');
+
+    }
 }
