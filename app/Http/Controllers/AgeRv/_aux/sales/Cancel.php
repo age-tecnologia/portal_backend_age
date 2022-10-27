@@ -38,4 +38,15 @@ class Cancel
         return count($this->cancel);
     }
 
+    public function getExtractCancelArray()
+    {
+        $array = [];
+
+        foreach($this->cancel as $key => $value) {
+            $array[] = $value;
+        }
+
+        return $array;
+    }
+
 }

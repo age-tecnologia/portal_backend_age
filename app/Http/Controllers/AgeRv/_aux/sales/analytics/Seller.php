@@ -68,7 +68,7 @@ class Seller
             ],
             'cancel' => [
                 'count' => $cancel->getCountCancel(),
-                'extract' => $cancel->getExtractCancel()
+                'extract' => $cancel->getExtractCancelArray()
             ],
             'meta' => $meta->getMeta(),
             'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),
