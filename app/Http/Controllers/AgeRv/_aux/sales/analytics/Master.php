@@ -117,7 +117,7 @@ class Master
                 ],
                 'meta' => $meta->getMeta(),
                 'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),
-                'valueStar' => $valueStar->getValueStar(),
+                'valueStar' => number_format($valueStar->getValueStar(), 2),
                 'stars' => $stars->getStars(),
                 'mediator' => $channelId !== 3 ? $cancel->getCountCancel() > 0 ? -10 : 10 : 0,
                 'commission' => number_format($commission->getCommission(), 2, ',', '.')

@@ -58,7 +58,7 @@ class ValueStar
                 } elseif ($this->metaPercent >= 141) {
                     $this->valueStar = 7;
                 }
-            } elseif (($this->month === '08' || $this->month === '09') && $this->year === '2022') {
+            } elseif (($this->month === '08') && $this->year === '2022') {
 
                 if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                     $this->valueStar = 2.50;
@@ -69,7 +69,7 @@ class ValueStar
                 } elseif ($this->metaPercent >= 141) {
                     $this->valueStar = 10;
                 }
-            } elseif (($this->month >= '10') && $this->year === '2022') {
+            } elseif (($this->month >= '09') && $this->year === '2022') {
 
                 if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                     $this->valueStar = 2.50;
@@ -95,7 +95,7 @@ class ValueStar
                 } elseif ($this->metaPercent >= 141) {
                     $this->valueStar = 1.30;
                 }
-            } elseif (($this->month === '08' || $this->month === '09') && $this->year === '2022') {
+            } elseif (($this->month === '08') && $this->year === '2022') {
 
                 if ($this->metaPercent >= 60 && $this->metaPercent < 100) {
                     $this->valueStar = 0.6;
@@ -107,16 +107,16 @@ class ValueStar
                     $this->valueStar = 3;
                 }
 
-            } elseif ($this->month >= '10' && $this->year === '2022') {
+            } elseif ($this->month >= '09' && $this->year === '2022') {
 
                 if ($this->metaPercent >= 70 && $this->metaPercent < 80) {
-                    $this->valueStar = 50;
+                    $this->valueStar = .5;
                 } elseif ($this->metaPercent >= 80 && $this->metaPercent < 90) {
-                    $this->valueStar = 60;
+                    $this->valueStar = .6;
                 } elseif ($this->metaPercent >= 90 && $this->metaPercent < 100) {
-                    $this->valueStar = 80;
+                    $this->valueStar = .8;
                 } elseif ($this->metaPercent >= 100) {
-                    $this->valueStar = $this->metaPercent;
+                    $this->valueStar = ($this->metaPercent / 100);
                 }
 
             }
