@@ -31,7 +31,7 @@ class ValueStar
             } elseif (($this->month === '08' || $this->month === '09') && $this->year === '2022') {
                 $this->minMeta = 60;
             } elseif ($this->month >= '10' && $this->year === '2022') {
-                $this->minMeta = 70;
+                $this->minMeta = 60;
             }
 
             // Regra e valores vigentes até o momento -- 09/10/2022
