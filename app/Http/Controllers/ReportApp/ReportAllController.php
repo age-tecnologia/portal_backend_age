@@ -664,30 +664,49 @@ class ReportAllController extends Controller
         ini_set('memory_limit', '2048M');
 
         $query = 'select
-                c.id as "N° contrato",
-                p.name as "Cliente",
-                c.date as "Dt cadastro",
-                c.cancellation_date as "Dt cancelamento",
-                c.v_stage as "Status",
-                c.v_status as "Situação",
-                p1.name as "Vendedor 1",
-                p2.name as "Vendedor 2"
-                from erp.contracts c
-                left join erp.people p on p.id = c.client_id
-                left join erp.people p1 on p1.id = c.seller_1_id
-                left join erp.people p2 on p2.id = c.seller_2_id';
+                    vc.client_name as "Cliente",
+                    vc.id as "N° Contrato",
+                    vc.contract_type_title as "Tipo",
+                    vc.date as "Dt. Cadastro",
+                    c.beginning_date as "Vigência de",
+                    c.final_date as "Dt. Término",
+                    c.suspension_days as "SuspensÃ£o em",
+                    c.collection_day as "Dia Cobrança",
+                    vc.financial_collection_type_title as "Tipo de Cobrança",
+                    vc.seller1_name as "Vendedor 1",
+                    vc.seller2_name as "Vendedor 2",
+                    vc.amount as "Valor",
+                    vc.v_status as "Situação",
+                    vc.v_stage as "Status",
+                    c.cancellation_date as "Dt. Cancelamento",
+                    c.cancellation_motive as "Motivo do Cancelamento",
+                    vu.name as "Criado por",
+                    aap.title as "PE Contabilizado"
+                    from erp.v_contracts vc
+                    left join erp.contracts c on c.id = vc.id
+                    left join erp.authentication_access_points aap on aap.id = c.authentication_access_point_id
+                    left join erp.v_users vu on vu.id = c.created_by';
 
         $result = DB::connection('pgsql')->select($query);
 
         $headers = [
-            'Nº do contrato',
             'Cliente',
+            'Nº contrato',
             'Data do cadastro',
-            'Data do cancelamento',
+            'Vigência de',
+            'Dt. Término',
+            'Suspenção em',
+            'Dia cobrança',
+            'Tipo de cobrança',
+            'Vendedor 1',
+            'Vendedor 2',
+            'Valor',
+            'Situação',
             'Status',
-            'Situacao',
-            'Vendedor',
-            'Supervisor'
+            'Dt. Cancelamento',
+            'Motivo do Cancelamento',
+            'Criado por',
+            'PE Contabilizado'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'contracts_seller.xlsx');
