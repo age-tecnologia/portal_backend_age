@@ -692,6 +692,7 @@ class ReportAllController extends Controller
         $headers = [
             'Cliente',
             'Nº contrato',
+            'Tipo',
             'Data do cadastro',
             'Vigência de',
             'Dt. Término',
