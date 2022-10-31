@@ -31,6 +31,10 @@ class TestController extends Controller
     {
 
 
+        $users = User::all();
+
+
+
 //        $query = $request->input('query');
 //
 //        $query = Str::replaceFirst('#', $request->input('first'), $query);
