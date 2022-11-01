@@ -856,7 +856,7 @@ class ReportAllController extends Controller
 
     public function leads_black()
     {
-        $query = 'select nome, email, telefone from leads';
+        $query = 'select nome, email, telefone, created_at from leads';
 
         $result = DB::connection('mysql')->select($query);
 
@@ -864,6 +864,7 @@ class ReportAllController extends Controller
             'Nome',
             'E-mail',
             'Telefone',
+            'data_registro'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'leads_black_fibra.xlsx');
