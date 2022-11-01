@@ -635,7 +635,7 @@ class ReportAllController extends Controller
                 left join erp.solicitation_problems sp on sp.id = ai.solicitation_problem_id
                 left join erp.solicitation_classifications sc on sc.id = ai.solicitation_classification_id
                 left join erp.people p on p.id = a.responsible_id
-                left join erp.contracts c on p.id = c.people_id
+                left join erp.contracts c on p.id = c.client_id
                 left join erp.people p2 on p2.id = a.requestor_id
                 left join erp.v_users vu on vu.id = a.created_by
                 where it.id = 1068';
