@@ -184,3 +184,8 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
 
 
 });
+
+
+Route::prefix('assine')->group(function() {
+    Route::resource('/leads', \App\Http\Controllers\LeadsController::class);
+});
