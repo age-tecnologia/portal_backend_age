@@ -856,8 +856,7 @@ class ReportAllController extends Controller
 
     public function leads_black()
     {
-        $leads = Leads::all(['nome', 'email', 'telefone']);
-
+        $query = 'select nome, email, telefone from leads';
 
         $result = DB::connection('mysql')->select($query);
 
