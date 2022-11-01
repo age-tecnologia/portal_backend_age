@@ -614,7 +614,6 @@ class ReportAllController extends Controller
         ini_set('memory_limit', '2048M');
 
         $query = 'select
-                c.id as "Nº contrato",
                 a.title as "Protocolo des",
                 ai.protocol as "Nº protocolo",
                 vu.name as "Atendente Origem",
@@ -635,7 +634,6 @@ class ReportAllController extends Controller
                 left join erp.solicitation_problems sp on sp.id = ai.solicitation_problem_id
                 left join erp.solicitation_classifications sc on sc.id = ai.solicitation_classification_id
                 left join erp.people p on p.id = a.responsible_id
-                left join erp.contracts c on p2.id = c.client_id
                 left join erp.people p2 on p2.id = a.requestor_id
                 left join erp.v_users vu on vu.id = a.created_by
                 where it.id = 1068';
@@ -643,15 +641,17 @@ class ReportAllController extends Controller
         $result = DB::connection('pgsql')->select($query);
 
         $headers = [
-        'Nº contrato',
           'Descrição do protocolo',
+          'Nº do protocolo',
           'Atendente origem',
           'Catálogo de serviço',
+          'Itens de serviço',
           'Sub item',
           'Problema',
           'Contexto',
           'Data da abertura',
-          'Cliente'
+          'Cliente',
+            'ID cliente'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'productive_retenction.xlsx');
