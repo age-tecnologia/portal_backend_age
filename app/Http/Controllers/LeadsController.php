@@ -45,7 +45,7 @@ class LeadsController extends Controller
         ]);
 
         if(isset($lead->nome)) {
-            return response()->json(['msg' => 'Sucesso'], 201);
+            return response()->json(['msg' => 'Solicitação realizada, em breve entraremos em contato!'], 201);
         }
     }
 
