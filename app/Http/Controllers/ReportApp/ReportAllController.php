@@ -6,6 +6,7 @@ use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\AgeReport\Report;
 use App\Models\AgeReport\ReportPermission;
+use App\Models\Leads;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -660,7 +661,6 @@ class ReportAllController extends Controller
 
     }
 
-
     public function contracts_seller()
     {
         set_time_limit(2000);
@@ -852,5 +852,21 @@ class ReportAllController extends Controller
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'against_evidence.xlsx');
 
+    }
+
+    public function leads_black()
+    {
+        $leads = Leads::all(['nome', 'email', 'telefone']);
+
+
+        $result = DB::connection('mysql')->select($query);
+
+        $headers = [
+            'Nome',
+            'E-mail',
+            'Telefone',
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'leads_black_fibra.xlsx');
     }
 }
