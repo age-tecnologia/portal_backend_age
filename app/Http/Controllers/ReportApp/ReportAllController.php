@@ -583,7 +583,8 @@ class ReportAllController extends Controller
                     p.number as "Número",
                     p.neighborhood as "Cidade",
                     c.v_stage,
-                    c.v_status
+                    c.v_status,
+                    c.activation_date as "Data ativação",
                     from erp.authentication_contracts ac
                     left join erp.contracts c on c.id = ac.contract_id
                     left join erp.people p on p.id = c.client_id
@@ -604,6 +605,7 @@ class ReportAllController extends Controller
             'Cidade',
           'Status',
           'Situacao',
+            'Data_ativacao'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'base_clients_active.xlsx');
