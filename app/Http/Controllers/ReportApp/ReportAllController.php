@@ -872,6 +872,10 @@ class ReportAllController extends Controller
 
     public function monest()
     {
+
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
         $query = 'select
                   cp.name_2  as "Local",
                   f.client_id as "Código cliente",
