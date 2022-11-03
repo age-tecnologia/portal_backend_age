@@ -584,7 +584,7 @@ class ReportAllController extends Controller
                     p.neighborhood as "Cidade",
                     c.v_stage,
                     c.v_status,
-                    c.activation_date as "Data ativação",
+                    c.activation_date as "Data ativação"
                     from erp.authentication_contracts ac
                     left join erp.contracts c on c.id = ac.contract_id
                     left join erp.people p on p.id = c.client_id
