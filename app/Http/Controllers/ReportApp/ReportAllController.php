@@ -584,11 +584,12 @@ class ReportAllController extends Controller
                     p.neighborhood as "Cidade",
                     c.v_stage,
                     c.v_status,
-                    c.activation_date as "Data ativação"
+                    caa.activation_date as "Data ativação"
                     from erp.authentication_contracts ac
                     left join erp.contracts c on c.id = ac.contract_id
                     left join erp.people p on p.id = c.client_id
                     left join erp.service_products sp on sp.id = ac.service_product_id
+                    left join erp.contract_assignment_activations caa ON caa.contract_id = c.id
                     where ac.user != \'\'
                     and ac.user like \'ALCL%\'
                     and c.v_status = \'Normal\'
