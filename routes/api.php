@@ -89,6 +89,8 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
             Route::get('report/against-evidence', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'against_evidence']);
             Route::get('report/leads-black', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'leads_black']);
             Route::get('report/monest', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'monest']);
+            Route::get('report/renove', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'renove']);
+            Route::get('report/receivables-clients', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'receivables_clients']);
         });
 
 

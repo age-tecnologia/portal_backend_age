@@ -601,12 +601,12 @@ class ReportAllController extends Controller
           'Contrato',
           'Nome cliente',
           'E-mail',
-            'Endereço',
-            'Número',
-            'Cidade',
+          'Endereço',
+          'Número',
+          'Cidade',
           'Status',
           'Situacao',
-            'Data_ativacao'
+          'Data_ativacao'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'base_clients_active.xlsx');
@@ -655,7 +655,7 @@ class ReportAllController extends Controller
           'Contexto',
           'Data da abertura',
           'Cliente',
-            'ID cliente'
+          'ID cliente'
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'productive_retenction.xlsx');
@@ -722,6 +722,10 @@ class ReportAllController extends Controller
 
     public function renove()
     {
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+
         $query = 'select
                   cp.name_2  as "Local",
                   f.client_id as "Código cliente",
@@ -776,6 +780,47 @@ class ReportAllController extends Controller
                 and (f.original_expiration_date - current_date) >= 30';
 
         $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Local',
+            'Código do cliente',
+            'Nome',
+            'Documento',
+            'Tipo de Documento',
+            'Contato 1',
+            'Contato 2',
+            'E-mail',
+            'Nº do título',
+            'Parcela',
+            'Nosso Nº',
+            'Valor do título',
+            'Saldo',
+            'Acréscimo',
+            'Multa',
+            'Emissão',
+            'Vencimento',
+            'Vencimento Original',
+            'Operação',
+            'Natureza Financeira',
+            'Tipo de cobrança',
+            'Condições do pagamento',
+            'Complemento',
+            'Nº do contrato',
+            'Competência',
+            'Baixado',
+            'Linha editável',
+            'Excluído',
+            'Em aberto',
+            'Título reagendado',
+            'Vencimento (Filtro)',
+            'Situação',
+            'Status',
+            'Dias Bloqueado',
+            'Data último pagamento'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'renove.xlsx');
+
 
     }
 
@@ -972,5 +1017,55 @@ class ReportAllController extends Controller
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'monest.xlsx');
+    }
+
+    public function receivables_clients()
+    {
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+        $query = 'select
+                    fr.contract_id  as "N° Contrato",
+                  cp.tx_id as "CNPJs",
+                  fn.title as "Natureza financeira",
+                  freci.complement  as "Referencia",
+                  fr.title as "Título",
+                  freci.receipt_date  as "Data Pagamento",
+                  fr.competence as "competence",
+                  freci.amount as "VALOR NO VOALLE",
+                  freci.increase_amount,
+                  freci.discount_value as "desconto",
+                  freci.fine_amount as "juros e multa",
+                  freci.evolution_amount,
+                  freci.total_amount as "valor total recebido"
+                from financial_receipt_titles freci
+                left join financial_receivable_titles fr on fr.id = freci.financial_receivable_title_id
+                left join companies_places cp on cp.id = fr.company_place_id
+                left join financers_natures fn on fn.id = freci.financer_nature_id
+                where fr.title not like \'FAT%\'
+                AND freci.receipt_date between \'2021-04-01\' AND \'2022-07-31\'
+                AND freci.deleted = FALSE
+                AND freci.finished = false';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Nº do contrato',
+            'CNPJs',
+            'Natureza financeira',
+            'Referencia',
+            'Título',
+            'Data do pagamento',
+            'Competencia',
+            'Valor',
+            'increase_amount',
+            'Desconto',
+            'Juros e multa',
+            'evolution_amount',
+            'Valor total recebido'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'receivables_clients.xlsx');
+
     }
 }
