@@ -1066,8 +1066,6 @@ class ReportAllController extends Controller
 
         $result = DB::connection('pgsql')->select($query);
 
-        return $result;
-
         $headers = [
             'Nº do contrato',
             'CNPJs',
