@@ -729,14 +729,9 @@ class ReportAllController extends Controller
         $query = 'select
                   cp.name_2  as "Local",
                   f.client_id as "Código cliente",
-                  p.name as "Nome",
-                  p.tx_id as "Documento",
-                  CASE WHEN P.type_tx_id = 1 then \'CNPJ\'
-                       WHEN P.type_tx_id = 2 then \'CPF\'
-                   END as "Tipo de documento",
-                  p.phone as "contato 1",
-                  p.cell_phone_1 as "contato 2",
-                  p.email as "E-mail",
+                  p.name as "Cliente",
+                  p.phone as "Telefone",
+                  p.cell_phone_1 as "Celular",
                   f.title as "N° Título",
                   f.parcel as "Parcela",
                   f.bank_title_number as "Nosso N°",
@@ -758,13 +753,11 @@ class ReportAllController extends Controller
                   f.typeful_line as "linha editável",
                   f.deleted as "Excluído",
                   f.p_is_receivable "Em Aberto",
+                  frt.client_paid_date as "Dt Último Pagamento",
                   f.p_has_before_update_info as "Título Reagendado",
                   f.issue_date as "Vencimento (filtro)",
-                  f.renegotiated as "Título Renegociado",
-                  c.v_status as "Situação",
-                  c.v_stage as "Status",
-                  cbd.number_of_days as "Dias Bloqueado",
-                  frt.client_paid_date as "Dt Último Pagamento"
+                  ( current_date - f.issue_date  ) as "Dias em atraso",
+                  f.renegotiated as "Título Renegociado"
                 from erp.financial_receivable_titles f
                 Left join erp.people p on p.id = f.client_id
                 Left join erp.companies_places cp on  cp.id = f.company_place_id
@@ -777,19 +770,16 @@ class ReportAllController extends Controller
                 where f.title like \'FAT%\'
                 and f.deleted is false
                 and f.p_is_receivable is true
-                and (f.original_expiration_date - current_date) >= 30';
+                and (current_date - f.issue_date ) >= 30';
 
         $result = DB::connection('pgsql')->select($query);
 
         $headers = [
             'Local',
             'Código do cliente',
-            'Nome',
-            'Documento',
-            'Tipo de Documento',
-            'Contato 1',
-            'Contato 2',
-            'E-mail',
+            'Cliente',
+            'Telefone',
+            'Celular',
             'Nº do título',
             'Parcela',
             'Nosso Nº',
@@ -811,12 +801,11 @@ class ReportAllController extends Controller
             'Linha editável',
             'Excluído',
             'Em aberto',
+            'Data último pagamento',
             'Título reagendado',
-            'Vencimento (Filtro)',
-            'Situação',
-            'Status',
-            'Dias Bloqueado',
-            'Data último pagamento'
+            'Vencimento (filtro)',
+            'Dias em atraso',
+            'Título renegociado',
         ];
 
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'renove.xlsx');
