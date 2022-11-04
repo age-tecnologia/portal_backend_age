@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ReportExport;
 use App\Exports\UsersExport;
 use App\Http\Controllers\AgeRv\_aux\sales\Stars;
+use App\Ldap\UserLdap;
 use App\Models\AgeReport\Report;
 use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
@@ -31,7 +32,9 @@ class TestController extends Controller
     {
 
 
+        $users = UserLdap::limit(1)->get(['name']);
 
+        return $users[0]['name'];
 
 
 
