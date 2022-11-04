@@ -31,7 +31,7 @@ class TestController extends Controller
     {
 
 
-        $users = User::all();
+
 
 
 
