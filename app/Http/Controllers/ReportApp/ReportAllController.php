@@ -1046,19 +1046,21 @@ class ReportAllController extends Controller
                 AND freci.deleted = FALSE
                 AND freci.finished = false';
 
-        if ($request->input('firstPeriod') !== null && $request->input('lastPeriod') === null) {
-            $query = $query.' AND freci.receipt_date >= \''.$request->input('firstPeriod').'\'';
+        $firstPeriod = Carbon::parse($request->input('firstPeriod'))->format('Y-m-d');
+        $lastPeriod = Carbon::parse($request->input('lastPeriod'))->format('Y-m-d');
 
-        } elseif ($request->input('firstPeriod') === null && $request->input('lastPeriod') !== null) {
+        if ($firstPeriod !== null && $lastPeriod === null) {
+            $query = $query.' AND freci.receipt_date >= \''.$firstPeriod.'\'';
 
-            $query = $query.' AND freci.receipt_date <= \''.$request->input('lastPeriod').'\'';
+        } elseif ($firstPeriod === null && $lastPeriod !== null) {
+
+            $query = $query.' AND freci.receipt_date <= \''.$lastPeriod.'\'';
 
 
-        }  elseif ($request->input('firstPeriod') !== null && $request->input('lastPeriod') !== null) {
+        }  elseif ($firstPeriod !== null && $lastPeriod !== null) {
 
-            $query = $query.'AND freci.receipt_date between \''.$request->input('firstPeriod').'\'
-                            AND \''.$request->input('lastPeriod').'\'';
-
+            $query = $query.' AND freci.receipt_date between \''.$firstPeriod.'\'
+                            AND \''.$lastPeriod.'\'';
 
         }  else {
             $query = $query;
