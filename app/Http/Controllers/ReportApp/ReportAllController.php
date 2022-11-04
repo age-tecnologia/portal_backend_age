@@ -1019,7 +1019,7 @@ class ReportAllController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'monest.xlsx');
     }
 
-    public function receivables_clients()
+    public function receivables_clients(Request $request)
     {
         set_time_limit(2000);
         ini_set('memory_limit', '2048M');
@@ -1043,9 +1043,26 @@ class ReportAllController extends Controller
                 left join companies_places cp on cp.id = fr.company_place_id
                 left join financers_natures fn on fn.id = freci.financer_nature_id
                 where fr.title not like \'FAT%\'
-                AND freci.receipt_date between \'2021-04-01\' AND \'2022-07-31\'
                 AND freci.deleted = FALSE
                 AND freci.finished = false';
+
+        if ($request->input('firstPeriod') !== null && $request->input('lastPeriod') === null) {
+            $query = $query." AND freci.receipt_date >= \'".$request->input('firstPeriod').'\'';
+
+        } elseif ($request->input('firstPeriod') === null && $request->input('lastPeriod') !== null) {
+
+            $query = $query." AND freci.receipt_date <= \'".$request->input('lastPeriod').'\'';
+
+
+        }  elseif ($request->input('firstPeriod') !== null && $request->input('lastPeriod') !== null) {
+
+            $query = $query.'AND freci.receipt_date between \''.$request->input('firstPeriod').'\'
+                            AND \''.$request->input('lastPeriod').'\'';
+
+
+        }  else {
+            $query = $query;
+        }
 
         $result = DB::connection('pgsql')->select($query);
 
