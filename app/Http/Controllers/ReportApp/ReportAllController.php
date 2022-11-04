@@ -1038,20 +1038,20 @@ class ReportAllController extends Controller
                   freci.fine_amount as "juros e multa",
                   freci.evolution_amount,
                   freci.total_amount as "valor total recebido"
-                from financial_receipt_titles freci
-                left join financial_receivable_titles fr on fr.id = freci.financial_receivable_title_id
-                left join companies_places cp on cp.id = fr.company_place_id
-                left join financers_natures fn on fn.id = freci.financer_nature_id
+                from erp.financial_receipt_titles freci
+                left join erp.financial_receivable_titles fr on fr.id = freci.financial_receivable_title_id
+                left join erp.companies_places cp on cp.id = fr.company_place_id
+                left join erp.financers_natures fn on fn.id = freci.financer_nature_id
                 where fr.title not like \'FAT%\'
                 AND freci.deleted = FALSE
                 AND freci.finished = false';
 
         if ($request->input('firstPeriod') !== null && $request->input('lastPeriod') === null) {
-            $query = $query." AND freci.receipt_date >= \'".$request->input('firstPeriod').'\'';
+            $query = $query.' AND freci.receipt_date >= \''.$request->input('firstPeriod').'\'';
 
         } elseif ($request->input('firstPeriod') === null && $request->input('lastPeriod') !== null) {
 
-            $query = $query." AND freci.receipt_date <= \'".$request->input('lastPeriod').'\'';
+            $query = $query.' AND freci.receipt_date <= \''.$request->input('lastPeriod').'\'';
 
 
         }  elseif ($request->input('firstPeriod') !== null && $request->input('lastPeriod') !== null) {
@@ -1065,6 +1065,8 @@ class ReportAllController extends Controller
         }
 
         $result = DB::connection('pgsql')->select($query);
+
+        return $result;
 
         $headers = [
             'Nº do contrato',
