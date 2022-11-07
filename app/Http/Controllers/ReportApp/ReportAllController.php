@@ -1016,4 +1016,60 @@ class ReportAllController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'receivables_clients.xlsx');
 
     }
+
+    public function good_payment()
+    {
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+        $query = 'select
+                 c.id as "Contrato",
+                 c.date as "Data criação",
+                 frt.client_paid_date as "Data pagamento",
+                 frt.receipt_date as "Data recebimento",
+                 c.v_stage as "Estágio",
+                 c.v_status as "Status",
+                 sp.title as "Plano",
+                 c.amount as "Valor",
+                 frt.discount_value as "Valor do desconto",
+                 frt.total_amount  as "Valor total pago",
+                 frt2.competence as "Competência",
+                CASE
+                    WHEN c.discount_use_contract  = 2 THEN \'Nao aplicar desconto\'
+                    WHEN c.discount_use_contract  = 1 THEN \'Sim, conforme o Contrato\'
+                    WHEN c.discount_use_contract  = 0 THEN \'Sim, conforme Tipo de Cobrança\'
+                END as "Utiliza desconto",
+                 frt2.billet_printed as "Baixado",
+                 frt2.original_expiration_date as "Vencimento original",
+                 c.collection_day as "Dia vencimento"
+                 from erp.contracts c
+                 left join erp.financial_receivable_titles frt2  on frt2.contract_id = c.id
+                 left join erp.financial_receipt_titles frt on frt.financial_receivable_title_id  = frt2.id
+                 left join erp.authentication_contracts ac on ac.contract_id = c.id
+                 left join erp.service_products sp on sp.id = ac.service_product_id
+                 where frt2.title like \'FAT%\'';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+          'Contrato',
+          'Data da criação',
+          'Data do pagamento',
+          'Data do recebimento',
+          'Estágio',
+          'Status',
+          'Plano',
+          'Valor',
+          'Valor do desconto',
+          'Valor total pago',
+          'Competência',
+          'Utiliza desconto',
+          'Baixado',
+          'Vencimento original',
+          'Dia do vencimento'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'good_payment.xlsx');
+
+    }
 }
