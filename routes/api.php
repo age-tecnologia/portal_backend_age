@@ -68,6 +68,8 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
 
             Route::resource('users-permiteds', \App\Http\Controllers\ReportApp\AccessUsersController::class);
 
+            Route::resource('reports', \App\Http\Controllers\AgeReport\ReportController::class);
+            Route::get('report-download/{id}', [\App\Http\Controllers\AgeReport\ReportController::class, 'download']);
             Route::get('report/reports', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'getAll']);
             Route::get('report/list-connections', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'list_connections']);
             Route::get('report/condominiums', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'condominiums']);
@@ -92,6 +94,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
             Route::get('report/renove', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'renove']);
             Route::get('report/receivables-clients', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'receivables_clients']);
             Route::get('report/good_payment', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'good_payment']);
+            Route::get('report/local-fat', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'local_fat']);
         });
 
 

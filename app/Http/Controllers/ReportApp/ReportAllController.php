@@ -1072,4 +1072,46 @@ class ReportAllController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'good_payment.xlsx');
 
     }
+
+    public function local_fat(Request $request)
+    {
+        set_time_limit(2000);
+        ini_set('memory_limit', '2048M');
+
+        $query = 'select
+                cp.description  as "Local FAT.",
+                p.name as "Cliente",
+                f.issue_date as "Emissão",
+                f.document_amount as "Vlr. Bruto",
+                f.title_amount as "Vlr. Líquido"
+                from erp.financial_receivable_titles f
+                left join erp.companies_places cp on cp.id = f.company_place_id
+                left join erp.people p on p.id = f.client_id';
+
+        $firstPeriod = Carbon::parse($request->input('firstPeriod'))->format('Y-m-d');
+        $lastPeriod = Carbon::parse($request->input('lastPeriod'))->format('Y-m-d');
+
+        if ($firstPeriod !== null && $lastPeriod === null) {
+            $query = $query.' where f.issue_date >= \'' . $firstPeriod . '\'';
+        } elseif ($firstPeriod === null && $lastPeriod !== null) {
+            $query = $query.' where f.issue_date <= \'' . $request->input('lastPeriod') . '\'';
+        } elseif ($firstPeriod !== null && $lastPeriod !== null) {
+            $query = $query.' where f.issue_date >= \'' . $firstPeriod . '\' and f.issue_date <= \'' . $lastPeriod . '\'';
+        } else {
+            $query = $query;
+        }
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+            'Local FAT.',
+            'Cliente',
+            'Emissão',
+            'Valor bruto',
+            'Valor liquido',
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'local_fat.xlsx');
+
+    }
 }
