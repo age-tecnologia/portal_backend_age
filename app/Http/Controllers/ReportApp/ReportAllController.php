@@ -1079,24 +1079,40 @@ class ReportAllController extends Controller
         ini_set('memory_limit', '2048M');
 
         $query = 'select
-                cp.description  as "Local FAT.",
+                cp.description as "Local FAT.",
                 p.name as "Cliente",
                 f.issue_date as "Emissão",
-                f.document_amount as "Vlr. Bruto",
-                f.title_amount as "Vlr. Líquido"
+                case
+                    when cp.description = \'AGE TECNOLOGIA DA INFORMACAO\' then
+                    case
+                        when f.financial_operation_id = 26 then 0
+                        when f.financial_operation_id != 26 then f.document_amount
+                    end
+                    when cp.description != \'AGE TECNOLOGIA DA INFORMACAO\' then f.document_amount
+                end as "Vlr. Bruto",
+                case
+                    when cp.description = \'AGE TECNOLOGIA DA INFORMACAO\' then
+                    case
+                        when f.financial_operation_id = 26 then 0
+                        when f.financial_operation_id != 26 then f.title_amount
+                    end
+                    when cp.description != \'AGE TECNOLOGIA DA INFORMACAO\' then f.title_amount
+                end as "Vlr. Liquido"
                 from erp.financial_receivable_titles f
                 left join erp.companies_places cp on cp.id = f.company_place_id
-                left join erp.people p on p.id = f.client_id';
+                left join erp.people p on p.id = f.client_id
+                where f.deleted is false
+                and (f.financial_operation_id = 25 or f.financial_operation_id = 34 or f.financial_operation_id = 57 or f.financial_operation_id = 26)';
 
         $firstPeriod = Carbon::parse($request->input('firstPeriod'))->format('Y-m-d');
         $lastPeriod = Carbon::parse($request->input('lastPeriod'))->format('Y-m-d');
 
         if ($firstPeriod !== null && $lastPeriod === null) {
-            $query = $query.' where f.issue_date >= \'' . $firstPeriod . '\'';
+            $query = $query.' and f.issue_date >= \'' . $firstPeriod . '\'';
         } elseif ($firstPeriod === null && $lastPeriod !== null) {
-            $query = $query.' where f.issue_date <= \'' . $request->input('lastPeriod') . '\'';
+            $query = $query.' and f.issue_date <= \'' . $request->input('lastPeriod') . '\'';
         } elseif ($firstPeriod !== null && $lastPeriod !== null) {
-            $query = $query.' where f.issue_date >= \'' . $firstPeriod . '\' and f.issue_date <= \'' . $lastPeriod . '\'';
+            $query = $query.' and f.issue_date >= \'' . $firstPeriod . '\' and f.issue_date <= \'' . $lastPeriod . '\'';
         } else {
             $query = $query;
         }
