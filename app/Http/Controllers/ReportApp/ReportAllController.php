@@ -1118,7 +1118,7 @@ class ReportAllController extends Controller
     public function financial_blockade()
     {
         $query = 'select distinct c.id as "Nº do contrato", p."name" as "Nome do cliente",
-                    (select ce2.created from contract_events ce2 where ce2.contract_id = c.id order by ce2.created desc limit 1) as "Data do bloqueio"
+                    (select ce2.created from erp.contract_events ce2 where ce2.contract_id = c.id order by ce2.created desc limit 1) as "Data do bloqueio"
                     from erp.contracts c
                     left join erp.contract_events ce on ce.contract_id = c.id
                     left join erp.people p on c.client_id = p.id
