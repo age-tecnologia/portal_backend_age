@@ -1114,4 +1114,25 @@ class ReportAllController extends Controller
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'local_fat.xlsx');
 
     }
+
+    public function financial_blockade()
+    {
+        $query = 'select distinct c.id as "Nº do contrato", p."name" as "Nome do cliente",
+                    (select ce2.created from contract_events ce2 where ce2.contract_id = c.id order by ce2.created desc limit 1) as "Data do bloqueio"
+                    from contracts c
+                    left join contract_events ce on ce.contract_id = c.id
+                    left join people p on c.client_id = p.id
+                    where v_status = \'Bloqueio Financeiro\' and ce.contract_event_type_id = 40';
+
+        $result = DB::connection('pgsql')->select($query);
+
+        $headers = [
+          'Nº do contrato',
+          'Nome do cliente',
+          'Data do bloqueio'
+        ];
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $headers), 'financial_blockade.xlsx');
+
+    }
 }

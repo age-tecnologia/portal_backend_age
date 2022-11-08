@@ -95,6 +95,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
             Route::get('report/receivables-clients', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'receivables_clients']);
             Route::get('report/good_payment', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'good_payment']);
             Route::get('report/local-fat', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'local_fat']);
+            Route::get('report/financial-blockade', [\App\Http\Controllers\ReportApp\ReportAllController::class, 'financial_blockade']);
         });
 
 
