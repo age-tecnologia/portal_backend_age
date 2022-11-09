@@ -120,12 +120,13 @@ class ReportController extends Controller
             $firstPeriod = $request->has('firstPeriod') ? Carbon::parse($request->input('firstPeriod'))->format('Y-m-d') : null;
             $lastPeriod = $request->has('lastPeriod') ? Carbon::parse($request->input('lastPeriod'))->format('Y-m-d') : null;
         } elseif($type === 2) {
-            $firstPeriod = $request->has('firstPeriod') ? Carbon::parse($request->input('firstPeriod'))->format('Y-m-d H') : null;
-            $lastPeriod = $request->has('lastPeriod') ? Carbon::parse($request->input('lastPeriod'))->format('Y-m-d H') : null;
+            $firstPeriod = $request->has('firstPeriod') ? Carbon::parse($request->input('firstPeriod'))->format('Y-m-d H:i:s') : null;
+            $lastPeriod = $request->has('lastPeriod') ? Carbon::parse($request->input('lastPeriod'))->format('Y-m-d H:i:s') : null;
         }
 
         $query = \Illuminate\Support\Str::replaceFirst('#', $firstPeriod, $this->report->query);
         $query = \Illuminate\Support\Str::replaceFirst('#', $lastPeriod, $query);
+
 
         $result = DB::connection($this->report->banco_solicitado)->select($query);
 
