@@ -111,8 +111,9 @@ class ReportController extends Controller
         $query = \Illuminate\Support\Str::replaceFirst('#', $firstPeriod, $this->report->query);
         $query = \Illuminate\Support\Str::replaceFirst('#', $lastPeriod, $query);
 
-        $result = DB::connection('mysql_take')->select($query);
+        $result = DB::connection($this->report->banco_solicitado)->select($query);
 
+        return $result;
 
         return $this->report($query);
 
