@@ -99,6 +99,7 @@ class ReportController extends Controller
         set_time_limit(2000);
         ini_set('memory_limit', '2048M');
 
+
         if($this->report->isPeriodo === 1) {
             return $this->reportPeriod($request, 1);
 

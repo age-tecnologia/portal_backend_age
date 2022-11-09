@@ -20,7 +20,7 @@ class ReportAllController extends Controller
         $level = auth()->user()->nivel_acesso_id;
 
         if($level === 2 || $level === 3) {
-            $reports = Report::all(['nome', 'nome_arquivo', 'url', 'isPeriodo', 'id']);
+            $reports = Report::all(['nome', 'nome_arquivo', 'url', 'isPeriodo','isPeriodoHora', 'id']);
 
             return $reports;
         }
@@ -28,7 +28,7 @@ class ReportAllController extends Controller
         $reports = DB::table('agereport_relatorios as r')
             ->leftJoin('agereport_relatorios_permissoes as rp', 'r.id', 'rp.relatorio_id')
             ->where('rp.user_id', auth()->user()->id)
-            ->get(['r.nome', 'r.nome_arquivo', 'r.url', 'r.isPeriodo', 'r.id']);
+            ->get(['r.nome', 'r.nome_arquivo', 'r.url', 'r.isPeriodo', 'r.isPeriodoHora', 'r.id']);
 
         return $reports;
     }
