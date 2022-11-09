@@ -66,7 +66,7 @@ class ReportController extends Controller
 
         $report->update([
            'nome' => $request->input('name'),
-           'nome_arquivo' => $request->input('name_archive'),
+           'nome_arquivo' => $request->input('namearchive'),
            'query' => $request->input('query'),
            'cabecalhos' => $request->input('headers'),
            'banco_solicitado' => $request->input('database'),
