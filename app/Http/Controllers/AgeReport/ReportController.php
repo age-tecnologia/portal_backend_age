@@ -30,7 +30,22 @@ class ReportController extends Controller
 
     public function store(Request $request)
     {
-        //
+        $report = new Report();
+
+        $report = $report->create([
+           'nome' => $request->input('name'),
+           'nome_arquivo' => $request->input('name_archive'),
+           'query' => $request->input('query'),
+           'cabecalhos' => $request->input('headers'),
+           'banco_solicitado' => $request->input('database'),
+           'isPeriodo' => $request->input('isPeriod'),
+           'isPeriodoHora' => $request->input('isPeriodHour'),
+           'url' => 'sem_url'
+        ]);
+
+        if(isset($report->id)) {
+            return response()->json(['status' => true, 'msg' => 'Relatório criado com sucesso!'], 201);
+        }
     }
 
 
@@ -112,8 +127,6 @@ class ReportController extends Controller
         $query = \Illuminate\Support\Str::replaceFirst('#', $lastPeriod, $query);
 
         $result = DB::connection($this->report->banco_solicitado)->select($query);
-
-        return $result;
 
         return $this->report($query);
 

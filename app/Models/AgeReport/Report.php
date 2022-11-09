@@ -10,5 +10,5 @@ class Report extends Model
     use HasFactory;
 
     protected $table = 'agereport_relatorios';
-    protected $fillable = ['nome', 'nome_arquivo', 'query', 'cabecalhos', 'banco_solicitado', 'isPeriodo', 'isPeriodoHora'];
+    protected $fillable = ['nome', 'url', 'nome_arquivo', 'query', 'cabecalhos', 'banco_solicitado', 'isPeriodo', 'isPeriodoHora'];
 }
