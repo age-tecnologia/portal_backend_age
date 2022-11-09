@@ -5,11 +5,16 @@ namespace App\Http\Controllers\AgeReport;
 use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\AgeReport\Report;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Psy\Util\Str;
+use Symfony\Component\Console\Input\Input;
 
 class ReportController extends Controller
 {
+
+    private $report;
 
     public function index()
     {
@@ -71,29 +76,62 @@ class ReportController extends Controller
         //
     }
 
-    public function download($id)
+    public function download(Request $request, $id)
     {
-        $report = Report::find($id);
+        $this->report = Report::find($id);
 
         set_time_limit(2000);
         ini_set('memory_limit', '2048M');
 
-        if($report->isPeriodo === 0 && $report->isPeriodoHora === 0) {
+        if($this->report->isPeriodo === 1) {
+            return $this->reportPeriod($request, 1);
 
-            $query = $report->query;
-            $i = substr_count($report->cabecalhos, ';');
-            $headers = explode(';', $report->cabecalhos);
-            $arrHeaders = [];
+        } elseif($this->report->isPeriodoHora === 1) {
 
-            for($x = 0; $i > $x; $x++) {
-                $arrHeaders[] = $headers[$x];
-            }
+            return $this->reportPeriod($request, 2);
 
-            $result = DB::connection($report->banco_solicitado)->select($query);
+        } else {
 
-            return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $arrHeaders), $report->nome_arquivo);
+            return $this->report($this->report->query);
 
         }
+
+    }
+
+    private function reportPeriod($request, $type) {
+
+        if($type === 1) {
+            $firstPeriod = $request->has('firstPeriod') ? Carbon::parse($request->input('firstPeriod'))->format('Y-m-d') : null;
+            $lastPeriod = $request->has('lastPeriod') ? Carbon::parse($request->input('lastPeriod'))->format('Y-m-d') : null;
+        } elseif($type === 2) {
+            $firstPeriod = $request->has('firstPeriod') ? Carbon::parse($request->input('firstPeriod'))->format('Y-m-d H') : null;
+            $lastPeriod = $request->has('lastPeriod') ? Carbon::parse($request->input('lastPeriod'))->format('Y-m-d H') : null;
+        }
+
+        $query = \Illuminate\Support\Str::replaceFirst('#', $firstPeriod, $this->report->query);
+        $query = \Illuminate\Support\Str::replaceFirst('#', $lastPeriod, $query);
+
+        $result = DB::connection('mysql_take')->select($query);
+
+
+        return $this->report($query);
+
+    }
+
+    private function report($query) {
+
+
+        $i = substr_count($this->report->cabecalhos, ';');
+        $headers = explode(';', $this->report->cabecalhos);
+        $arrHeaders = [];
+
+        for($x = 0; $i > $x; $x++) {
+            $arrHeaders[] = $headers[$x];
+        }
+
+        $result = DB::connection($this->report->banco_solicitado)->select($query);
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $arrHeaders), $this->report->nome_arquivo);
 
     }
 }

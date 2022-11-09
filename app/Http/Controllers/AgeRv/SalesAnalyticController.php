@@ -413,6 +413,7 @@ class SalesAnalyticController extends Controller
         });
 
 
+        $data = [];
 
         foreach($supervisors as $item => $value) {
 
@@ -427,6 +428,7 @@ class SalesAnalyticController extends Controller
             $this->deflatorSup = 0;
             $this->metaSup = 0;
             $this->metaPercent = 0;
+
 
             $data[] = [
                 'supervisor' => mb_convert_case($value, MB_CASE_TITLE, 'UTF-8'),
@@ -1086,7 +1088,6 @@ class SalesAnalyticController extends Controller
             ->select('nome')
             ->get();
 
-
         return [
             'salesTotal' => $this->managementSalesTotals($collaborator),
             'supervisors' => $this->supervisors(),
@@ -1113,7 +1114,6 @@ class SalesAnalyticController extends Controller
                 'vendedor', 'supervisor', 'data_cancelamento', 'plano')
             ->get()
             ->unique('id_contrato');
-
 
         $this->salesTotalsCount += count($this->salesTotals);
 
