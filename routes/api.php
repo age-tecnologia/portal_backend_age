@@ -57,7 +57,9 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
         Route::middleware('AccessAdmin')->prefix('admin')->group(function () {
 
             Route::resource('users', \App\Http\Controllers\UsersController::class);
-
+            Route::get('access-systems', [\App\Http\Controllers\AccessSystemsController::class, 'getUsers']);
+            Route::get('reports-permitteds/{id}', [\App\Http\Controllers\AgeReport\ReportsPermittedsController::class, 'getReportsPermitteds']);
+            Route::put('reports-permitteds/{id}', [\App\Http\Controllers\AgeReport\ReportsPermittedsController::class, 'edit']);
         });
 
         Route::middleware('AccessAgeReport')->prefix('agereport')->group(function () {
