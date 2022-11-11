@@ -6,6 +6,9 @@ use App\Exports\ReportExport;
 use App\Exports\UsersExport;
 use App\Http\Controllers\AgeRv\_aux\sales\Stars;
 use App\Ldap\UserLdap;
+use App\Models\AgeBoard\AccessPermission;
+use App\Models\AgeBoard\DashboardPermitted;
+use App\Models\AgeBoard\ItemPermitted;
 use App\Models\AgeReport\Report;
 use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
@@ -31,10 +34,51 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
+            $id = $request->input('id');
 
-        $users = UserLdap::limit(1)->get(['name']);
+            $id = [
+                94,
+                95,
+                96,
+                97
+            ];
 
-        return $users[0]['name'];
+
+
+            $user = User::find($id);
+
+            $permitted = new AccessPermission();
+
+            $dashPermitted = new DashboardPermitted();
+
+            $itemPermitted = new ItemPermitted();
+
+
+            foreach($id as $key => $value) {
+                $permitted = $permitted->firstOrCreate(
+                    ['user_id' => $value],
+                    ['funcao_id' => 1, 'setor_id' => 1, 'nivel_acesso_id' => 1]
+                );
+
+                $dashPermitted = $dashPermitted->firstOrCreate(
+                    ['user_id' => $value],
+                    ['dashboard_id' => 3, 'permitido_por' => 1]
+                );
+
+                $itemPermitted = $itemPermitted->firstOrCreate(
+                    ['user_id' => $value],
+                    ['dashboard_id' => 3, 'item_id' => 9, 'criado_por' => 1, 'modificado_por' => 1]
+                );
+
+            }
+
+            return 'ok';
+
+
+
+//        $users = UserLdap::limit(1)->get(['name']);
+//
+//        return $users[0]['name'];
 
 
 
