@@ -69,4 +69,48 @@ class AccessSystemsController extends Controller
        return $result;
 
     }
+
+    public function alternateAccess(Request $request, $id)
+    {
+        if($this->system !== null) {
+
+            switch ($this->system) {
+                case 'agereport':
+                    return $this->accessAgeReport($id);
+                    break;
+            }
+
+        }
+    }
+
+    private function accessAgeReport($id)
+    {
+        $user = AccessPermission::whereUserId($id)->withTrashed()->first();
+
+        if(! isset($user->id)) {
+            $user = AccessPermission::create([
+               'user_id' => $id,
+                'funcao_id' => 2,
+                'setor_id' => 9,
+                'nivel_acesso_id' => 1
+            ]);
+
+            return response()->json(['msg' => 'Usuário liberado com sucesso.', 'access' => true], 201);
+
+        } else {
+
+            if(isset($user->deleted_at)) {
+
+                $user = $user->restore();
+
+                return response()->json(['msg' => 'Usuário liberado com sucesso.', 'access' => true], 201);
+
+            } else {
+                $user = $user->delete();
+
+                return response()->json(['msg' => 'Usuário inativado com sucesso.', 'access' => false], 201);
+            }
+
+        }
+    }
 }

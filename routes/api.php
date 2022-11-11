@@ -58,8 +58,10 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
 
             Route::resource('users', \App\Http\Controllers\UsersController::class);
             Route::get('access-systems', [\App\Http\Controllers\AccessSystemsController::class, 'getUsers']);
+            Route::put('access-systems/alternate/{id}', [\App\Http\Controllers\AccessSystemsController::class, 'alternateAccess']);
             Route::get('reports-permitteds/{id}', [\App\Http\Controllers\AgeReport\ReportsPermittedsController::class, 'getReportsPermitteds']);
             Route::put('reports-permitteds/{id}', [\App\Http\Controllers\AgeReport\ReportsPermittedsController::class, 'edit']);
+            Route::put('reports-permitteds/alternate/{iduser}/{idreport}', [\App\Http\Controllers\AgeReport\ReportsPermittedsController::class, 'alternateReportsPermitteds']);
         });
 
         Route::middleware('AccessAgeReport')->prefix('agereport')->group(function () {
