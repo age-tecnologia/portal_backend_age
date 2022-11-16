@@ -34,46 +34,6 @@ class TestController extends Controller
     public function index(Request $request)
     {
 
-            $id = $request->input('id');
-
-            $id = [
-                94,
-                95,
-                96,
-                97
-            ];
-
-
-
-            $user = User::find($id);
-
-            $permitted = new AccessPermission();
-
-            $dashPermitted = new DashboardPermitted();
-
-            $itemPermitted = new ItemPermitted();
-
-
-            foreach($id as $key => $value) {
-                $permitted = $permitted->firstOrCreate(
-                    ['user_id' => $value],
-                    ['funcao_id' => 1, 'setor_id' => 1, 'nivel_acesso_id' => 1]
-                );
-
-                $dashPermitted = $dashPermitted->firstOrCreate(
-                    ['user_id' => $value],
-                    ['dashboard_id' => 3, 'permitido_por' => 1]
-                );
-
-                $itemPermitted = $itemPermitted->firstOrCreate(
-                    ['user_id' => $value],
-                    ['dashboard_id' => 3, 'item_id' => 9, 'criado_por' => 1, 'modificado_por' => 1]
-                );
-
-            }
-
-            return 'ok';
-
 
 
 //        $users = UserLdap::limit(1)->get(['name']);
