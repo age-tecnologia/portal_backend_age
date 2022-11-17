@@ -35,7 +35,6 @@ class TestController extends Controller
     {
 
 
-
 //        $users = UserLdap::limit(1)->get(['name']);
 //
 //        return $users[0]['name'];
