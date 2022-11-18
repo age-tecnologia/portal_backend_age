@@ -835,8 +835,10 @@ class SalesAnalyticController extends Controller
                         // Verifica o mês e aplica a diferença na meta mínima
                         if ($this->month <= '07') {
                             $this->minMeta = 70;
-                        } elseif ($this->month >= '08') {
+                        } elseif ($this->month === '08') {
                             $this->minMeta = 60;
+                        } elseif ($this->month >= '08') {
+                            $this->minMeta = 70;
                         }
 
                         if ($this->metaPercent >= $this->minMeta && $this->metaPercent < 100) {
