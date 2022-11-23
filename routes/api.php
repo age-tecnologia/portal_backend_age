@@ -164,6 +164,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                 Route::post('new-user', [\App\Http\Controllers\UsersController::class, 'newUserAgeRv']);
                 Route::get('new-password/{id}', [\App\Http\Controllers\UsersController::class, 'newPasswordAgeRv']);
                 Route::resource('meta', \App\Http\Controllers\AgeRv\CollaboratorMetaController::class);
+                Route::get('meta-add-mass', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddMass']);
             });
 
             Route::prefix('analytics')->group(function () {

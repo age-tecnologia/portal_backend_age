@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AgeRv;
 
 use App\Http\Controllers\Controller;
+use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\CollaboratorMeta;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -95,5 +96,24 @@ class CollaboratorMetaController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function metaAddMass(Request $request)
+    {
+        $channel = $request->input('channel');
+        $meta = $request->input('meta');
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $collab = Collaborator::whereCanalId($channel)->get('id');
+
+        foreach($collab as $key => $value) {
+            $query = CollaboratorMeta::firstOrCreate(
+                ['colaborador_id' => $value->id, 'mes_competencia' => $month],
+                ['colaborador_id' => $value->id, 'mes_competencia' => $month, 'meta' => $meta, 'modified_by' => auth()->user()->id]
+            );
+        }
+
+        return response()->json('Meta do time adicionada com sucesso!', 201);
+
     }
 }
