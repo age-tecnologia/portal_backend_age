@@ -35,9 +35,17 @@ class TestController extends Controller
     {
 
 
-//        $users = UserLdap::limit(1)->get(['name']);
-//
-//        return $users[0]['name'];
+
+
+        $users = UserLdap::get(['name']);
+
+        $result = [];
+
+        foreach($users as $key => $val) {
+            $result[] = $val->name;
+        }
+
+        return $result;
 
 
 
