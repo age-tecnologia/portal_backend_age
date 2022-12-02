@@ -26,7 +26,7 @@ class Master
 
     public function __construct($month, $year)
     {
-        $this->month = $month;
+        $this->month = '10';
         $this->year = $year;
 
 

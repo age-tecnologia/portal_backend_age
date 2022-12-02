@@ -40,6 +40,7 @@ class SalesRulesController extends Controller
             return $master->response();
 
         } elseif ($c->funcao === 'Supervisor') {
+
             $supervisor = new Supervisor($this->month, $this->year, $c->nome, $c->id);
 
             return $supervisor->response();

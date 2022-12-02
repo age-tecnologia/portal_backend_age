@@ -15,6 +15,6 @@ class UserLdap extends Model
         'top',
         'person',
         'organizationalperson',
-        'user',
+        'user'
     ];
 }

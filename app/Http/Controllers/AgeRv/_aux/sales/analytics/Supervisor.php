@@ -47,6 +47,7 @@ class Supervisor
     public function response()
     {
 
+
         $sales = new Sales($this->name, $this->data);
         $cancel = new Cancel($this->data);
         $meta = new Meta($this->id, $this->month, $this->year);

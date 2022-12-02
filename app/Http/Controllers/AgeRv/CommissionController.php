@@ -45,7 +45,7 @@ class CommissionController extends Controller
 
         $commission = new Commission();
 
-        foreach($result as $item => $value) {
+        foreach($data as $item => $value) {
             $commission->create([
                 'mes_competencia' => $this->month,
                 'ano_competencia' => $this->year,

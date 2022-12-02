@@ -104,7 +104,7 @@ class CollaboratorMetaController extends Controller
         $meta = $request->input('meta');
         $month = $request->input('month');
         $year = $request->input('year');
-        $collab = Collaborator::whereCanalId($channel)->get('id');
+        $collab = Collaborator::whereTipoComissaoId($channel)->get('id');
 
         foreach($collab as $key => $value) {
             $query = CollaboratorMeta::firstOrCreate(

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AgeRv\AccessPermission;
 use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
+use App\Models\AgeRv\VoalleSales;
 use App\Models\User;
 use Carbon\Carbon;
 use Complex\Exception;
@@ -45,13 +46,30 @@ class CollaboratorController extends Controller
 
     public function create()
     {
-        //
+        $supervisors = VoalleSales::whereNotNull('supervisor')->distinct()->get(['supervisor']);
+        $sellers = VoalleSales::whereMonth('data_contrato', '>=', '05')->whereNotNull('vendedor')->distinct()->get(['vendedor']);
+
+        $collab = new Collaborator();
+
+        foreach($supervisors as $key => $value) {
+            $collab->firstOrCreate(
+                ['nome' => $value->supervisor, 'funcao_id' => 3],
+                ['nome' => $value->supervisor, 'funcao_id' => 3, 'canal_id' => 2, 'tipo_comissao_id' => 3]
+            );
+        }
+
+        foreach($sellers as $key => $value) {
+            $collab->firstOrCreate(
+                ['nome' => $value->vendedor, 'funcao_id' => 1],
+                ['nome' => $value->vendedor, 'funcao_id' => 1, 'canal_id' => 2, 'tipo_comissao_id' => 2]
+            );
+        }
     }
 
 
     public function store(Request $request)
     {
-        //
+
     }
 
 
@@ -160,10 +178,6 @@ class CollaboratorController extends Controller
 
     public function showList(Request $request)
     {
-        header("Access-Control-Allow-Origin: *");
-
-        return $request->all();
-
         $collaborators = Collaborator::where('nome', 'LIKE', '%'.$request->input('name').'%')->limit(5)->get();
 
         return response()->json($collaborators, 201);
