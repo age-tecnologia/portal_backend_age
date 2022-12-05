@@ -227,3 +227,7 @@ Route::prefix('assine')->group(function() {
     Route::resource('/leads', \App\Http\Controllers\LeadsController::class);
     Route::resource('/cliques', \App\Http\Controllers\CliquesAssineController::class);
 });
+
+Route::prefix('indique')->group(function() {
+    Route::post('/leads', [\App\Http\Controllers\AgeIndicate\LeadsController::class, 'store']);
+});
