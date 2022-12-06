@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AgeRv\_aux\sales\analytics;
 
 use App\Http\Controllers\AgeRv\_aux\sales\Cancel;
+use App\Http\Controllers\AgeRv\_aux\sales\CollaboratorFilter;
 use App\Http\Controllers\AgeRv\_aux\sales\Commission;
 use App\Http\Controllers\AgeRv\_aux\sales\Meta;
 use App\Http\Controllers\AgeRv\_aux\sales\MetaPercent;
@@ -92,6 +93,11 @@ class Master
     {
 
         $data = [];
+
+        $filterCollab = new CollaboratorFilter($this->collaborators, $this->data);
+
+        $this->collaborators = $filterCollab->response();
+
 
         foreach($this->collaborators as $key => $value) {
 
