@@ -26,4 +26,9 @@ class ReportExport implements FromArray, WithHeadings
     {
         return $this->headers;
     }
+
+    public function chunkSize() : int
+    {
+        return 10;
+    }
 }
