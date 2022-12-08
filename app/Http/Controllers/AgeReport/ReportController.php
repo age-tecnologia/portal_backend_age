@@ -62,7 +62,9 @@ class ReportController extends Controller
 
     public function edit($id, Request $request)
     {
+
         $report = Report::find($id);
+
 
         $report->update([
            'nome' => $request->input('name'),
@@ -70,8 +72,8 @@ class ReportController extends Controller
            'query' => $request->input('query'),
            'cabecalhos' => $request->input('headers'),
            'banco_solicitado' => $request->input('database'),
-           'isPeriodo' => $request->input('isPeriod'),
-           'isPeriodoHora' => $request->input('isPeriodHour'),
+           'isPeriodo' => $request->input('type') == 1 ? 1 : 0,
+           'isPeriodoHora' => $request->input('type') == 2 ? 1 : 0,
         ]);
 
         $report = Report::find($id);
