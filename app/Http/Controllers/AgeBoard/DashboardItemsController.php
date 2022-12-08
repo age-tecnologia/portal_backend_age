@@ -3,43 +3,49 @@
 namespace App\Http\Controllers\AgeBoard;
 
 use App\Http\Controllers\Controller;
-use App\Models\AgeBoard\Dashboard;
+use App\Models\AgeBoard\Item;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class DashboardItemsController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $dashboards = Dashboard::all(['id', 'dashboard']);
+        $items = Item::whereDashboardId($request->input('id'))->get(['item', 'iframe']);
 
-        return $dashboards;
+        return $items;
     }
+
 
     public function create()
     {
         //
     }
 
+
     public function store(Request $request)
     {
         //
     }
+
 
     public function show($id)
     {
         //
     }
 
+
     public function edit($id)
     {
         //
     }
 
+
     public function update(Request $request, $id)
     {
         //
     }
+
 
     public function destroy($id)
     {

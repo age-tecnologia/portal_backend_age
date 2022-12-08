@@ -214,6 +214,9 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
             });
 
             Route::resource('dashboards', \App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class);
+            Route::resource('dashboard', \App\Http\Controllers\AgeBoard\DashboardController::class);
+            Route::resource('dashboard-items', \App\Http\Controllers\AgeBoard\DashboardItemsController::class);
+            Route::get('dashboard-items-management', [\App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class, 'itensPermittedsAndNot']);
 
         });
 

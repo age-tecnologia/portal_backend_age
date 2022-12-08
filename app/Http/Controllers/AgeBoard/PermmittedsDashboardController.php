@@ -71,6 +71,42 @@ class PermmittedsDashboardController extends Controller
         return $itemPermitted;
     }
 
+    public function itensPermittedsAndNot(Request $request)
+    {
+
+        $itemsPermitteds = ItemPermitted::whereUserId($request->input('userId'))->get(['item_id']);
+
+        $data = [];
+
+
+        $itemsNotPermitteds = Item::whereDashboardId($request->input('dashboardId'))
+                                ->whereNotIn('id', $itemsPermitteds)
+                                ->get(['id', 'item', 'iframe']);
+
+        $itemsPermitteds = Item::whereIn('id', $itemsPermitteds)->get(['id', 'item', 'iframe']);
+
+        foreach($itemsPermitteds as $key => $value) {
+            $data[] = [
+                'id' => $value->id,
+                'item' => $value->item,
+                'iframe' => $value->iframe,
+                'status' => true
+            ];
+        }
+
+        foreach($itemsNotPermitteds as $key => $value) {
+            $data[] = [
+                'id' => $value->id,
+                'item' => $value->item,
+                'iframe' => $value->iframe,
+                'status' => false
+            ];
+        }
+
+        return $data;
+
+    }
+
     public function create()
     {
 
