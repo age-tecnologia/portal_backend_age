@@ -139,6 +139,8 @@ class ReportController extends Controller
 
     private function report($query) {
 
+        set_time_limit(3000);
+        ini_set('memory_limit', '2048M');
 
         $i = substr_count($this->report->cabecalhos, ';');
         $headers = explode(';', $this->report->cabecalhos);
