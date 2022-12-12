@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\AgeBoard;
 
+use App\Http\Controllers\AccessSystemsController;
 use App\Http\Controllers\Controller;
+use App\Models\AgeBoard\AccessPermission;
 use App\Models\AgeBoard\Dashboard;
 use App\Models\AgeBoard\DashboardPermitted;
 use App\Models\AgeBoard\Item;
@@ -28,7 +30,7 @@ class PermmittedsDashboardController extends Controller
                 $result[] = [
                     'id' => $value->id,
                     'dashboard' => $value->dashboard,
-                    'itens' => $this->itensPermmitteds($value->id)
+                    'itens' => $this->itemsPermmitteds($value->id)
                 ];
             }
 
@@ -45,7 +47,7 @@ class PermmittedsDashboardController extends Controller
             $result[] = [
                 'id' => $value->id,
                 'dashboard' => $value->dashboard,
-                'itens' => $this->itensPermmitteds($value->id)
+                'itens' => $this->itemsPermmitteds($value->id)
             ];
         }
 
@@ -53,7 +55,7 @@ class PermmittedsDashboardController extends Controller
         return $result;
     }
 
-    public function itensPermmitteds($id)
+    public function itemsPermmitteds($id)
     {
 
         if($this->level === 2 || $this->level === 3) {
@@ -71,7 +73,7 @@ class PermmittedsDashboardController extends Controller
         return $itemPermitted;
     }
 
-    public function itensPermittedsAndNot(Request $request)
+    public function itemsPermittedsAndNot(Request $request)
     {
 
         $itemsPermitteds = ItemPermitted::whereUserId($request->input('userId'))->get(['item_id']);
@@ -104,6 +106,68 @@ class PermmittedsDashboardController extends Controller
         }
 
         return $data;
+
+    }
+
+    public function itemsAlternateAccess(Request $request)
+    {
+        $user = AccessPermission::whereUserId($request->input('idUser'))->withTrashed()->first();
+
+        // Criar acesso ao AgeBoard
+        if(! isset($user->id)) {
+            $user = \App\Models\AgeBoard\AccessPermission::create([
+                'user_id' => $request->input('idUser'),
+                'funcao_id' => 2,
+                'setor_id' => 9,
+                'nivel_acesso_id' => 1
+            ]);
+
+        } else {
+
+            if(isset($user->deleted_at)) {
+
+                $user = $user->restore();
+
+            }
+        }
+
+        $item = Item::whereId($request->input('idItem'))->first(['dashboard_id']);
+
+        $dashboardAccess = DashboardPermitted::whereUserId($request->input('idUser'))->first();
+
+        // Liberar Dashboard
+        if(! isset($dashboardAccess->id)) {
+            $dashboardAccess = \App\Models\AgeBoard\DashboardPermitted::create([
+                'user_id' => $request->input('idUser'),
+                'dashboard_id' => $item->dashboard_id,
+                'permitido_por' => auth()->user()->id,
+            ]);
+
+        }
+
+
+        $itemAccess = ItemPermitted::whereUserId($request->input('idUser'))->whereItemId($request->input('idItem'))->first();
+
+        // Liberar item do dashboard
+        if(! isset($itemAccess->id)) {
+            $itemAccess = \App\Models\AgeBoard\ItemPermitted::create([
+                'user_id' => $request->input('idUser'),
+                'dashboard_id' => $item->dashboard_id,
+                'item_id' => $request->input('idItem'),
+                'criado_por' => auth()->user()->id,
+                'modificado_por' => auth()->user()->id,
+            ]);
+
+            return response()->json(['msg' => 'Dashboard liberado com sucesso.', 'access' => true], 201);
+
+        } else {
+
+            $itemAccess = ItemPermitted::whereUserId($request->input('idUser'))->whereItemId($request->input('idItem'))->delete();
+
+            return response()->json(['msg' => 'Dashboard bloqueado com sucesso.', 'access' => false], 201);
+
+        }
+
 
     }
 

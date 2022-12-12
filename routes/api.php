@@ -62,6 +62,16 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
             Route::get('reports-permitteds/{id}', [\App\Http\Controllers\AgeReport\ReportsPermittedsController::class, 'getReportsPermitteds']);
             Route::put('reports-permitteds/{id}', [\App\Http\Controllers\AgeReport\ReportsPermittedsController::class, 'edit']);
             Route::put('reports-permitteds/alternate/{iduser}/{idreport}', [\App\Http\Controllers\AgeReport\ReportsPermittedsController::class, 'alternateReportsPermitteds']);
+
+
+
+
+
+            Route::prefix('datawarehouse')->group(function () {
+                Route::prefix('voalle')->group(function() {
+                    Route::resource('contracts', \App\Http\Controllers\DataWarehouse\Voalle\ContractsController::class);
+                });
+            });
         });
 
         Route::middleware('AccessAgeReport')->prefix('agereport')->group(function () {
@@ -216,7 +226,8 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
             Route::resource('dashboards', \App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class);
             Route::resource('dashboard', \App\Http\Controllers\AgeBoard\DashboardController::class);
             Route::resource('dashboard-items', \App\Http\Controllers\AgeBoard\DashboardItemsController::class);
-            Route::get('dashboard-items-management', [\App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class, 'itensPermittedsAndNot']);
+            Route::get('dashboard-items-management', [\App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class, 'itemsPermittedsAndNot']);
+            Route::put('dashboard-items-alternate', [\App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class, 'itemsAlternateAccess']);
 
         });
 

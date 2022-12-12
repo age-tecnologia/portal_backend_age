@@ -158,8 +158,9 @@ class AccessSystemsController extends Controller
         }
     }
 
-    private function accessAgeBoard($id)
+    public function accessAgeBoard($id)
     {
+
         $user = \App\Models\AgeBoard\AccessPermission::whereUserId($id)->withTrashed()->first();
 
         if(! isset($user->id)) {
