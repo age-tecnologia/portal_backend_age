@@ -46,7 +46,6 @@ class Master
         $this->data = \App\Models\AgeRv\Commission::where('mes_competencia', $this->month)
                                                     ->where('ano_competencia', $this->year)
                                                     ->whereStatus('Aprovado')
-                                                    ->whereVendedor('iasmin cavalcante rocha')
                                                     ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
                                                                                     id_contrato,
                                                                                     status, situacao,
@@ -125,7 +124,7 @@ class Master
                 'meta' => $meta->getMeta(),
                 'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),
                 'valueStar' => number_format($valueStar->getValueStar(), 2),
-                'stars' => $stars->debug(),
+                'stars' => $stars->getStars(),
                 'mediator' => $channelId !== 3 ? $cancel->getCountCancel() > 0 ? -10 : 10 : 0,
                 'commission' => number_format($commission->getCommission(), 2, ',', '.')
             ];

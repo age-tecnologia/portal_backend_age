@@ -70,6 +70,10 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
             Route::prefix('datawarehouse')->group(function () {
                 Route::prefix('voalle')->group(function() {
                     Route::resource('contracts', \App\Http\Controllers\DataWarehouse\Voalle\ContractsController::class);
+                    Route::resource('contracts-type', \App\Http\Controllers\DataWarehouse\Voalle\ContractsTypeController::class);
+                    Route::resource('peoples', \App\Http\Controllers\DataWarehouse\Voalle\PeoplesController::class);
+                    Route::resource('authentication-contracts', \App\Http\Controllers\DataWarehouse\Voalle\AuthenticationContractsController::class);
+                    Route::resource('service-products', \App\Http\Controllers\DataWarehouse\Voalle\ServiceProductsController::class);
                 });
             });
         });

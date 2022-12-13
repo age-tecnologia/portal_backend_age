@@ -87,7 +87,7 @@ class ContractsController extends Controller
             ]);
         }
 
-        return $contracts;
+        return response()->json('Tabela atualizada com sucesso!');
 
     }
 
