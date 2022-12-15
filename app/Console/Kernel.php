@@ -2,6 +2,10 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\AgeRv\VoalleSalesController;
+use App\Http\Controllers\DataWarehouse\Voalle\AuthenticationContractsController;
+use App\Http\Controllers\TestController;
+use App\Models\AgeRv\VoalleSales;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -16,6 +20,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+
+        $schedule->call(new AuthenticationContractsController())->dailyAt('03:00');
+        $schedule->call(new VoalleSalesController())->dailyAt('04:00');
+
+
     }
 
     /**

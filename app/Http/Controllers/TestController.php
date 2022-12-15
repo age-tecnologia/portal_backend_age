@@ -14,6 +14,7 @@ use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\CollaboratorMeta;
 use App\Models\AgeRv\VoalleSales;
+use App\Models\Test;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -31,8 +32,35 @@ class TestController extends Controller
     private $salesTotals;
 
 
+
+    public function __invoke()
+    {
+        $test = new Test();
+
+        $test->truncate();
+
+    }
+
     public function index(Request $request)
     {
+
+//        $id = $request->input('id');
+//        $idCollab = $request->input('idCollab');
+//
+//        $user = User::find($id);
+//
+//        $collab = User::find($idCollab);
+
+        $test = new Test();
+
+        $test->truncate();
+
+
+
+
+
+
+
 
 //        $array = [
 //            'Ana Paula Andrade',
