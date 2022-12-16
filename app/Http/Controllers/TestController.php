@@ -20,10 +20,14 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LdapRecord\Auth\BindException;
 use LdapRecord\Connection;
 use Maatwebsite\Excel\Excel;
+use Nette\Utils\Random;
+use Barryvdh\DomPDF\PDF;
 
 class TestController extends Controller
 {
@@ -51,9 +55,35 @@ class TestController extends Controller
 //
 //        $collab = User::find($idCollab);
 
-        $test = new Test();
 
-        $test->truncate();
+
+        for($i = 0; $i < 100; $i++) {
+            $data = Http::withHeaders(['Content-Type' => 'Application/json'])
+                ->post('https://plataforma.astenassinatura.com.br/api/downloadPDFEnvelopeDocs/',[
+                    'token' => '3koqaYFIRSx5QypP2huHk4gpIsVT0WZ3bIEbLfbfJWwKzgu0WP+jI13IISftJl+6x5yKrknzeGyvNuqYcVVky4-S8HNSIjlCU90x8GWDthturJN+Nue40K9PPLxRCvo5mqdQ28eqVfA',
+                    'params' => [
+                        'idEnvelope' => $i,
+                        'incluirDocs' => 'S',
+                        'versaoSemCertificado' => null
+                    ]
+                ])
+                ->json();
+
+            // return $data['response']['nomeArquivo'];
+
+            if(isset($data['response'])) {
+                Storage::disk('public2')->put($data['response']['nomeArquivo'], base64_decode($data['response']['envelopeContent']));
+            }
+
+        }
+
+        //return Storage::put('public/asten/'.$data['nomeArquivo'].'.pdf', $content);
+
+
+
+
+
+
 
 
 
