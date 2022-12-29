@@ -25,7 +25,9 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
     });
 
 
-    Route::get('teste', [\App\Http\Controllers\TestController::class, 'index']);
+    Route::post('teste', [\App\Http\Controllers\TestController::class, 'index']);
+    Route::get('billing-equip-divide', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'index']);
+    Route::get('billing-equip-divide/download', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'createPDF']);
 
     Route::group([
         'middleware' => 'api',
@@ -172,6 +174,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                 Route::get('/seller', [\App\Http\Controllers\AgeRv\RvSellerController::class, 'seller']);
             });
 
+
             Route::middleware('AccessAdmin')->prefix('management')->group(function () {
                 Route::resource('collaborators', \App\Http\Controllers\AgeRv\CollaboratorController::class);
                 Route::get('collaborator/list/', [\App\Http\Controllers\AgeRv\CollaboratorController::class, 'showList']);
@@ -179,6 +182,10 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                 Route::get('new-password/{id}', [\App\Http\Controllers\UsersController::class, 'newPasswordAgeRv']);
                 Route::resource('meta', \App\Http\Controllers\AgeRv\CollaboratorMetaController::class);
                 Route::get('meta-add-mass', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddMass']);
+                Route::get('users-not-link', [\App\Http\Controllers\AgeRv\LinkUserController::class, 'getUsersNotLinkAgeRv']);
+                Route::put('user-link', [\App\Http\Controllers\AgeRv\LinkUserController::class, 'linkUserAndReleaseAccess']);
+
+
             });
 
             Route::prefix('analytics')->group(function () {

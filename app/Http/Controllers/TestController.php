@@ -6,6 +6,8 @@ use App\Exports\ReportExport;
 use App\Exports\UsersExport;
 use App\Http\Controllers\AgeRv\_aux\sales\Stars;
 use App\Ldap\UserLdap;
+use App\Mail\SendBlackFiber;
+use App\Mail\SendMainUser;
 use App\Models\AgeBoard\AccessPermission;
 use App\Models\AgeBoard\DashboardPermitted;
 use App\Models\AgeBoard\ItemPermitted;
@@ -21,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LdapRecord\Auth\BindException;
@@ -55,41 +58,100 @@ class TestController extends Controller
 //
 //        $collab = User::find($idCollab);
 
+        set_time_limit(200000);
+
+//
+//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+//
+//        foreach($array as $key => $value) {
+//
+//            foreach($value as $k => $v) {
+//                Mail::to($v[1])
+//                    ->send(new SendMainUser($v[0]));
+//
+//            }
+//        }
+//
+//        return "ok";
+
+//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+//
+//        foreach($array as $key => $value) {
+//
+//            foreach($value as $k => $v) {
+//                Mail::to($v[1])
+//                    ->send(new SendBlackFiber());
+//
+//            }
+//        }
+//
+//        return "ok";
+
+//        Mail::to('carlos.neto@agetelecom.com.br')
+//                    ->send(new SendBlackFiber());
+//
+//
+//            return "Ok";
 
 
-        for($i = 0; $i < 100; $i++) {
-            $data = Http::withHeaders(['Content-Type' => 'Application/json'])
-                ->post('https://plataforma.astenassinatura.com.br/api/downloadPDFEnvelopeDocs/',[
-                    'token' => '3koqaYFIRSx5QypP2huHk4gpIsVT0WZ3bIEbLfbfJWwKzgu0WP+jI13IISftJl+6x5yKrknzeGyvNuqYcVVky4-S8HNSIjlCU90x8GWDthturJN+Nue40K9PPLxRCvo5mqdQ28eqVfA',
-                    'params' => [
-                        'idEnvelope' => $i,
-                        'incluirDocs' => 'S',
-                        'versaoSemCertificado' => null
-                    ]
-                ])
-                ->json();
 
-            // return $data['response']['nomeArquivo'];
+//        $array = [
+//          'Ancelmo De Sales',
+//            'Angelica Mires',
+//            'Carla Julia',
+//            'Erivan de Souza',
+//            'Geovana Souza',
+//            'Itanael',
+//            'Jose Loiola',
+//            'Karen de Almeida',
+//            'Lucas de Brito',
+//            'Marcus Vinicius',
+//            'Maria Dilma',
+//            'Thalia Isabella'
+//        ];
+//
+//
+//        foreach($array as $key => $value) {
+//
+//            $collab = Collaborator::where('nome', 'like', $value.'%')->first('id');
+//
+//            $meta = CollaboratorMeta::whereColaboradorId($collab->id)->whereMesCompetencia('10')->first();
+//
+//            $meta = $meta->update(['meta' => 30]);
+//
+//
+//
+//        }
 
-            if(isset($data['response'])) {
-                Storage::disk('public2')->put($data['response']['nomeArquivo'], base64_decode($data['response']['envelopeContent']));
-            }
-
-        }
-
-        //return Storage::put('public/asten/'.$data['nomeArquivo'].'.pdf', $content);
+//
+//
 
 
-
-
-
-
-
-
-
-
-
-
+//
+//        for($i = 9502; $i < 99999; $i++) {
+//            $data = Http::withHeaders(['Content-Type' => 'Application/json'])
+//                ->post('https://plataforma.astenassinatura.com.br/api/downloadPDFEnvelopeDocs/', [
+//                    'token' => '3koqaYFIRSx5QypP2huHk4gpIsVT0WZ3bIEbLfbfJWwKzgu0WP+jI13IISftJl+6x5yKrknzeGyvNuqYcVVky4-S8HNSIjlCU90x8GWDthturJN+Nue40K9PPLxRCvo5mqdQ28eqVfA',
+//                    'params' => [
+//                        'idEnvelope' => $i,
+//                        'incluirDocs' => 'S',
+//                        'versaoSemCertificado' => null
+//                    ]
+//                ])
+//                ->json();
+//
+//            if(isset($data['response'])) {
+//                if($data['response']['nomeArquivo'] !== '6763 - KLEBSON SANTOS SILVA.zip') {
+//
+//                    if(! Storage::disk('public2')->exists($data['response']['nomeArquivo'])) {
+//                        Storage::disk('public2')->put($data['response']['nomeArquivo'], base64_decode($data['response']['envelopeContent']));
+//                    }
+//
+//                }
+//
+//
+//            }
+//        }
 
 
 //        $array = [
@@ -163,6 +225,8 @@ class TestController extends Controller
 //        return $result;
 
     }
+
+
 
 
 }

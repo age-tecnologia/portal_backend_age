@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\DB;
 class ContractsController extends Controller
 {
 
+    public function __invoke()
+    {
+        $this->create();
+    }
+
     public function index()
     {
         //

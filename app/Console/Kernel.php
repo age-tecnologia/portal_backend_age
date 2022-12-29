@@ -4,6 +4,10 @@ namespace App\Console;
 
 use App\Http\Controllers\AgeRv\VoalleSalesController;
 use App\Http\Controllers\DataWarehouse\Voalle\AuthenticationContractsController;
+use App\Http\Controllers\DataWarehouse\Voalle\ContractsController;
+use App\Http\Controllers\DataWarehouse\Voalle\ContractsTypeController;
+use App\Http\Controllers\DataWarehouse\Voalle\PeoplesController;
+use App\Http\Controllers\DataWarehouse\Voalle\ServiceProductsController;
 use App\Http\Controllers\TestController;
 use App\Models\AgeRv\VoalleSales;
 use Illuminate\Console\Scheduling\Schedule;
@@ -22,6 +26,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
 
         $schedule->call(new AuthenticationContractsController())->dailyAt('03:00');
+        $schedule->call(new ContractsController())->dailyAt('03:00');
+        $schedule->call(new ContractsTypeController())->dailyAt('03:00');
+        $schedule->call(new PeoplesController())->dailyAt('03:00');
+        $schedule->call(new ServiceProductsController())->dailyAt('03:00');
         $schedule->call(new VoalleSalesController())->dailyAt('04:00');
 
 

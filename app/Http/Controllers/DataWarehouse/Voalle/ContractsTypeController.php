@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\DB;
 class ContractsTypeController extends Controller
 {
 
+    public function __invoke()
+    {
+        $this->create();
+    }
+
     public function index()
     {
         //

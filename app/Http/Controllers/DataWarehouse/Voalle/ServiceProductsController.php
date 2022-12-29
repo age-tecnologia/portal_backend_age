@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class ServiceProductsController extends Controller
 {
+
+    public function __invoke()
+    {
+        $this->create();
+    }
+
     public function index()
     {
         //
