@@ -25,12 +25,12 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->call(new AuthenticationContractsController())->dailyAt('03:00');
-        $schedule->call(new ContractsController())->dailyAt('03:00');
-        $schedule->call(new ContractsTypeController())->dailyAt('03:00');
-        $schedule->call(new PeoplesController())->dailyAt('03:00');
-        $schedule->call(new ServiceProductsController())->dailyAt('03:00');
-        $schedule->call(new VoalleSalesController())->dailyAt('04:00');
+        $schedule->call(new AuthenticationContractsController())->everyMinute();
+        $schedule->call(new ContractsController())->everyMinute();
+        $schedule->call(new ContractsTypeController())->everyMinute();
+        $schedule->call(new PeoplesController())->everyMinute();
+        $schedule->call(new ServiceProductsController())->everyMinute();
+        $schedule->call(new VoalleSalesController())->everyMinute();
 
 
     }
