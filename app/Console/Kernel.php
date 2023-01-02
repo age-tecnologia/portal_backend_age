@@ -25,13 +25,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->call(new AuthenticationContractsController())->dailyAt('15:54');
-        $schedule->call(new ContractsController())->dailyAt('15:54');
-        $schedule->call(new ContractsTypeController())->dailyAt('15:54');
-        $schedule->call(new PeoplesController())->dailyAt('15:54');
-        $schedule->call(new ServiceProductsController())->dailyAt('15:54');
-        $schedule->call(new VoalleSalesController())->dailyAt('15:54');
-
+        $schedule->command('update:tables')->dailyAt('10:25');
 
     }
 
@@ -45,5 +39,8 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
+
+
+
     }
 }
