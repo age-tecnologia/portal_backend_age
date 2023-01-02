@@ -13,7 +13,7 @@
 
 </head>
 <body>
-<img src="https://i.ibb.co/JrCj9kB/EMAIL-MKT-VENCIMENTO-10-01.jpg" alt="vencimento">
+<img src="https://i.ibb.co/2SxK2pg/EMAIL-MKT-VENCIMENTO-15-01.jpg" alt="vencimento">
 <img src="https://i.ibb.co/VJFbMPL/ASS-CENTRAL-DE-RELACIONAMENTO.jpg" alt="central_age">
 </body>
 </html>
