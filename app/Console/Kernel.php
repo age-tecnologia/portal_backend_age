@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command('update:tables')->everyMinute();
+        $schedule->command('update:tables')->dailyAt('10:42');
 
     }
 
