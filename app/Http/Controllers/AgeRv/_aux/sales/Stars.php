@@ -201,8 +201,6 @@ class Stars
                     $this->stars += 17;
                 }
             }
-
-
         }
     }
 

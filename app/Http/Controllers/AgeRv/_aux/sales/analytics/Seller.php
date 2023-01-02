@@ -94,6 +94,11 @@ class Seller
         $dayUtil = 0;
         $datesUtils = [];
 
+        if($this->month !== $month) {
+            return "Sem projeção para o mês anterior";
+        }
+
+
         for ($i = 1; ($daysMonth + 1) > $i; $i++) {
             $date = Carbon::parse("$year-$month-$i")->format('d/m/Y');
             $dayName = Carbon::parse("$year-$month-$i")->format('l');
@@ -128,6 +133,12 @@ class Seller
 
         foreach ($dayUtilActual as $item => $value) {
             $dateUtilActual = $value[0];
+        }
+
+
+
+        if($metaPercent === 0) {
+            return 0;
         }
 
 
