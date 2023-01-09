@@ -136,7 +136,6 @@ class Seller
         }
 
 
-
         if($metaPercent === 0) {
             return 0;
         }

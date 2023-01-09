@@ -24,12 +24,13 @@ class PermmittedsDashboardController extends Controller
 
 
         if($this->level === 2 || $this->level === 3) {
-            $dashPermitted = Dashboard::all(['id', 'dashboard']);
+            $dashPermitted = Dashboard::all(['id', 'ativo', 'dashboard']);
 
             foreach($dashPermitted as $item => $value) {
                 $result[] = [
                     'id' => $value->id,
                     'dashboard' => $value->dashboard,
+                    'active' => $value->ativo,
                     'itens' => $this->itemsPermmitteds($value->id)
                 ];
             }
@@ -38,7 +39,7 @@ class PermmittedsDashboardController extends Controller
             $dashPermitted = DB::table('ageboard_dashboards as d')
                 ->leftJoin('ageboard_dashboard_permissoes as dp', 'd.id', '=', 'dp.dashboard_id')
                 ->where('dp.user_id', auth()->user()->id)
-                ->get(['d.id', 'd.dashboard']);
+                ->get(['d.id', 'd.ativo', 'd.dashboard']);
         }
 
         $result = [];
@@ -47,6 +48,7 @@ class PermmittedsDashboardController extends Controller
             $result[] = [
                 'id' => $value->id,
                 'dashboard' => $value->dashboard,
+                'active' => $value->ativo,
                 'itens' => $this->itemsPermmitteds($value->id)
             ];
         }

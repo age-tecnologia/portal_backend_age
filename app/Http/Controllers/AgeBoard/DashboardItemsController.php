@@ -11,7 +11,7 @@ class DashboardItemsController extends Controller
 
     public function index(Request $request)
     {
-        $items = Item::whereDashboardId($request->input('id'))->get(['item', 'iframe']);
+        $items = Item::whereDashboardId($request->input('id'))->get(['id', 'item', 'iframe']);
 
         return $items;
     }

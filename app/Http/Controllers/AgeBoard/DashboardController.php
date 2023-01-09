@@ -11,7 +11,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $dashboards = Dashboard::all(['id', 'dashboard']);
+        $dashboards = Dashboard::all(['id','ativo', 'dashboard']);
 
         return $dashboards;
     }
@@ -61,6 +61,43 @@ class DashboardController extends Controller
 
     public function destroy($id)
     {
-        //
+        $dashboard = Dashboard::find($id);
+
+        if($dashboard->ativo === 1) {
+            $dashboard = $dashboard->update([
+               'ativo' => 0
+            ]);
+
+            if($dashboard) {
+                return response()->json([
+                    'msg' => 'Dashboard inativado com sucesso',
+                    'status' => true
+                ], 201);
+            } else {
+                return response()->json([
+                    'msg' => 'Erro ao inativar Dashboard!',
+                    'status' => false
+                ], 200);
+            }
+        } else {
+
+            $dashboard = $dashboard->update([
+                'ativo' => 1
+            ]);
+
+            if($dashboard) {
+                return response()->json([
+                    'msg' => 'Dashboard ativado com sucesso',
+                    'status' => true
+                ], 201);
+            } else {
+                return response()->json([
+                    'msg' => 'Erro ao ativar Dashboard!',
+                    'status' => false
+                ], 200);
+            }
+
+        }
+
     }
 }

@@ -10,5 +10,5 @@ class Dashboard extends Model
     use HasFactory;
 
     protected $table = 'ageboard_dashboards';
-    protected $fillable = ['dashboard'];
+    protected $fillable = ['dashboard', 'ativo'];
 }
