@@ -29,7 +29,7 @@ class LinkUserController extends Controller
             $name = explode(' ', mb_convert_case($request->input('name'), MB_CASE_LOWER, 'utf-8'));
 
             $users = $users->filter(function($item, $key) use($request, $name) {
-                if(str_contains($item->name, $name[0])) {
+                if((str_contains($item->name, $name[0]) || (str_contains($item->name, $name[1]) ))){
                     return $item;
                 }
             });

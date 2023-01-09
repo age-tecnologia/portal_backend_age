@@ -66,11 +66,55 @@ class TestController extends Controller
 
         set_time_limit(200000);
 
+
+        $sellers = VoalleSales::distinct('vendedor')->get(['vendedor']);
+
+        return $sellers;
+
+
+
        // return view('mail.invoice_error');
 //
-        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+     //   $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 
+
+//        $connection = new Connection([
+//            'hosts' => ['10.25.0.1'],
+//            'base_dn' => 'dc=tote, dc=local',
+//            'username' => 'ldap',
+//            'password' => 'iAcWMMqC@',
 //
+//            // Optional Configuration Options
+//            'port' => 389,
+//            'use_ssl' => false,
+//            'use_tls' => false,
+//            'version' => 3,
+//            'timeout' => 5,
+//            'follow_referrals' => false,
+//
+//        ]);
+//
+//
+//        try {
+//            $connection->connect();
+//
+//            $username = $request->input('email') . '@tote.local';
+//            $password = $request->input('password');
+//
+//            if ($connection->auth()->attempt($username, $password)) {
+//                // Separa o nome e o sobrenome
+//
+//                return response()->json('Authentic', 201);
+//
+//            } else {
+//
+//                return response()->json('Unauthentic', 200);
+//
+//            }
+//        } catch (\Exception $e) {
+//
+//        }
+
 //        foreach($array as $key => $value) {
 //
 //            foreach($value as $k => $v) {
