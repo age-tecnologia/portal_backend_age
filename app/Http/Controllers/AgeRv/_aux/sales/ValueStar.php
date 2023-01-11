@@ -32,6 +32,8 @@ class ValueStar
                 $this->minMeta = 60;
             } elseif ($this->month >= '09' && $this->year === '2022') {
                 $this->minMeta = 70;
+            } elseif ($this->month >= '01' && $this->year === '2023') {
+                $this->minMeta = 70;
             }
 
             // Regra e valores vigentes até o momento -- 09/10/2022
@@ -80,6 +82,17 @@ class ValueStar
                 } elseif ($this->metaPercent >= 141) {
                     $this->valueStar = 8;
                 }
+            } elseif (($this->month >= '01') && $this->year === '2023') {
+
+                if ($this->metaPercent >= 70 && $this->metaPercent < 100) {
+                    $this->valueStar = 2.50;
+                } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                    $this->valueStar = 5;
+                } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                    $this->valueStar = 7;
+                } elseif ($this->metaPercent >= 141) {
+                    $this->valueStar = 8;
+                }
             }
 
 
@@ -108,6 +121,18 @@ class ValueStar
                 }
 
             } elseif ($this->month >= '09' && $this->year === '2022') {
+
+                if ($this->metaPercent >= 70 && $this->metaPercent < 80) {
+                    $this->valueStar = .5;
+                } elseif ($this->metaPercent >= 80 && $this->metaPercent < 90) {
+                    $this->valueStar = .6;
+                } elseif ($this->metaPercent >= 90 && $this->metaPercent < 100) {
+                    $this->valueStar = .8;
+                } elseif ($this->metaPercent >= 100) {
+                    $this->valueStar = ($this->metaPercent / 100);
+                }
+
+            } elseif ($this->month >= '01' && $this->year === '2023') {
 
                 if ($this->metaPercent >= 70 && $this->metaPercent < 80) {
                     $this->valueStar = .5;
