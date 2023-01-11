@@ -25,7 +25,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
     });
 
 
-    Route::post('teste', [\App\Http\Controllers\TestController::class, 'index']);
+    Route::get('teste', [\App\Http\Controllers\TestController::class, 'index']);
     Route::get('billing-equip-divide', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'index']);
     Route::get('billing-equip-divide/download', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'createPDF']);
 

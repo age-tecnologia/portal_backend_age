@@ -67,15 +67,183 @@ class TestController extends Controller
         set_time_limit(200000);
 
 
-        $sellers = VoalleSales::distinct('vendedor')->get(['vendedor']);
-
-        return $sellers;
-
-
-
-       // return view('mail.invoice_error');
+//        $sellers = VoalleSales::whereMonth('data_contrato', '>=', '5')->whereYear('data_contrato', '2022')
+//                                ->whereNotNull('vendedor')
+//                                ->distinct('vendedor')->get(['vendedor']);
 //
-     //   $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+//        $supervisors = VoalleSales::whereMonth('data_contrato', '>=', '5')->whereYear('data_contrato', '2022')
+//            ->whereNotNull('supervisor')
+//            ->distinct('supervisor')->get(['supervisor']);
+//
+//        $sellers = DB::select('SELECT DISTINCT vendedor, COUNT(*) as vendas_vendedor FROM agerv_voalle_vendas
+//                                            WHERE (MONTH(data_contrato) >= 5 AND YEAR(data_contrato) = 2022)
+//                                            AND vendedor != \' \'
+//                                            GROUP BY vendedor');
+//
+//        $supervisors = DB::select('SELECT DISTINCT supervisor, COUNT(*) as vendas_vendedor FROM agerv_voalle_vendas
+//                                            WHERE (MONTH(data_contrato) >= 5  AND YEAR(data_contrato) = 2022)
+//                                            AND supervisor != \' \'
+//                                            GROUP BY supervisor');
+//
+//        $collaborators = DB::select('SELECT DISTINCT vendedor FROM agerv_voalle_vendas
+//                                            WHERE (MONTH(data_contrato) >= 5  AND YEAR(data_contrato) = 2022)
+//                                            AND vendedor != \' \'
+//                                            GROUP BY vendedor
+//                                            UNION
+//                                            SELECT DISTINCT supervisor FROM agerv_voalle_vendas
+//                                            WHERE (MONTH(data_contrato) >= 5  AND YEAR(data_contrato) = 2022)
+//                                            AND supervisor != \' \'
+//                                            GROUP BY supervisor');
+//
+//        $result = [];
+//
+//        foreach($collaborators as $k => $v) {
+//            $result[] = [
+//                'colaborador' => [
+//                    'nome' => $v->vendedor,
+//                    'vendedor' => $this->sellers($v->vendedor, $sellers),
+//                    'supervisor' => $this->supervisors($v->vendedor, $supervisors)
+//                ]
+//            ];
+//        }
+//
+//        $duplicates = [];
+//
+//        foreach($result as $k => $v) {
+//            if($v['colaborador']['vendedor'] !== null && $v['colaborador']['supervisor'] !== null) {
+//                $duplicates[] = $v;
+//            }
+//        }
+//
+//        return $duplicates;
+
+
+        $agerv_comissao_vendas = array(
+            array(
+                "supervisor" => "tarcisiane sumara barbosa guimaraes",
+            ),
+            array(
+                "supervisor" => NULL,
+            ),
+            array(
+                "supervisor" => "aguiar telecom",
+            ),
+            array(
+                "supervisor" => "laisa de oliveira sant'ana",
+            ),
+            array(
+                "supervisor" => "multi canal de vendas",
+            ),
+            array(
+                "supervisor" => "keila jaqueline da silva",
+            ),
+            array(
+                "supervisor" => "daiane neres da silva",
+            ),
+            array(
+                "supervisor" => "emanuel oliveira de castro",
+            ),
+            array(
+                "supervisor" => "eliazar vieira silva",
+            ),
+            array(
+                "supervisor" => "laiane bertoldo de sousa",
+            ),
+            array(
+                "supervisor" => "hugo thiago da silva santos",
+            ),
+            array(
+                "supervisor" => "quiosque gama",
+            ),
+            array(
+                "supervisor" => "clebersom sousa felix",
+            ),
+            array(
+                "supervisor" => "jefferson ramos de jesus",
+            ),
+            array(
+                "supervisor" => "pedro vidal soares",
+            ),
+            array(
+                "supervisor" => "willianns da silva x. junior",
+            ),
+            array(
+                "supervisor" => "cesar cordeiro araujo",
+            ),
+            array(
+                "supervisor" => "alessandro silva vieira",
+            ),
+            array(
+                "supervisor" => "nilmar pereira dos santos",
+            ),
+            array(
+                "supervisor" => "heberty diego de abreu resende",
+            ),
+            array(
+                "supervisor" => "aegiton alves leite",
+            ),
+            array(
+                "supervisor" => "new life telecom bsb ltda",
+            ),
+            array(
+                "supervisor" => "neat web telecomunicacoes",
+            ),
+            array(
+                "supervisor" => "mateus pereira de araujo",
+            ),
+            array(
+                "supervisor" => "meta servicos e negocios ltda",
+            ),
+            array(
+                "supervisor" => "dct telecom manutenção tecnica eireli",
+            ),
+            array(
+                "supervisor" => "robotica telecom promocao de vendas ltda",
+            ),
+            array(
+                "supervisor" => "willian da silva bento",
+            ),
+            array(
+                "supervisor" => "dr conexao",
+            ),
+            array(
+                "supervisor" => "jessica soares costa",
+            ),
+            array(
+                "supervisor" => "mateus pereira araujo",
+            ),
+            array(
+                "supervisor" => "elem aparecida de sousa laura",
+            ),
+            array(
+                "supervisor" => "r & v telecom",
+            ),
+            array(
+                "supervisor" => "rodrigo corsino de oliveira",
+            ),
+        );
+
+        $result = [];
+
+        $collab = Collaborator::whereNotIn('nome', $agerv_comissao_vendas[0])->whereTipoComissaoId(3)->get();
+
+        return count($collab);
+
+
+        foreach($agerv_comissao_vendas as $k => $v) {
+
+
+
+        }
+
+        return $result;
+
+
+
+//
+//        return view('mail.invoice_error');
+//
+//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 
 
 //        $connection = new Connection([
@@ -135,10 +303,6 @@ class TestController extends Controller
 //            }
 //        }
 
-
-
-
-        return "ok";
 //
 ////
 //        Mail::to('carlos.neto@agetelecom.com.br')
@@ -516,9 +680,6 @@ class TestController extends Controller
 //        foreach($collaborator as $k => $v) {
 //
 //        }
-
-
-
 //        $users = UserLdap::limit(10)->get(['name']);
 //
 //        return $users;
@@ -550,6 +711,41 @@ class TestController extends Controller
     {
         return true;
     }
+
+    public function sellers($name, $sellers)
+    {
+        $sellers = collect($sellers);
+
+        $sellers = $sellers->filter(function ($item) use($name) {
+           if($name === $item->vendedor) {
+               return $item;
+           }
+        });
+
+
+        foreach($sellers as $k => $v) {
+            return $v->vendas_vendedor;
+        }
+
+    }
+
+    public function supervisors($name, $supervisors)
+    {
+        $supervisors = collect($supervisors);
+
+        $supervisors = $supervisors->filter(function ($item) use($name) {
+            if($name === $item->supervisor) {
+                return $item;
+            }
+        });
+
+
+        foreach($supervisors as $k => $v) {
+            return $v->vendas_vendedor;
+        }
+    }
+
+
 
 
 

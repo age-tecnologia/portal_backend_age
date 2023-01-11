@@ -116,11 +116,11 @@ class Master
                 'name' => $value->nome,
                 'sales' => [
                     'count' => $sales->getCountValids(),
-                    'extract' => $sales->getExtractValidsArray()
+               //     'extract' => $sales->getExtractValidsArray()
                 ],
                 'cancel' => [
                     'count' => $cancel->getCountCancel(),
-                    'extract' => $cancel->getExtractCancel()
+               //     'extract' => $cancel->getExtractCancel()
                 ],
                 'meta' => $meta->getMeta(),
                 'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),

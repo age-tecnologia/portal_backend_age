@@ -22,6 +22,7 @@ class Seller
     private $data;
     private $id;
     private $collabChannelId;
+    private $dateAdmission;
 
     public function __construct($month, $year, $name, $id)
     {
@@ -44,16 +45,17 @@ class Seller
                                             nome_cliente')
             ->get()->unique(['id_contrato']);
 
-        $collab = Collaborator::whereNome($this->name)->first('tipo_comissao_id');
+        $collab = Collaborator::whereNome($this->name)->first(['tipo_comissao_id', 'data_admissao']);
 
         $this->collabChannelId = $collab->tipo_comissao_id;
+        $this->dateAdmission = $collab->data_admissao;
     }
 
     public function response()
     {
         $sales = new Sales($this->name, $this->data);
         $cancel = new Cancel($this->data);
-        $meta = new Meta($this->id, $this->month, $this->year);
+        $meta = new Meta($this->id, $this->month, $this->year, $this->dateAdmission);
         $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
         $valueStar = new ValueStar($metaPercent->getMetaPercent(), $this->collabChannelId, $this->month, $this->year);
         $stars = new Stars($sales->getExtractValids());
