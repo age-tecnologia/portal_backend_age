@@ -17,6 +17,7 @@ use App\Models\AgeReport\Report;
 use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\CollaboratorMeta;
+use App\Models\AgeRv\Commission;
 use App\Models\AgeRv\VoalleSales;
 use App\Models\Test;
 use App\Models\User;
@@ -118,121 +119,19 @@ class TestController extends Controller
 //        return $duplicates;
 
 
-        $agerv_comissao_vendas = array(
-            array(
-                "supervisor" => "tarcisiane sumara barbosa guimaraes",
-            ),
-            array(
-                "supervisor" => NULL,
-            ),
-            array(
-                "supervisor" => "aguiar telecom",
-            ),
-            array(
-                "supervisor" => "laisa de oliveira sant'ana",
-            ),
-            array(
-                "supervisor" => "multi canal de vendas",
-            ),
-            array(
-                "supervisor" => "keila jaqueline da silva",
-            ),
-            array(
-                "supervisor" => "daiane neres da silva",
-            ),
-            array(
-                "supervisor" => "emanuel oliveira de castro",
-            ),
-            array(
-                "supervisor" => "eliazar vieira silva",
-            ),
-            array(
-                "supervisor" => "laiane bertoldo de sousa",
-            ),
-            array(
-                "supervisor" => "hugo thiago da silva santos",
-            ),
-            array(
-                "supervisor" => "quiosque gama",
-            ),
-            array(
-                "supervisor" => "clebersom sousa felix",
-            ),
-            array(
-                "supervisor" => "jefferson ramos de jesus",
-            ),
-            array(
-                "supervisor" => "pedro vidal soares",
-            ),
-            array(
-                "supervisor" => "willianns da silva x. junior",
-            ),
-            array(
-                "supervisor" => "cesar cordeiro araujo",
-            ),
-            array(
-                "supervisor" => "alessandro silva vieira",
-            ),
-            array(
-                "supervisor" => "nilmar pereira dos santos",
-            ),
-            array(
-                "supervisor" => "heberty diego de abreu resende",
-            ),
-            array(
-                "supervisor" => "aegiton alves leite",
-            ),
-            array(
-                "supervisor" => "new life telecom bsb ltda",
-            ),
-            array(
-                "supervisor" => "neat web telecomunicacoes",
-            ),
-            array(
-                "supervisor" => "mateus pereira de araujo",
-            ),
-            array(
-                "supervisor" => "meta servicos e negocios ltda",
-            ),
-            array(
-                "supervisor" => "dct telecom manutenção tecnica eireli",
-            ),
-            array(
-                "supervisor" => "robotica telecom promocao de vendas ltda",
-            ),
-            array(
-                "supervisor" => "willian da silva bento",
-            ),
-            array(
-                "supervisor" => "dr conexao",
-            ),
-            array(
-                "supervisor" => "jessica soares costa",
-            ),
-            array(
-                "supervisor" => "mateus pereira araujo",
-            ),
-            array(
-                "supervisor" => "elem aparecida de sousa laura",
-            ),
-            array(
-                "supervisor" => "r & v telecom",
-            ),
-            array(
-                "supervisor" => "rodrigo corsino de oliveira",
-            ),
-        );
+        $supervisors = Commission::where('mes_competencia', '>=', 10)->distinct('supervisor')->get(['supervisor']);
 
         $result = [];
 
-        $collab = Collaborator::whereNotIn('nome', $agerv_comissao_vendas[0])->whereTipoComissaoId(3)->get();
+        $collab = Collaborator::whereIn('nome', $supervisors)->whereTipoComissaoId(3)->get(['nome']);
 
-        return count($collab);
-
-
-        foreach($agerv_comissao_vendas as $k => $v) {
+        return $collab;
 
 
+        foreach($supervisors as $k => $v) {
+
+
+            $result[] = $collab;
 
         }
 
