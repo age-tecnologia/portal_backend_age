@@ -119,23 +119,7 @@ class TestController extends Controller
 //        return $duplicates;
 
 
-        $supervisors = Commission::where('mes_competencia', '>=', 10)->distinct('supervisor')->get(['supervisor']);
-
-        $result = [];
-
-        $collab = Collaborator::whereIn('nome', $supervisors)->whereTipoComissaoId(3)->get(['nome']);
-
-        return $collab;
-
-
-        foreach($supervisors as $k => $v) {
-
-
-            $result[] = $collab;
-
-        }
-
-        return $result;
+       return "aqui";
 
 
 
@@ -193,16 +177,21 @@ class TestController extends Controller
 //        }
 
 //
+//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+//
+//        return $array;
+//
+//
 //        foreach($array as $key => $value) {
 //
 //            foreach($value as $k => $v) {
 //                Mail::to($v[1])
 //                    ->send(new SendInvoice());
-//
 //            }
 //        }
-
 //
+//        return "ok";
+////
 ////
 //        Mail::to('carlos.neto@agetelecom.com.br')
 //            ->send(new SendInvoice());

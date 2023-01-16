@@ -18,6 +18,7 @@ class Supervisor
     private $month;
     private $year;
     private $name;
+    private $collab;
     private $data;
     private $id;
 
@@ -42,15 +43,16 @@ class Supervisor
                                             nome_cliente')
             ->get()->unique(['id_contrato']);
 
+        $this->collab = Collaborator::whereNome($name)->first();
+
     }
 
     public function response()
     {
 
-
         $sales = new Sales($this->name, $this->data);
         $cancel = new Cancel($this->data);
-        $meta = new Meta($this->id, $this->month, $this->year);
+        $meta = new Meta($this->id, $this->month, $this->year, $this->collab->data_admissao);
         $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
         $valueStar = new ValueStar($metaPercent->getMetaPercent(), 3, $this->month, $this->year);
         $stars = new Stars($sales->getExtractValids());

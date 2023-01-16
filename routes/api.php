@@ -25,7 +25,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
     });
 
 
-    Route::get('teste', [\App\Http\Controllers\TestController::class, 'index']);
+    Route::post('teste', [\App\Http\Controllers\TestController::class, 'index']);
     Route::get('billing-equip-divide', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'index']);
     Route::get('billing-equip-divide/download', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'createPDF']);
 
@@ -241,6 +241,41 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
             Route::put('dashboard-items-alternate', [\App\Http\Controllers\AgeBoard\PermmittedsDashboardController::class, 'itemsAlternateAccess']);
 
         });
+
+        Route::middleware('AccessAgeControl')->prefix('agecontrol')->group(function () {
+
+            Route::get('/Access', function () {
+                $level = auth()->user()->nivel_acesso_id;
+
+                if($level === 2 || $level === 3) {
+
+                    return [
+                        'levelAccess' => 'Admin',
+                        'function' => 'Admin'
+                    ];
+
+                } else {
+                    $accesPermissions = \Illuminate\Support\Facades\DB::table('ageboard_usuarios_permitidos as up')
+                        ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
+                        ->leftJoin('portal_nivel_acesso as na', 'up.nivel_acesso_id', '=', 'na.id')
+                        ->where('user_id', auth()->user()->id)
+                        ->select('cf.funcao', 'na.nivel')
+                        ->first();
+
+                    $access = null;
+
+                    return [
+                        'levelAccess' => $accesPermissions->nivel,
+                        'function' => $accesPermissions->funcao
+                    ];
+                }
+            });
+
+
+
+
+        });
+
 
     });
 

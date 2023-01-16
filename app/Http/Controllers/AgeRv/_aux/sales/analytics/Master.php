@@ -43,6 +43,8 @@ class Master
 //                                            nome_cliente')
 //                                ->get()->unique(['id_contrato']);
 
+
+
         $this->data = \App\Models\AgeRv\Commission::where('mes_competencia', $this->month)
                                                     ->where('ano_competencia', $this->year)
                                                     ->whereStatus('Aprovado')
@@ -130,6 +132,8 @@ class Master
                 'commission' => number_format($commission->getCommission(), 2, ',', '.')
             ];
         }
+
+
 
         return $data;
 

@@ -16,7 +16,7 @@ class Meta
     private $dateCompetence;
 
 
-    public function __construct($id, $month, $year, $dateAdmission)
+    public function __construct($id, $month, $year, $dateAdmission = null)
     {
         $this->collaboratorId = $id;
         $this->month = $month;
@@ -27,7 +27,6 @@ class Meta
     }
 
     private function response() {
-
 
 
         $this->collaboratorMeta = CollaboratorMeta::whereColaboradorId($this->collaboratorId)->whereMesCompetencia($this->month)->first(['meta']);

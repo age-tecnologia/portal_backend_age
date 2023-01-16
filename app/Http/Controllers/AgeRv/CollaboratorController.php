@@ -54,14 +54,14 @@ class CollaboratorController extends Controller
 
         foreach($supervisors as $key => $value) {
             $collab->firstOrCreate(
-                ['nome' => $value->supervisor, 'funcao_id' => 3],
+                ['nome' => $value->supervisor],
                 ['nome' => $value->supervisor, 'funcao_id' => 3, 'canal_id' => 2, 'tipo_comissao_id' => 3]
             );
         }
 
         foreach($sellers as $key => $value) {
             $collab->firstOrCreate(
-                ['nome' => $value->vendedor, 'funcao_id' => 1],
+                ['nome' => $value->vendedor],
                 ['nome' => $value->vendedor, 'funcao_id' => 1, 'canal_id' => 2, 'tipo_comissao_id' => 2]
             );
         }

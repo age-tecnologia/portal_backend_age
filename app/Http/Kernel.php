@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\AccessMaster;
 use App\Http\Middleware\AgeBoard\AccessAgeBoard;
+use App\Http\Middleware\AgeControl\AccessAgeControl;
 use App\Http\Middleware\AgeReport\AccessReport;
 use App\Http\Middleware\AgeRv\AccessAdmin;
 use App\Http\Middleware\AgeRv\AccessAgeRv;
@@ -74,6 +75,7 @@ class Kernel extends HttpKernel
         'AccessAgeReport' => AccessReport::class,
         'AccessAdmin' => AccessAdmin::class,
         'AccessAgeBoard' => AccessAgeBoard::class,
+        'AccessAgeControl' => AccessAgeControl::class,
         'LogAccess' => LogAccess::class
     ];
 }

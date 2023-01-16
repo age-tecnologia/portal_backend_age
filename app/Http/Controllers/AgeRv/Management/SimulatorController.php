@@ -111,6 +111,7 @@ class SimulatorController extends Controller
                     LOWER(supervisor) as supervisor, data_cancelamento, plano')
             ->get()
             ->unique('id_contrato');
+
     }
 
     public function collaborators($channelId)
@@ -122,7 +123,6 @@ class SimulatorController extends Controller
                             ->selectRaw('LOWER(c.nome) as nome, cc.canal as canal')
                             ->distinct()
                             ->get();
-
 
         $result = [];
 
@@ -164,6 +164,7 @@ class SimulatorController extends Controller
         $this->salesD7 = 0;
 
         $result = $this->salesData->filter(function ($sale) use($name) {
+
             if($sale->vendedor === $name || $sale->supervisor === $name) {
 
                 if($sale->situacao === 'Cancelado') {
