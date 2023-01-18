@@ -118,10 +118,41 @@ class TestController extends Controller
 //
 //        return $duplicates;
 
-
-       return "aqui";
-
-
+//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+//
+//
+//        $collabs = [];
+//
+//        foreach($array as $k => $v) {
+//            foreach($v as $kk => $vv) {
+//                $collabs[] = Collaborator::whereNome($vv)->first(['id']);
+//            }
+//        }
+//
+//        $success = [];
+//
+//
+//        foreach($collabs as $k => $v) {
+//            if(isset($v->id)) {
+//
+//                $collab = CollaboratorMeta::whereColaboradorId($v->id)->where('mes_competencia', 11)->first();
+//
+//                if(isset($collab->id)) {
+//                    $collab->update([
+//                        'meta' => 16.5
+//                    ]);
+//                } else {
+//
+//                    CollaboratorMeta::create([
+//                       'colaborador_id' => $v->id,
+//                       'mes_competencia' => 11,
+//                       'meta' => 16.5,
+//                       'modified_by' => 1
+//                    ]);
+//
+//                }
+//            }
+//        }
 
 //
 //        return view('mail.invoice_error');

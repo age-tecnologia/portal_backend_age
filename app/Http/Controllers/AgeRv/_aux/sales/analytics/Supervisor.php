@@ -91,6 +91,7 @@ class Supervisor
 
         $data = [];
 
+
         $sellers = Collaborator::whereIn('nome', $sellers)->get()->unique(['nome']);
 
         foreach($sellers as $key => $value) {

@@ -96,7 +96,7 @@ class Seller
         $dayUtil = 0;
         $datesUtils = [];
 
-        if($this->month !== $month) {
+        if($this->month != $month) {
             return "Sem projeção para o mês anterior";
         }
 

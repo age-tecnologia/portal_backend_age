@@ -255,7 +255,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                     ];
 
                 } else {
-                    $accesPermissions = \Illuminate\Support\Facades\DB::table('ageboard_usuarios_permitidos as up')
+                    $accesPermissions = \Illuminate\Support\Facades\DB::table('agecontrol_usuarios_permitidos as up')
                         ->leftJoin('portal_colaboradores_funcoes as cf', 'up.funcao_id', '=', 'cf.id')
                         ->leftJoin('portal_nivel_acesso as na', 'up.nivel_acesso_id', '=', 'na.id')
                         ->where('user_id', auth()->user()->id)
