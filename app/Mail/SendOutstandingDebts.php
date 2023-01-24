@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SendMainUser extends Mailable
+class SendOutstandingDebts extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -30,9 +30,9 @@ class SendMainUser extends Mailable
      */
     public function build()
     {
-        return $this->view('mail')
-                    ->from('notificacao@agetelecom.com.br')
-                    ->subject('Devolução da ONU – (Modem)')
-                    ->with(['name' => $this->name]);
+        return $this->view('mail.outstanding_debts')
+            ->from('notificacao@agetelecom.com.br')
+            ->subject('Débitos pendentes')
+            ->with(['name' => $this->name]);
     }
 }

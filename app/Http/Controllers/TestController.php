@@ -6,10 +6,13 @@ use App\Exports\ReportExport;
 use App\Exports\UsersExport;
 use App\Http\Controllers\AgeRv\_aux\sales\Stars;
 use App\Http\Controllers\DataWarehouse\Voalle\PeoplesController;
+use App\Http\Controllers\Ixc\Api\WebserviceClient;
+use App\Http\Requests\AgeControl\ConductorStoreRequest;
 use App\Ldap\UserLdap;
 use App\Mail\SendBlackFiber;
 use App\Mail\SendInvoice;
 use App\Mail\SendMainUser;
+use App\Mail\SendOutstandingDebts;
 use App\Models\AgeBoard\AccessPermission;
 use App\Models\AgeBoard\DashboardPermitted;
 use App\Models\AgeBoard\ItemPermitted;
@@ -24,6 +27,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -66,6 +70,135 @@ class TestController extends Controller
 //        $collab = User::find($idCollab);
 
         set_time_limit(200000);
+
+
+        return "autorizado";
+
+
+//
+
+
+//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+//
+//
+//
+//
+//
+//
+//        $host = 'https://ixc.agetelecom.com.br/webservice/v1';
+//        $token = '10:8db6eebcbf1b5f8ddb6800f2d79e62690f4e7eec161ef80ff39bba2ad5e5f5a3';//token gerado no cadastro do usuario (verificar permissões)
+//        $selfSigned = true; //true para certificado auto assinado
+//        $api = new Ixc\Api\WebserviceClient($host, $token, $selfSigned);
+//
+//        $params = array(
+//            'qtype' => 'usuarios.id',//campo de filtro
+//            'oper' => '=',//operador da consulta
+//            'page' => '1',//página a ser mostrada
+//            'rp' => '500',//quantidade de registros por página
+//            'sortname' => 'usuarios.id',//campo para ordenar a consulta
+//            'sortorder' => 'desc'//ordenação (asc= crescente | desc=decrescente)
+//        );
+//        $api->get('usuarios', $params);
+//
+//        $retorno = $api->getRespostaConteudo(true);// false para json | true para array
+//
+//        $users = [];
+//
+//        foreach($retorno['registros'] as $k => $value) {
+//            $users[] = $value['email'];
+//        }
+//
+//        return $users;
+
+
+
+
+
+
+//
+//        foreach($array as $key => $value) {
+//            foreach($value as $k => $v) {
+//            $dados = array(
+//                'id_grupo' => "$v[0]",
+//                'nome' => mb_convert_case($v[1], MB_CASE_TITLE, 'UTF-8'),
+//                'email' => "$v[2]",
+//                'senha' => 'Age@telecom2023',
+//                'status' => 'A',
+//                'permite_acesso_ixc_mobile' => 'S',
+//                'imagem' => '',
+//                'dica_imagem' => '',
+//                'acesso_webservice' => 'N',
+//                'acesso_token' => '',
+//                'user_callcenter' => 'N',
+//                'callcenter' => '',
+//                'alter_passwd_date' => 'NULL',
+//                'language' => 'Pt-Br',
+//                'caixa_fn_receber' => '',
+//                'id_caixa' => '',
+//                'vendedor_padrao' => '',
+//                'recebimentos_dia_atual' => 'N',
+//                'pagamentos_dia_atual' => 'N',
+//                'lancamentos_dia_atual' => 'N',
+//                'desc_max_recebimento' => '0.00',
+//                'desc_max_venda' => '0.00',
+//                'desc_max_renegociacao' => '0.00',
+//                'funcionario' => '',
+//                'filtra_setor' => 'N',
+//                'filtra_funcionario' => 'N',
+//                'mostrar_os_sem_funcionario' => 'N',
+//                'crm_filtra_vendedor' => 'N',
+//                'inmap_filtra_vendedor' => 'N',
+//                'enviar_monitoramento_host' => 'N',
+//                'enviar_notificacao_backup' => 'N',
+//                'permite_inutilizar_patrimonio' => 'N',
+//                'permite_ver_diferenca' => 'N'
+//            );
+//        $api->post('usuarios', $dados);
+//        $retorno = $api->getRespostaConteudo(false);// false para json | true para array
+//            }
+//        }
+//
+//        return "Ok!";
+
+//        $dados = array(
+//            'id_grupo' => '',
+//            'tipo_alcada' => 'ADM',
+//            'nome' => '',
+//            'email' => '',
+//            'senha' => '',
+//            'status' => 'A',
+//            'permite_acesso_ixc_mobile' => 'S',
+//            'imagem' => '',
+//            'dica_imagem' => '',
+//            'acesso_webservice' => 'S',
+//            'acesso_token' => '',
+//            'user_callcenter' => 'S',
+//            'callcenter' => '',
+//            'alter_passwd_date' => 'NULL',
+//            'language' => 'Pt-Br',
+//            'caixa_fn_receber' => '',
+//            'id_caixa' => '',
+//            'vendedor_padrao' => '',
+//            'recebimentos_dia_atual' => 'N',
+//            'pagamentos_dia_atual' => 'N',
+//            'lancamentos_dia_atual' => 'S',
+//            'desc_max_recebimento' => '0.00',
+//            'desc_max_venda' => '0.00',
+//            'desc_max_renegociacao' => '0.00',
+//            'funcionario' => '',
+//            'filtra_setor' => 'S',
+//            'filtra_funcionario' => 'S',
+//            'mostrar_os_sem_funcionario' => 'S',
+//            'crm_filtra_vendedor' => 'S',
+//            'inmap_filtra_vendedor' => 'S',
+//            'enviar_monitoramento_host' => 'S',
+//            'enviar_notificacao_backup' => 'S',
+//            'permite_inutilizar_patrimonio' => 'N',
+//            'permite_ver_diferenca' => 'S'
+//        );
+//        $api->post('usuarios', $dados);
+//        $retorno = $api->getRespostaConteudo(false);// false para json | true para array
+//        return $retorno;
 
 
 //        $sellers = VoalleSales::whereMonth('data_contrato', '>=', '5')->whereYear('data_contrato', '2022')
@@ -208,20 +341,38 @@ class TestController extends Controller
 //        }
 
 //
+        //
+//        Mail::to('carlos.neto@agetelecom.com.br')
+//                ->send(new SendMainUser('Carlos Neto'));
+
 //        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
-//
-//        return $array;
-//
 //
 //        foreach($array as $key => $value) {
 //
 //            foreach($value as $k => $v) {
 //                Mail::to($v[1])
-//                    ->send(new SendInvoice());
+//                    ->send(new SendMainUser($v[0]));
 //            }
 //        }
 //
 //        return "ok";
+
+//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+//
+//
+////        Mail::to('carlos.neto@agetelecom.com.br')
+////                ->send(new SendMainUser('Carlos Neto'));
+//
+//        foreach($array as $key => $value) {
+//
+//            foreach($value as $k => $v) {
+//                Mail::to($v[1])
+//                    ->send(new SendMainUser($v[0]));
+//            }
+//        }
+//
+//        return "ok";
+
 ////
 ////
 //        Mail::to('carlos.neto@agetelecom.com.br')

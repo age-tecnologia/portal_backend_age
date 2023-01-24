@@ -25,9 +25,8 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
     });
 
 
-    Route::post('teste', [\App\Http\Controllers\TestController::class, 'index']);
-    Route::get('billing-equip-divide', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'index']);
-    Route::get('billing-equip-divide/download', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'createPDF']);
+//    Route::get('billing-equip-divide', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'index']);
+//    Route::get('billing-equip-divide/download', [\App\Http\Controllers\Mail\Billing\EquipDivideController::class, 'createPDF']);
 
     Route::group([
         'middleware' => 'api',
@@ -42,6 +41,9 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
     });
 
     Route::group(['middleware' => 'auth:api'], function () {
+
+        Route::post('teste', [\App\Http\Controllers\TestController::class, 'index']);
+
 
         Route::get('/validatedToken', function () {
 
@@ -79,6 +81,10 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                 });
             });
         });
+
+        Route::resource('city', \App\Http\Controllers\CitysController::class);
+        Route::resource('collaborators/group', \App\Http\Controllers\CollaboratorGroupsController::class);
+
 
         Route::middleware('AccessAgeReport')->prefix('agereport')->group(function () {
 

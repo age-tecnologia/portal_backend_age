@@ -27,7 +27,7 @@ class AuthenticationContractsController extends Controller
         set_time_limit(2000);
         ini_set('memory_limit', '2048M');
 
-        $query = 'select id, contract_id, service_product_id, user from erp.authentication_contracts';
+        $query = 'select id, contract_id, service_product_id, "user" from erp.authentication_contracts';
 
         $result = DB::connection('pgsql')->select($query);
 
