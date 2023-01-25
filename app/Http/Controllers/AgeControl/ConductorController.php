@@ -29,6 +29,7 @@ class ConductorController extends Controller
                         ->leftJoin('portal_colaboradores_grupos as g', 'g.id', '=', 'c.grupo_id')
                         ->leftJoin('portal_cidades as pc', 'pc.id', '=', 'c.cidade_id')
                         ->leftJoin('agecontrol_servicos as s', 's.id', '=', 'c.servico_id')
+                        ->orderBy('c.id', 'desc')
                         ->get(['c.id', 'c.primeiro_nome', 'c.segundo_nome', 'g.grupo', 'vt.tipo', 'v.fabricante', 'v.modelo', 'c.created_at']);
 
         return response()->json($conductors, 200);
