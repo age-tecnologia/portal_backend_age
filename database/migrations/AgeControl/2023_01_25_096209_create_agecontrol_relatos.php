@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('condutor_id');
             $table->float('quilometragem_relatada');
-            $table->float('quilometragem_aprovada');
+            $table->float('quilometragem_aprovada')->nullable();
             $table->unsignedBigInteger('periodo_id');
-            $table->unsignedBigInteger('aprovador_id');
+            $table->unsignedBigInteger('aprovador_id')->nullable();
             $table->string('nome_foto');
             $table->timestamps();
             $table->softDeletes();

@@ -58,7 +58,7 @@ class ReportsController extends Controller
             'quilometragem_relatada' => $request->input('kmReport'),
             'quilometragem_aprovada' => $request->input('kmReport'),
             'periodo_id' => $request->input('period'),
-            'aprovador_id' => auth()->user()->id,
+            'aprovador_id' => null,
             'nome_foto' => $this->uploadImage($request->input('image')),
         ]);
 
