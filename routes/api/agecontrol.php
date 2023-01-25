@@ -16,7 +16,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('services', \App\Http\Controllers\AgeControl\ServicesController::class);
         Route::resource('vehicle-type', \App\Http\Controllers\AgeControl\VehicleTypeController::class);
         Route::resource('vehicle-modality', \App\Http\Controllers\AgeControl\VehicleModalityController::class);
-        Route::resource('report', \App\Http\Controllers\AgeControl\ReportsController::class);
+        Route::controller(\App\Http\Controllers\AgeControl\ReportsController::class)->group(function() {
+            Route::post('report', 'store');
+            Route::get('reports-complete', 'viewReportComplete');
+        });
         Route::resource('report-periods', \App\Http\Controllers\AgeControl\ReportPeriodsController::class);
 
     });

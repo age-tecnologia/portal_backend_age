@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AgeControl;
 use App\Http\Controllers\Controller;
 use App\Models\AgeControl\Report;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Psy\Util\Str;
 
@@ -14,6 +15,32 @@ class ReportsController extends Controller
     public function index()
     {
         //
+    }
+
+    public function viewReportComplete()
+    {
+        $reports = DB::table('agecontrol_relatos as r')
+                        ->leftJoin('agecontrol_condutores as c', 'c.id', '=', 'r.condutor_id')
+                        ->leftJoin('agecontrol_veiculos as v', 'c.id', '=', 'v.condutor_id')
+                        ->leftJoin('agecontrol_veiculo_tipo as vt', 'vt.id', '=', 'v.tipo_veiculo_id')
+                        ->leftJoin('agecontrol_relato_periodos as rp', 'rp.id', '=', 'r.periodo_id')
+                        ->leftJoin('portal_colaboradores_grupos as cg', 'cg.id', '=', 'c.grupo_id')
+                        ->orderBy('r.id', 'desc')
+                        ->get([
+                            'r.id',
+                            'c.primeiro_nome',
+                            'c.segundo_nome',
+                            'cg.grupo',
+                            'vt.tipo',
+                            'v.fabricante',
+                            'v.modelo',
+                            'r.created_at',
+                            'r.quilometragem_aprovada',
+                            'aprovador_id',
+                            'rp.periodo'
+                        ]);
+
+        return response()->json($reports->toArray(), 200);
     }
 
 
