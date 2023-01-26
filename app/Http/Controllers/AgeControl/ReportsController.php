@@ -71,21 +71,22 @@ class ReportsController extends Controller
 
     protected function uploadImage($image_64)
     {
+        if($image_64 !== null) {
+            $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
 
-        $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
-
-        $replace = substr($image_64, 0, strpos($image_64, ',')+1);
+            $replace = substr($image_64, 0, strpos($image_64, ',')+1);
 
 
-        $image = str_replace($replace, '', $image_64);
+            $image = str_replace($replace, '', $image_64);
 
-        $image = str_replace(' ', '+', $image);
+            $image = str_replace(' ', '+', $image);
 
-        $imageName = \Illuminate\Support\Str::random(10).'.'.$extension;
+            $imageName = \Illuminate\Support\Str::random(10).'.'.$extension;
 
-        Storage::disk('ageControlReports')->put($imageName, base64_decode($image));
+            Storage::disk('ageControlReports')->put($imageName, base64_decode($image));
 
-        return $imageName;
+            return $imageName;
+        }
     }
 
     public function show($id)
