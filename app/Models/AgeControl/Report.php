@@ -13,7 +13,8 @@ class Report extends Model
 
     protected $table = 'agecontrol_relatos';
     protected $fillable = ['condutor_id', 'quilometragem_relatada',
-                            'quilometragem_aprovada', 'periodo_id',
+                            'quilometragem_aprovada',
+                            'data_referencia', 'periodo_id',
                             'nome_foto', 'aprovador_id'
                             ];
 }
