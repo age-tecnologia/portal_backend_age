@@ -17,7 +17,7 @@ class ReportsController extends Controller
         //
     }
 
-    public function viewReportComplete()
+    public function viewReportComplete(Request $request)
     {
         $reports = DB::table('agecontrol_relatos as r')
                         ->leftJoin('agecontrol_condutores as c', 'c.id', '=', 'r.condutor_id')
@@ -25,22 +25,31 @@ class ReportsController extends Controller
                         ->leftJoin('agecontrol_veiculo_tipo as vt', 'vt.id', '=', 'v.tipo_veiculo_id')
                         ->leftJoin('agecontrol_relato_periodos as rp', 'rp.id', '=', 'r.periodo_id')
                         ->leftJoin('portal_colaboradores_grupos as cg', 'cg.id', '=', 'c.grupo_id')
-                        ->orderBy('r.id', 'desc')
-                        ->get([
-                            'r.id',
-                            'c.primeiro_nome',
-                            'c.segundo_nome',
-                            'cg.grupo',
-                            'vt.tipo',
-                            'v.fabricante',
-                            'v.modelo',
-                            'r.created_at',
-                            'r.quilometragem_aprovada',
-                            'aprovador_id',
-                            'rp.periodo'
-                        ]);
+                        ->orderBy('r.id', 'desc');
 
-        return response()->json($reports->toArray(), 200);
+
+
+
+        if($request->has('filters')) {
+
+           $this->filterRepors($reports, $request->filters);
+        }
+
+
+        return response()->json($reports->get([
+                                        'r.id',
+                                        'c.primeiro_nome',
+                                        'c.segundo_nome',
+                                        'cg.grupo',
+                                        'vt.tipo',
+                                        'v.fabricante',
+                                        'v.modelo',
+                                        'r.created_at',
+                                        'r.quilometragem_aprovada',
+                                        'aprovador_id',
+                                        'rp.periodo',
+                                        'r.data_referencia'
+                                    ])->toArray(), 200);
     }
 
 
@@ -112,4 +121,31 @@ class ReportsController extends Controller
     {
         //
     }
+
+
+    protected function filterRepors($reports, $filters)
+    {
+        $filters = json_decode($filters);
+
+        $data = [];
+
+        if($filters->conductor !== '') {
+            $reports = $reports->where('r.condutor_id', $filters->conductor);
+        }
+
+        if($filters->period !== '') {
+            $reports = $reports->where('r.periodo_id', $filters->period);
+        }
+
+        if($filters->firstPeriod !== '') {
+            $reports = $reports->where('r.data_referencia','>=',$filters->firstPeriod);
+        }
+
+        if($filters->lastPeriod !== '') {
+            $reports = $reports->where('r.data_referencia','<=',$filters->lastPeriod);
+        }
+
+        return $reports;
+    }
 }
+
