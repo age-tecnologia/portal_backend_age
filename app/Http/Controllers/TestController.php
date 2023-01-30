@@ -9,6 +9,7 @@ use App\Http\Controllers\DataWarehouse\Voalle\PeoplesController;
 use App\Http\Controllers\Ixc\Api\WebserviceClient;
 use App\Http\Requests\AgeControl\ConductorStoreRequest;
 use App\Ldap\UserLdap;
+use App\Mail\Portal\SendNewUser;
 use App\Mail\SendBlackFiber;
 use App\Mail\SendInvoice;
 use App\Mail\SendMainUser;
@@ -21,6 +22,7 @@ use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\CollaboratorMeta;
 use App\Models\AgeRv\Commission;
+use App\Models\AgeRv\Plan;
 use App\Models\AgeRv\VoalleSales;
 use App\Models\Test;
 use App\Models\User;
@@ -72,18 +74,53 @@ class TestController extends Controller
         set_time_limit(200000);
 
 
-        return "autorizado";
+        $plan = new Plan();
+
+
+//        $json = $request->;
+//
+//        foreach($request->json('rows') as $k => $v) {
+//            $plan->create([
+//               'plano' => $v['plano'],
+//                'valor_estrela' => $v['estrela'],
+//                'mes_competencia' => 1,
+//                'ano_competencia' => 2023
+//            ]);
+//        }
+//
+//        return "ok";
+
 
 
 //
-
+//        $user = new User();
+//
+//        $user = $user->find(153);
+//
+//        $password = 'Age@Telecom2023';
+//
+//        $user = $user->update([
+//            'password' => Hash::make($password)
+//        ]);
+//
+//
+//        return $user;
 
 //        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 //
 //
+//        $newArray = [];
 //
 //
-//
+//        foreach ($array as $key => $value) {
+//            foreach($value as $k => $v) {
+//                $newArray[] = [
+//                    'nome' => mb_convert_case($v[1], MB_CASE_TITLE, 'UTF-8'),
+//                    'email' => $v[2],
+//                    'group_id' => $v[0]
+//                ];
+//            }
+//        }
 //
 //        $host = 'https://ixc.agetelecom.com.br/webservice/v1';
 //        $token = '10:8db6eebcbf1b5f8ddb6800f2d79e62690f4e7eec161ef80ff39bba2ad5e5f5a3';//token gerado no cadastro do usuario (verificar permissões)
@@ -105,10 +142,75 @@ class TestController extends Controller
 //        $users = [];
 //
 //        foreach($retorno['registros'] as $k => $value) {
-//            $users[] = $value['email'];
+//            $users[] = [
+//                'id' => $value['id'],
+//                'email' => $value['email'],
+//                'group_id' => 0
+//            ];
 //        }
 //
-//        return $users;
+//        $usersLinked = [];
+//
+//
+//        foreach($newArray as $key => $value) {
+//
+//            foreach($users as $k => $v) {
+//
+//                if($value['email'] === $v['email']) {
+//                    $usersLinked[] = [
+//                        'nome' => $value['nome'],
+//                        'email' => $v['email'],
+//                        'id' => $v['id'],
+//                        'group_id' => $value['group_id']
+//                    ];
+//                }
+//
+//            }
+//
+//        }
+//
+//        foreach($usersLinked as $key => $value) {
+//            $dados = array(
+//                'id_grupo' => $value['group_id'],
+//                'nome' => $value['nome'],
+//                'email' => $value['email'],
+//                'senha' => 'Age@telecom2023',
+//                'status' => 'A',
+//                'permite_acesso_ixc_mobile' => 'S',
+//                'imagem' => '',
+//                'dica_imagem' => '',
+//                'acesso_webservice' => 'N',
+//                'acesso_token' => '',
+//                'user_callcenter' => 'N',
+//                'callcenter' => '',
+//                'alter_passwd_date' => 'NULL',
+//                'language' => 'Pt-Br',
+//                'caixa_fn_receber' => '',
+//                'id_caixa' => '',
+//                'vendedor_padrao' => '',
+//                'recebimentos_dia_atual' => 'N',
+//                'pagamentos_dia_atual' => 'N',
+//                'lancamentos_dia_atual' => 'N',
+//                'desc_max_recebimento' => '0.00',
+//                'desc_max_venda' => '0.00',
+//                'desc_max_renegociacao' => '0.00',
+//                'funcionario' => '',
+//                'filtra_setor' => 'N',
+//                'filtra_funcionario' => 'N',
+//                'mostrar_os_sem_funcionario' => 'N',
+//                'crm_filtra_vendedor' => 'N',
+//                'inmap_filtra_vendedor' => 'N',
+//                'enviar_monitoramento_host' => 'N',
+//                'enviar_notificacao_backup' => 'N',
+//                'permite_inutilizar_patrimonio' => 'N',
+//                'permite_ver_diferenca' => 'N'
+//            );
+//            $registro = $value['id'];//registro a ser editado
+//            $api->put('usuarios', $dados, $registro);
+//        }
+//
+//        return "ok";
+
 
 
 

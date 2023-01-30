@@ -66,16 +66,17 @@ class Seller
             'name' => $this->name,
             'sales' => [
                 'count' => $sales->getCountValids(),
-                'extract' => $sales->getExtractValidsArray()
+           //     'extract' => $sales->getExtractValidsArray()
             ],
             'cancel' => [
                 'count' => $cancel->getCountCancel(),
-                'extract' => $cancel->getExtractCancelArray()
+           //     'extract' => $cancel->getExtractCancelArray()
             ],
             'meta' => $meta->getMeta(),
             'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),
             'valueStar' => $valueStar->getValueStar(),
             'stars' => $stars->getStars(),
+            'extractStars' => $stars->getPlansAndStars(),
             'mediator' => $cancel->getCountCancel() > 0 ? -10 : 10,
             'commission' => number_format($commission->getCommission(), 2, ',', '.'),
             'projection' => $this->projection($metaPercent->getMetaPercent(), $sales->getExtractValids(), $cancel->getCountCancel())

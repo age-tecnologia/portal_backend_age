@@ -297,3 +297,5 @@ Route::prefix('assine')->group(function() {
 Route::prefix('indique')->group(function() {
     Route::post('/leads', [\App\Http\Controllers\AgeIndicate\LeadsController::class, 'store']);
 });
+
+Route::get('teste-email', [\App\Http\Controllers\Mail\TestController::class, 'index']);
