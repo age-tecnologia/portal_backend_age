@@ -8,13 +8,17 @@ use Carbon\Carbon;
 class Stars
 {
     private $data;
+    private $month;
+    private $year;
     private $stars;
     private $plansStarsPeriod;
 
 
-    public function __construct($data)
+    public function __construct($data, $month, $year)
     {
         $this->data = $data;
+        $this->month = $month;
+        $this->year = $year;
 
         $this->response();
     }
@@ -490,8 +494,8 @@ class Stars
     public function getPlansAndStars()
     {
 
-        $plans = Plan::where('mes_competencia', 11)
-                        ->where('ano_competencia', 2022)
+        $plans = Plan::where('mes_competencia', $this->month)
+                        ->where('ano_competencia', $this->year)
                         ->get(['plano', 'valor_estrela']);
 
 
@@ -542,71 +546,6 @@ class Stars
             }
 
         }
-
-        return $this->plansStarsPeriod;
-
-
-
-
-            foreach($this->data  as $key => $item) {
-                if(Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
-
-                    // Verifica qual é o plano e atribui a estrela correspondente.
-                    if (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
-                        $this->stars += 30;
-
-
-                    } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
-                        $this->stars += 15;
-
-                    } elseif (str_contains($item->plano, 'PLANO 1 GIGA NÃO FIDELIZADO + DEEZER PREMIUM')) {
-                        $this->stars += 0;
-
-                    } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
-                        $this->stars += 7;
-
-                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
-                        $this->stars += 9;
-
-                    } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
-                        $this->stars += 9;
-
-                    } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
-                        $this->stars += 7;
-
-                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
-                        $this->stars += 7;
-
-                    } elseif (str_contains($item->plano, 'PLANO 480 MEGA NÃO FIDELIZADO')) {
-                        $this->stars += 0;
-
-                    } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
-                        $this->stars += 9;
-
-                    } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
-                        $this->stars += 15;
-
-                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
-                        $this->stars += 35;
-
-                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
-                        $this->stars += 35;
-
-                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
-                        $this->stars += 9;
-
-                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
-                        $this->stars += 12;
-
-
-                    } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
-                        $this->stars += 17;
-
-                    }
-                }
-
-            }
-
 
         return $this->plansStarsPeriod;
 

@@ -53,12 +53,13 @@ class Seller
 
     public function response()
     {
+
         $sales = new Sales($this->name, $this->data);
         $cancel = new Cancel($this->data);
         $meta = new Meta($this->id, $this->month, $this->year, $this->dateAdmission);
         $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
         $valueStar = new ValueStar($metaPercent->getMetaPercent(), $this->collabChannelId, $this->month, $this->year);
-        $stars = new Stars($sales->getExtractValids());
+        $stars = new Stars($sales->getExtractValids(), $this->month, $this->year);
         $commission = new Commission($this->collabChannelId, $valueStar->getValueStar(), $stars->getStars(),
         $cancel->getCountCancel(), $this->month, $this->year);
 
@@ -149,7 +150,7 @@ class Seller
 
         $valueStar = new ValueStar($metaPercent, $this->collabChannelId, $this->month, $this->year);
 
-        $stars = new Stars($salesValids);
+        $stars = new Stars($salesValids, $this->month, $this->year);
 
         $commission = new Commission($this->collabChannelId, $valueStar->getValueStar(), $stars->getStars(),
             $cancel, $this->month, $this->year);
