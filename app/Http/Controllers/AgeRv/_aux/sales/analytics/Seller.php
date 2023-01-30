@@ -66,11 +66,11 @@ class Seller
             'name' => $this->name,
             'sales' => [
                 'count' => $sales->getCountValids(),
-           //     'extract' => $sales->getExtractValidsArray()
+                'extract' => $sales->getExtractValidsArray()
             ],
             'cancel' => [
                 'count' => $cancel->getCountCancel(),
-           //     'extract' => $cancel->getExtractCancelArray()
+                'extract' => $cancel->getExtractCancelArray()
             ],
             'meta' => $meta->getMeta(),
             'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),
