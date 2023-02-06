@@ -55,7 +55,7 @@ class Supervisor
         $meta = new Meta($this->id, $this->month, $this->year, $this->collab->data_admissao);
         $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
         $valueStar = new ValueStar($metaPercent->getMetaPercent(), 3, $this->month, $this->year);
-        $stars = new Stars($sales->getExtractValids());
+        $stars = new Stars($sales->getExtractValids(), $this->month, $this->year);
         $commission = new Commission(3, $valueStar->getValueStar(), $stars->getStars(),
                                     $cancel->getCountCancel(), $this->month, $this->year);
 
