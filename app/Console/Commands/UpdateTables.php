@@ -4,10 +4,12 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\AgeRv\VoalleSalesController;
 use App\Http\Controllers\DataWarehouse\Voalle\AuthenticationContractsController;
+use App\Http\Controllers\DataWarehouse\Voalle\ContractAssignmentActivationsController;
 use App\Http\Controllers\DataWarehouse\Voalle\ContractsController;
 use App\Http\Controllers\DataWarehouse\Voalle\ContractsTypeController;
 use App\Http\Controllers\DataWarehouse\Voalle\PeoplesController;
 use App\Http\Controllers\DataWarehouse\Voalle\ServiceProductsController;
+use App\Models\DataWarehouse\Voalle\ContractAssignmentActivations;
 use App\Models\DataWarehouse\Voalle\Contracts;
 use Illuminate\Console\Command;
 
@@ -53,6 +55,9 @@ class UpdateTables extends Command
 
         $voalleSales = new VoalleSalesController();
         $voalleSales->__invoke();
+
+        $contract_assignment_activations = new ContractAssignmentActivationsController();
+        $contract_assignment_activations->__invoke();
 
     }
 }

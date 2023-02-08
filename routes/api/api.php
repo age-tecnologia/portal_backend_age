@@ -78,6 +78,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                     Route::resource('peoples', \App\Http\Controllers\DataWarehouse\Voalle\PeoplesController::class);
                     Route::resource('authentication-contracts', \App\Http\Controllers\DataWarehouse\Voalle\AuthenticationContractsController::class);
                     Route::resource('service-products', \App\Http\Controllers\DataWarehouse\Voalle\ServiceProductsController::class);
+                    Route::resource('contract-assignment-activations', \App\Http\Controllers\DataWarehouse\Voalle\ContractAssignmentActivationsController::class);
                 });
             });
         });

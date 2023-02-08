@@ -14,7 +14,7 @@ class Stars
     private $plansStarsPeriod;
 
 
-    public function __construct($data, $month, $year)
+    public function __construct($data, $month = null, $year = null)
     {
         $this->data = $data;
         $this->month = $month;

@@ -74,4 +74,11 @@ class Sales
         return $array;
     }
 
+    public function getSalesWeek()
+    {
+        $calendar = new Calendar();
+
+        return $calendar->getLast7Days();
+    }
+
 }
