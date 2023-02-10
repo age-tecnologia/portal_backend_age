@@ -13,7 +13,7 @@
 
 </head>
 <body>
-<div style="box-sizing: border-box ; width: 100vw; display: flex; flex-direction: column; align-items: center; gap: 5vh">
+<div style="box-sizing: border-box ; width: 100vw; align-items: center; gap: 5vh">
     <p style="text-align: left; width: 100%;">Prezado(a): {{ $name }}</p>
 
     <p class="p-justify" style="text-align: justify-all; width: 100%">

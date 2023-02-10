@@ -10,6 +10,7 @@ class Sales
     private $data;
     private $collaboratorData;
     private $collaboratorSalesValid;
+    private $countSalesLast7Days = 0;
 
     public function __construct($name, $data)
     {
@@ -74,11 +75,44 @@ class Sales
         return $array;
     }
 
-    public function getSalesWeek()
+    public function getSalesLast7Days()
     {
         $calendar = new Calendar();
 
-        return $calendar->getLast7Days();
+
+        $daysName = [];
+
+        foreach($calendar->getLast7Days() as $k => $v) {
+
+            $daysName[] = [
+                'dayName' => $v['initial'],
+                'date' => $v['date'],
+                'sales' => 0
+            ];
+        }
+
+        foreach($daysName as $k => $v) {
+
+                foreach($this->collaboratorData as $key => $value) {
+
+                    if(Carbon::parse($value->data_contrato) == Carbon::parse($v['date'])) {
+                        $daysName[$k]['sales'] = $daysName[$k]['sales'] + 1;
+                        $this->countSalesLast7Days += 1;
+                    }
+
+                }
+
+        }
+
+
+
+        return $daysName;
+
+    }
+
+    public function getCountSalesLast7Days()
+    {
+        return $this->countSalesLast7Days;
     }
 
 }

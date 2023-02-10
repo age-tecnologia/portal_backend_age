@@ -7,6 +7,7 @@ use App\Http\Controllers\DataWarehouse\Voalle\AuthenticationContractsController;
 use App\Http\Controllers\DataWarehouse\Voalle\ContractAssignmentActivationsController;
 use App\Http\Controllers\DataWarehouse\Voalle\ContractsController;
 use App\Http\Controllers\DataWarehouse\Voalle\ContractsTypeController;
+use App\Http\Controllers\DataWarehouse\Voalle\PeopleAddressController;
 use App\Http\Controllers\DataWarehouse\Voalle\PeoplesController;
 use App\Http\Controllers\DataWarehouse\Voalle\ServiceProductsController;
 use App\Models\DataWarehouse\Voalle\ContractAssignmentActivations;
@@ -58,6 +59,9 @@ class UpdateTables extends Command
 
         $contract_assignment_activations = new ContractAssignmentActivationsController();
         $contract_assignment_activations->__invoke();
+
+        $people_address = new PeopleAddressController();
+        $people_address->__invoke();
 
     }
 }

@@ -33,5 +33,6 @@ class Contracts extends Model
                             'approval_date',
                             'v_stage',
                             'v_status',
-                            'v_invoice_type'];
+                            'v_invoice_type',
+                            'people_address_id'];
 }

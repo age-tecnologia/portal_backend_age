@@ -9,6 +9,7 @@ use App\Http\Controllers\DataWarehouse\Voalle\PeoplesController;
 use App\Http\Controllers\Ixc\Api\WebserviceClient;
 use App\Http\Requests\AgeControl\ConductorStoreRequest;
 use App\Ldap\UserLdap;
+use App\Mail\BaseManagement\SendPromotion;
 use App\Mail\Portal\SendNewUser;
 use App\Mail\SendBlackFiber;
 use App\Mail\SendInvoice;
@@ -71,10 +72,10 @@ class TestController extends Controller
 //
 //        $collab = User::find($idCollab);
 
-        set_time_limit(200000);
-
-
-        $plan = new Plan();
+//        set_time_limit(200000);
+//
+//
+//        $plan = new Plan();
 
 
 //        $json = $request->;
@@ -447,15 +448,22 @@ class TestController extends Controller
 //        Mail::to('carlos.neto@agetelecom.com.br')
 //                ->send(new SendMainUser('Carlos Neto'));
 
-//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+         $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+
+//        Mail::mailer('notification')->to('carlos.neto@agetelecom.com.br')
+//            ->send(new SendPromotion('Carlos ss'));
 //
+//        return "Ok";
+
 //        foreach($array as $key => $value) {
 //
 //            foreach($value as $k => $v) {
-//                Mail::to($v[1])
-//                    ->send(new SendMainUser($v[0]));
+//                Mail::mailer('notification')->to($v[1])
+//                    ->send(new SendPromotion($v[0]));
 //            }
 //        }
+//
+//        return "ok";
 //
 //        return "ok";
 

@@ -50,7 +50,8 @@ class ContractsController extends Controller
                      approval_date,
                      v_stage,
                      v_status,
-                     v_invoice_type
+                     v_invoice_type,
+                    people_address_id
                     from
                         erp.contracts';
 
@@ -88,7 +89,8 @@ class ContractsController extends Controller
                  'approval_date' => $value->approval_date,
                  'v_stage' => $value->v_stage,
                  'v_status' => $value->v_status,
-                 'v_invoice_type' => $value->v_invoice_type
+                 'v_invoice_type' => $value->v_invoice_type,
+                'people_address_id' => $value->people_address_id
             ]);
         }
 

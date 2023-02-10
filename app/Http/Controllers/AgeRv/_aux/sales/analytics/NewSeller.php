@@ -59,20 +59,25 @@ class NewSeller extends Controller
             'name' => $this->name,
             'sales' => [
                 'count' => $sales->getCountValids(),
-                'salesWeek' => $sales->getSalesWeek(),
+                'salesLast7Days' => $sales->getSalesLast7Days(),
+                'countSalesLast7Days' => $sales->getCountSalesLast7Days(),
               //  'extract' => $sales->getExtractValidsArray()
             ],
             'cancel' => [
                 'count' => $cancel->getCountCancel(),
               //  'extract' => $cancel->getExtractCancelArray()
             ],
-//            'meta' => $meta->getMeta(),
-//            'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),
-//            'valueStar' => $valueStar->getValueStar(),
-//            'stars' => $stars->getStars(),
-//            'extractStars' => $stars->getPlansAndStars(),
-//            'mediator' => $cancel->getCountCancel() > 0 ? -10 : 10,
-//            'commission' => number_format($commission->getCommission(), 2, ',', '.'),
+            'meta' => $meta->getMeta(),
+            'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),
+            'valueStar' => number_format($valueStar->getValueStar(), 2, ',', '.'),
+            'stars' => $stars->getStars(),
+            //'extractStars' => $stars->getPlansAndStars(),
+            'mediator' => $cancel->getCountCancel() > 0 ? -10 : 10,
+            'commission' => [
+                'liquid' => number_format($commission->getCommission(), 2, ',', '.'),
+                'brute' => number_format($commission->getCommissionGross(), 2, ',', '.'),
+                'diff' => number_format($commission->getCommissionDiff(), 2, ',', '.'),
+            ],
         ];
 
         return $data;

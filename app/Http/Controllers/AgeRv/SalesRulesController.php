@@ -48,7 +48,7 @@ class SalesRulesController extends Controller
 
         }  elseif ($c->funcao === 'Vendedor') {
 
-            $seller = new NewSeller($this->month, $this->year, $c->nome, $c->id);
+            $seller = new Seller($this->month, $this->year, $c->nome, $c->id);
 
             return $seller->response();
 

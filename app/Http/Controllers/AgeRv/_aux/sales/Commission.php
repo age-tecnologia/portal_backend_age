@@ -48,4 +48,15 @@ class Commission
         return $this->commission;
     }
 
+    public function getCommissionGross()
+    {
+        return $this->valueStar * $this->stars;
+    }
+
+    public function getCommissionDiff()
+    {
+
+        return $this->commission - ($this->valueStar * $this->stars);
+    }
+
 }

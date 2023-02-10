@@ -108,12 +108,37 @@ class CollaboratorMetaController extends Controller
 
         foreach($collab as $key => $value) {
             $query = CollaboratorMeta::firstOrCreate(
-                ['colaborador_id' => $value->id, 'mes_competencia' => $month],
-                ['colaborador_id' => $value->id, 'mes_competencia' => $month, 'meta' => $meta, 'modified_by' => auth()->user()->id]
+                ['colaborador_id' => $value->id, 'mes_competencia' => $month, 'ano_competencia' => $year],
+                ['colaborador_id' => $value->id, 'mes_competencia' => $month, 'ano_competencia' => $year, 'meta' => $meta, 'modified_by' => auth()->user()->id]
             );
         }
 
         return response()->json('Meta do time adicionada com sucesso!', 201);
 
+    }
+
+    public function metaAddSupervisors(Request $request)
+    {
+
+        foreach($request->json('supervisors') as $k => $v) {
+
+            $collaborator = Collaborator::where('nome', 'like', '%'.$v['name'].'%')->whereTipoComissaoId(3)->first();
+
+            if(isset($collaborator->id)) {
+                $meta = new CollaboratorMeta();
+
+                $meta->create([
+                    'colaborador_id' => $collaborator->id,
+                    'mes_competencia' => '12',
+                    'ano_competencia' => '2022',
+                    'meta' => $v['meta'],
+                    'modified_by' => 1
+                ]);
+            }
+
+
+        }
+
+        return "metas adicionadas com sucesso";
     }
 }

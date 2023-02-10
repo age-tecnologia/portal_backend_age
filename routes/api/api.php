@@ -76,6 +76,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                     Route::resource('contracts', \App\Http\Controllers\DataWarehouse\Voalle\ContractsController::class);
                     Route::resource('contracts-type', \App\Http\Controllers\DataWarehouse\Voalle\ContractsTypeController::class);
                     Route::resource('peoples', \App\Http\Controllers\DataWarehouse\Voalle\PeoplesController::class);
+                    Route::resource('peoples-address', \App\Http\Controllers\DataWarehouse\Voalle\PeopleAddressController::class);
                     Route::resource('authentication-contracts', \App\Http\Controllers\DataWarehouse\Voalle\AuthenticationContractsController::class);
                     Route::resource('service-products', \App\Http\Controllers\DataWarehouse\Voalle\ServiceProductsController::class);
                     Route::resource('contract-assignment-activations', \App\Http\Controllers\DataWarehouse\Voalle\ContractAssignmentActivationsController::class);
@@ -189,6 +190,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                 Route::get('new-password/{id}', [\App\Http\Controllers\UsersController::class, 'newPasswordAgeRv']);
                 Route::resource('meta', \App\Http\Controllers\AgeRv\CollaboratorMetaController::class);
                 Route::get('meta-add-mass', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddMass']);
+                Route::get('meta-add-supervisors', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddSupervisors']);
                 Route::get('users-not-link', [\App\Http\Controllers\AgeRv\LinkUserController::class, 'getUsersNotLinkAgeRv']);
                 Route::put('user-link', [\App\Http\Controllers\AgeRv\LinkUserController::class, 'linkUserAndReleaseAccess']);
 
