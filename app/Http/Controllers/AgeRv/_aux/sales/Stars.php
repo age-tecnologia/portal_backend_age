@@ -12,6 +12,7 @@ class Stars
     private $year;
     private $stars;
     private $plansStarsPeriod;
+    private $totalStarsLast7Days = 0;
 
 
     public function __construct($data, $month = null, $year = null)
@@ -205,6 +206,28 @@ class Stars
                     $this->stars += 12;
                 } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
                     $this->stars += 17;
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA HOTEL LAKE SIDE')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO + DIRECTV GO')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE + DIRECTV GO')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO + DIRECTV GO')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA  FIDELIZADO + DEEZER PREMIUM + DIRECTV GO')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA  FIDELIZADO + DIRECTV GO')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO COLABORADOR 1 GIGA + DEEZER + HBO MAX + DR. AGE')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA NÃO FIDELIZADO')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO COLABORADOR 1 GIGA + DEEZER')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA NÃO FIDELIZADO + DEEZER PREMIUM')) {
+                    $this->stars += 0;
+                } elseif (str_contains($item->plano, 'PLANO 800 MEGA NÃO FIDELIZADO')) {
+                    $this->stars += 0;
                 }
             }
         }
@@ -490,7 +513,6 @@ class Stars
 
     }
 
-
     public function getPlansAndStars()
     {
 
@@ -552,5 +574,622 @@ class Stars
 
 
     }
+
+    public function getStarsLast7Days()
+    {
+
+
+        $stars = $this->convertStars();
+
+        $calendar = new Calendar();
+
+
+        $daysName = [
+            'totalStarsLast7Days' => 0,
+            'plans' => []
+        ];
+
+        foreach($calendar->getLast7Days() as $k => $v) {
+
+            $daysName['plans'][] = [
+                'dayName' => $v['initial'],
+                'date' => $v['date'],
+                'stars' => 0
+            ];
+        }
+
+        foreach($daysName['plans'] as $key => $value) {
+
+            foreach($stars['plans'] as $k => $v) {
+
+                if(Carbon::parse($value['date']) == Carbon::parse($v['dateSale'])) {
+
+                    $daysName['plans'][$key]['stars'] = $daysName['plans'][$key]['stars'] + $v['star'];
+
+                    $daysName['totalStarsLast7Days'] += $v['star'];
+                }
+
+            }
+
+
+        }
+
+       return $daysName;
+
+
+    }
+
+    public function getStarsLast14Days()
+    {
+
+
+        $stars = $this->convertStars();
+
+        $calendar = new Calendar();
+
+
+        $daysName = [
+            'totalStarsLast7Days' => 0,
+            'plans' => []
+        ];
+
+        foreach($calendar->getLast14Days() as $k => $v) {
+
+            $daysName['plans'][] = [
+                'dayName' => $v['initial'],
+                'date' => $v['date'],
+                'stars' => 0
+            ];
+        }
+
+        foreach($daysName['plans'] as $key => $value) {
+
+            foreach($stars['plans'] as $k => $v) {
+
+                if(Carbon::parse($value['date']) == Carbon::parse($v['dateSale'])) {
+
+                    $daysName['plans'][$key]['stars'] = $daysName['plans'][$key]['stars'] + $v['star'];
+
+                    $daysName['totalStarsLast7Days'] += $v['star'];
+                }
+
+            }
+
+
+        }
+
+        return $daysName;
+
+
+    }
+
+
+
+    protected function convertStars ()
+    {
+        $result = [
+            'plans' => [],
+            'starsTotal' => 0,
+        ];
+
+
+        foreach ($this->data as $key => $item) {
+
+             if (Carbon::parse($item->data_contrato) < Carbon::parse('2022-08-01') &&
+                Carbon::parse($item->data_contrato) >= Carbon::parse('2022-07-01')) {
+
+                // Verifica qual é o plano e atribui a estrela correspondente.
+                if (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 30,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 15,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                    $this->stars += 7;
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 7,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 120 MEGA SEM FIDELIDADE')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 240 MEGA ')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA + DEEZER PREMIUM SEM FIDELIDADE')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 400 MEGA - COLABORADOR')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 7,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 400 MEGA NÃO FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 480 MEGA - FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 7,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 7,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 800 MEGA - CAMPANHA CONDOMÍNIO FIDELIZADO (AMBOS)')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 800 MEGA - COLABORADOR')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 17,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 960 MEGA')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 35,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO 960 MEGA (LOJAS)')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 35,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 35,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 35,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + IP FIXO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 38,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA SEM FIDELIDADE + IP FIXO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 36,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 12,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 15,
+                        'dateSale' => $item->data_vigencia
+                    ];
+                }
+
+                // Se o mês do cadastro do contrato for AGOSTO, executa esse bloco.
+            } elseif (Carbon::parse($item->data_contrato) >= Carbon::parse('2022-08-01')) {
+                // Verifica qual é o plano e atribui a estrela correspondente.
+                if (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 30,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 30;
+
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 15,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 15;
+
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA NÃO FIDELIZADO + DEEZER PREMIUM')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO 120 MEGA PROMOCAO LEVE 360 MEGA')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 7,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 7;
+
+                } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 9;
+
+                } elseif (str_contains($item->plano, 'PLANO 240 MEGA PROMOCAO LEVE 720 MEGA  + DEEZER PREMIUM')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 9;
+
+                } elseif (str_contains($item->plano, 'PLANO 400 MEGA FIDELIZADO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 7,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 7;
+
+                } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 7,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 7;
+
+                } elseif (str_contains($item->plano, 'PLANO 480 MEGA NÃO FIDELIZADO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 9;
+
+                } elseif (str_contains($item->plano, 'PLANO 800 MEGA FIDELIZADO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 15,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 15;
+
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 35,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 35;
+
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 1 GIGA FIDELIZADO + DEEZER PREMIUM')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 35,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 35;
+
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 9,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 9;
+
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA FIDELIZADO + IP FIXO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 12,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 12;
+
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 800 MEGA FIDELIZADO')) {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 17,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 17;
+
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA HOTEL LAKE SIDE')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO 480 MEGA FIDELIZADO + DIRECTV GO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA FIDELIZADO + DEEZER + HBO MAX + DR. AGE + DIRECTV GO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO 740 MEGA FIDELIZADO + DIRECTV GO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA  FIDELIZADO + DEEZER PREMIUM + DIRECTV GO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA  FIDELIZADO + DIRECTV GO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO COLABORADOR 1 GIGA + DEEZER + HBO MAX + DR. AGE')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO EMPRESARIAL 600 MEGA NÃO FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO COLABORADOR 1 GIGA + DEEZER')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO 1 GIGA NÃO FIDELIZADO + DEEZER PREMIUM')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } elseif (str_contains($item->plano, 'PLANO 800 MEGA NÃO FIDELIZADO')) {
+
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia
+                    ];
+
+                    $result['starsTotal'] += 0;
+
+                } else {
+                    $result['plans'][] = [
+                        'plan' => $item->plano,
+                        'star' => 0,
+                        'dateSale' => $item->data_vigencia,
+                        'errors' => [
+                            'msg' => 'Plano não encontrado ou sem estrela vinculada.'
+                        ]
+                    ];
+                }
+            }
+             else {
+                 $result['plans'][] = [
+                     'plan' => $item->plano,
+                     'star' => 0,
+                     'dateSale' => $item->data_vigencia,
+                     'errors' => [
+                         'msg' => 'Plano não está dentro da data filtrada'
+                     ],
+                 ];
+             }
+
+        }
+
+
+        return $result;
+
+    }
+
+    public function getPercentDiffLast7_14Days()
+    {
+        $last7Days = $this->getStarsLast7Days();
+        $countLast7Days = 0;
+        $last14Days = $this->getStarsLast14Days();
+        $countLast14Days = 0;
+
+
+        foreach($last7Days['plans'] as $key => $value) {
+            $countLast7Days += $value['stars'];
+
+        }
+
+        foreach($last14Days['plans'] as $key => $value) {
+            $countLast14Days += $value['stars'];
+        }
+
+
+        if($countLast7Days > 0 && $countLast14Days > 0) {
+            $diff = number_format(
+                ($countLast7Days - $countLast14Days) / $countLast14Days * 100,
+                2, '.', '.');
+        } else {
+            $diff = 0;
+        }
+
+        return [
+            'lastWeek' => $countLast7Days,
+            'beforeWeek' => $countLast14Days,
+            'diff' => $diff
+        ];
+
+    }
+
 
 }

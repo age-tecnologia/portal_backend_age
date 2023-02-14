@@ -177,4 +177,104 @@ class ValueStar
         return $this->valueStar;
     }
 
+    public function getTracks($channelId)
+    {
+        if($channelId === 1) {
+
+            $tracks = [
+                0 => [
+                    'initial' => 0,
+                    'final' => 69,
+                    'value' => number_format(0, 2, ',', '.')
+                ],
+                1 => [
+                    'initial' => 70,
+                    'final' => 99,
+                    'value' => number_format(.9, 2, ',', '.')
+                ],
+                2 => [
+                    'initial' => 100,
+                    'final' => 119,
+                    'value' => number_format(1.2, 2, ',', '.')
+                ],
+                3 => [
+                    'initial' => 120,
+                    'final' => 140,
+                    'value' => number_format(2, 2, ',', '.')
+                ],
+                4 => [
+                    'initial' => 141,
+                    'final' => null,
+                    'value' => number_format(4.5, 2, ',', '.')
+                ],
+            ];
+
+        }
+        if($channelId === 3) {
+
+            $tracks = [
+                0 => [
+                    'initial' => 0,
+                    'final' => 69,
+                    'value' => number_format(0, 2, ',', '.')
+                ],
+                1 => [
+                    'initial' => 70,
+                    'final' => 99,
+                    'value' => number_format(.6, 2, ',', '.')
+                ],
+                2 => [
+                    'initial' => 100,
+                    'final' => 119,
+                    'value' => number_format(9, 2, ',', '.')
+                ],
+                3 => [
+                    'initial' => 120,
+                    'final' => 140,
+                    'value' => number_format(1.5, 2, ',', '.')
+                ],
+                4 => [
+                    'initial' => 141,
+                    'final' => null,
+                    'value' => number_format(3, 2, ',', '.')
+                ],
+            ];
+
+        }
+        if($channelId === 2) {
+
+            $tracks = [
+                0 => [
+                    'initial' => 0,
+                    'final' => 69,
+                    'value' => number_format(0, 2, ',', '.')
+                ],
+                1 => [
+                    'initial' => 70,
+                    'final' => 99,
+                    'value' => number_format(2.5, 2, ',', '.')
+                ],
+                2 => [
+                    'initial' => 100,
+                    'final' => 119,
+                    'value' => number_format(5, 2, ',', '.')
+                ],
+                3 => [
+                    'initial' => 120,
+                    'final' => 140,
+                    'value' => number_format(7, 2, ',', '.')
+                ],
+                4 => [
+                    'initial' => 141,
+                    'final' => null,
+                    'value' => number_format(8, 2, ',', '.')
+                ],
+            ];
+
+        }
+
+        return $tracks;
+
+    }
+
 }

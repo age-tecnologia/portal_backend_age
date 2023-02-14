@@ -64,6 +64,7 @@ class TestController extends Controller
 
     public function index(Request $request)
     {
+        set_time_limit(200000);
 
 //        $id = $request->input('id');
 //        $idCollab = $request->input('idCollab');
@@ -72,7 +73,6 @@ class TestController extends Controller
 //
 //        $collab = User::find($idCollab);
 
-//        set_time_limit(200000);
 //
 //
 //        $plan = new Plan();
@@ -448,13 +448,15 @@ class TestController extends Controller
 //        Mail::to('carlos.neto@agetelecom.com.br')
 //                ->send(new SendMainUser('Carlos Neto'));
 
-         $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
-
-//        Mail::mailer('notification')->to('carlos.neto@agetelecom.com.br')
-//            ->send(new SendPromotion('Carlos ss'));
+//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 //
-//        return "Ok";
-
+////        Mail::mailer('notification')->to('carlos.neto@agetelecom.com.br')
+////            ->send(new SendPromotion('Carlos Neto'));
+////
+////        return "Ok";
+//
+////        return count($array[0]);
+//
 //        foreach($array as $key => $value) {
 //
 //            foreach($value as $k => $v) {

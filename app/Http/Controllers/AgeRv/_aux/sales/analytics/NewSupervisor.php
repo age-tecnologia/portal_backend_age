@@ -14,8 +14,15 @@ use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\VoalleSales;
 use Illuminate\Http\Request;
 
-class NewSeller extends Controller
+class NewSupervisor extends Controller
 {
+    private $month;
+    private $year;
+    private $name;
+    private $collab;
+    private $data;
+    private $id;
+
     public function __construct($month, $year, $name, $id)
     {
         $this->month = $month;
@@ -28,7 +35,7 @@ class NewSeller extends Controller
             $query->whereMonth('data_ativacao','>=', $this->month)->whereMonth('data_vigencia', $this->month)->whereYear('data_ativacao', $this->year);
         })
             ->whereStatus('Aprovado')
-            ->whereVendedor($this->name)
+            ->whereSupervisor($this->name)
             ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
                                             id_contrato,
                                             status, situacao,
@@ -37,10 +44,10 @@ class NewSeller extends Controller
                                             nome_cliente')
             ->get()->unique(['id_contrato']);
 
-        $collab = Collaborator::whereNome($this->name)->first(['tipo_comissao_id', 'data_admissao']);
+        $this->collab = Collaborator::whereNome($name)->first();
 
-        $this->collabChannelId = $collab->tipo_comissao_id;
-        $this->dateAdmission = $collab->data_admissao;
+        $this->collabChannelId = $this->collab->tipo_comissao_id;
+
     }
 
     public function response()
@@ -48,7 +55,7 @@ class NewSeller extends Controller
 
         $sales = new Sales($this->name, $this->data);
         $cancel = new Cancel($this->data);
-        $meta = new Meta($this->id, $this->month, $this->year, $this->dateAdmission);
+        $meta = new Meta($this->id, $this->month, $this->year);
         $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
         $valueStar = new ValueStar($metaPercent->getMetaPercent(), $this->collabChannelId, $this->month, $this->year);
         $stars = new Stars($sales->getExtractValids(), $this->month, $this->year);
@@ -61,12 +68,12 @@ class NewSeller extends Controller
                 'count' => $sales->getCountValids(),
                 'salesLast7Days' => $sales->getSalesLast7Days(),
                 'salesInfoLast14Days' => $sales->getPercentDiffLast7_14Days(),
-                'salesForWeek' => $sales->getSalesForWeek(),
-                'extract' => $sales->getExtractValidsArray()
+                'salesForWeek' => $sales->getSalesForWeek()
+              //  'extract' => $sales->getExtractValidsArray()
             ],
             'cancel' => [
                 'count' => $cancel->getCountCancel(),
-                'extract' => $cancel->getExtractCancelArray()
+              //  'extract' => $cancel->getExtractCancelArray()
             ],
             'meta' => $meta->getMeta(),
             'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),

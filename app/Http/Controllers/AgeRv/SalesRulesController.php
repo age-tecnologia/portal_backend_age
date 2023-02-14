@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AgeRv;
 
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\Master;
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\NewSeller;
+use App\Http\Controllers\AgeRv\_aux\sales\analytics\NewSupervisor;
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\Seller;
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\Supervisor;
 use App\Http\Controllers\Controller;
@@ -42,13 +43,13 @@ class SalesRulesController extends Controller
 
         } elseif ($c->funcao === 'Supervisor') {
 
-            $supervisor = new Supervisor($this->month, $this->year, $c->nome, $c->id);
+            $supervisor = new NewSupervisor($this->month, $this->year, $c->nome, $c->id);
 
             return $supervisor->response();
 
         }  elseif ($c->funcao === 'Vendedor') {
 
-            $seller = new Seller($this->month, $this->year, $c->nome, $c->id);
+            $seller = new NewSeller($this->month, $this->year, $c->nome, $c->id);
 
             return $seller->response();
 
