@@ -68,12 +68,12 @@ class NewSupervisor extends Controller
                 'count' => $sales->getCountValids(),
                 'salesLast7Days' => $sales->getSalesLast7Days(),
                 'salesInfoLast14Days' => $sales->getPercentDiffLast7_14Days(),
-                'salesForWeek' => $sales->getSalesForWeek()
-              //  'extract' => $sales->getExtractValidsArray()
+                'salesForWeek' => $sales->getSalesForWeek(),
+                'extract' => $sales->getExtractValidsArray()
             ],
             'cancel' => [
                 'count' => $cancel->getCountCancel(),
-              //  'extract' => $cancel->getExtractCancelArray()
+                'extract' => $cancel->getExtractCancelArray()
             ],
             'meta' => $meta->getMeta(),
             'metaPercent' => number_format($metaPercent->getMetaPercent(), 2),
