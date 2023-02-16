@@ -7,16 +7,18 @@ use Carbon\Carbon;
 class Sales
 {
     private $name;
+    private $function_id;
     private $data;
     private $collaboratorData;
     private $calendar;
     private $collaboratorSalesValid;
     private $countSalesLast7Days = 0;
 
-    public function __construct($name, $data)
+    public function __construct($name, $function_id, $data)
     {
 
         $this->name = mb_convert_case($name, MB_CASE_LOWER, 'UTF-8');
+        $this->function_id = $function_id;
         $this->data = $data;
         $this->calendar = new Calendar();
 
@@ -25,8 +27,14 @@ class Sales
 
     private function response()
     {
+
         $this->collaboratorData = $this->data->filter(function ($sale) {
-            if($sale->vendedor === $this->name || $sale->supervisor === $this->name) {
+
+            if($this->function_id === 1 && $sale->vendedor === $this->name) {
+                return $sale;
+            }
+
+            if($this->function_id === 3 && $sale->supervisor === $this->name) {
                 return $sale;
             }
         });

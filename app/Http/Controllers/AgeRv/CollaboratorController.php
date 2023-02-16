@@ -48,7 +48,7 @@ class CollaboratorController extends Controller
     {
 
         $supervisors = VoalleSales::whereNotNull('supervisor')->distinct()->get(['supervisor']);
-        $sellers = VoalleSales::whereMonth('data_contrato', '>=', '05')->whereNotNull('vendedor')->distinct()->get(['vendedor']);
+        $sellers = VoalleSales::whereMonth('data_contrato', '>=', '01')->whereYear('data_contrato', '2023')->whereNotNull('vendedor')->distinct()->get(['vendedor']);
 
         $collab = new Collaborator();
 

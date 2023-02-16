@@ -79,7 +79,7 @@ class Master
 
             $this->collaborators = Collaborator::where('tipo_comissao_id', $value->id)
                                         ->distinct('nome')
-                                        ->selectRaw('LOWER(nome) as nome, id, data_admissao')
+                                        ->selectRaw('LOWER(nome) as nome, id, data_admissao, funcao_id')
                                         ->get();
 
             $data[] = [
@@ -106,7 +106,7 @@ class Master
             $this->collaboratorData = null;
 
 
-            $sales = new Sales($value->nome, $this->data);
+            $sales = new Sales($value->nome, $value->funcao_id, $this->data);
             $cancel = new Cancel($sales->getExtractData());
             $meta = new Meta($value->id, $this->month, $this->year, $value->data_admissao);
             $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());

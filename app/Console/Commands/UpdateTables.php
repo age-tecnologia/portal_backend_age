@@ -6,6 +6,7 @@ use App\Http\Controllers\AgeRv\VoalleSalesController;
 use App\Http\Controllers\DataWarehouse\Voalle\AuthenticationContractsController;
 use App\Http\Controllers\DataWarehouse\Voalle\ContractAssignmentActivationsController;
 use App\Http\Controllers\DataWarehouse\Voalle\ContractsController;
+use App\Http\Controllers\DataWarehouse\Voalle\ContractsServiceTagsController;
 use App\Http\Controllers\DataWarehouse\Voalle\ContractsTypeController;
 use App\Http\Controllers\DataWarehouse\Voalle\PeopleAddressController;
 use App\Http\Controllers\DataWarehouse\Voalle\PeoplesController;
@@ -62,6 +63,9 @@ class UpdateTables extends Command
 
         $people_address = new PeopleAddressController();
         $people_address->__invoke();
+
+        $contract_service_tag = new ContractsServiceTagsController();
+        $contract_service_tag->__invoke();
 
     }
 }
