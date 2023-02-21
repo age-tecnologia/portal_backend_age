@@ -48,12 +48,13 @@ class NewSupervisor extends Controller
 
         $this->collabChannelId = $this->collab->tipo_comissao_id;
 
+
     }
 
     public function response()
     {
 
-        $sales = new Sales($this->name, $this->data);
+        $sales = new Sales($this->name, $this->collab->funcao_id, $this->data);
         $cancel = new Cancel($this->data);
         $meta = new Meta($this->id, $this->month, $this->year);
         $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());

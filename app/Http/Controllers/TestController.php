@@ -66,11 +66,11 @@ class TestController extends Controller
     {
         set_time_limit(200000);
 
-        $sales = Commission::whereMesCompetencia(12)->whereAnoCompetencia(2022)->get();
+        $users = UserLdap::all();
 
 
 
-        return count($sales);
+        return $users;
 
 //        $array = [
 //            'Dirley Teixeira',

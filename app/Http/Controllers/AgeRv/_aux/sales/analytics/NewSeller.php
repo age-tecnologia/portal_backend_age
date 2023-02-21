@@ -37,16 +37,17 @@ class NewSeller extends Controller
                                             nome_cliente')
             ->get()->unique(['id_contrato']);
 
-        $collab = Collaborator::whereNome($this->name)->first(['tipo_comissao_id', 'data_admissao']);
+        $collab = Collaborator::whereNome($this->name)->first(['tipo_comissao_id', 'data_admissao', 'funcao_id']);
 
         $this->collabChannelId = $collab->tipo_comissao_id;
+        $this->functionId = $collab->funcao_id;
         $this->dateAdmission = $collab->data_admissao;
     }
 
     public function response()
     {
 
-        $sales = new Sales($this->name, $this->data);
+        $sales = new Sales($this->name, $this->functionId, $this->data);
         $cancel = new Cancel($this->data);
         $meta = new Meta($this->id, $this->month, $this->year, $this->dateAdmission);
         $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
