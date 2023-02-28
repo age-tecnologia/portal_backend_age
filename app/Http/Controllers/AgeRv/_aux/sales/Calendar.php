@@ -12,18 +12,31 @@ class Calendar
     private $date;
     private $calendar;
 
-    public function __construct()
+    public function __construct($dashboard, $month, $year)
     {
         date_default_timezone_set('America/Sao_Paulo');
         setlocale(LC_ALL, 'pt_BR.utf-8', 'ptb', 'pt_BR', 'portuguese-brazil', 'portuguese-brazilian', 'bra', 'brazil', 'br');
         setlocale(LC_TIME, 'pt_BR.utf-8', 'ptb', 'pt_BR', 'portuguese-brazil', 'portuguese-brazilian', 'bra', 'brazil', 'br');
 
-        $this->date = new Carbon();
-        $this->daysMonth = $this->date->now()->format('t');
-        $this->month = $this->date->now()->format('m');
-        $this->year = $this->date->now()->format('Y');
-        $this->calendar = $this->getCalendar();
 
+        if(! $dashboard) {
+            $this->date = Carbon::now();
+
+            $this->daysMonth = $this->date->now()->format('t');
+            $this->month = $this->date->now()->format('m');
+            $this->year = $this->date->now()->format('Y');
+
+        } else {
+            $this->date = Carbon::parse("01-".$month."-".$year);
+
+
+            $this->daysMonth = $this->date->format('t');
+            $this->month = $this->date->format('m');
+            $this->year = $this->date->format('Y');
+
+        }
+
+        $this->calendar = $this->getCalendar();
 
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AgeRv\_aux\sales\analytics;
 
+use App\Http\Controllers\AgeRv\_aux\sales\Calendar;
 use App\Http\Controllers\AgeRv\_aux\sales\Cancel;
 use App\Http\Controllers\AgeRv\_aux\sales\Commission;
 use App\Http\Controllers\AgeRv\_aux\sales\Meta;
@@ -16,26 +17,36 @@ use Illuminate\Http\Request;
 
 class NewSeller extends Controller
 {
-    public function __construct($month, $year, $name, $id)
+    public function __construct($month, $year, $name, $id, $dashboard)
     {
         $this->month = $month;
         $this->year = $year;
         $this->name = $name;
         $this->id = $id;
+        $this->dashboard = $dashboard;
 
 
-        $this->data = VoalleSales::where(function ($query) {
-            $query->whereMonth('data_ativacao','>=', $this->month)->whereMonth('data_vigencia', $this->month)->whereYear('data_ativacao', $this->year);
-        })
-            ->whereStatus('Aprovado')
-            ->whereVendedor($this->name)
-            ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
+        if(! $this->dashboard) {
+            $this->data = VoalleSales::where(function ($query) {
+                $query->whereMonth('data_ativacao','>=', $this->month)->whereMonth('data_vigencia', $this->month)->whereYear('data_ativacao', $this->year);
+            })
+                ->whereStatus('Aprovado')
+                ->whereVendedor($this->name)
+                ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
                                             id_contrato,
                                             status, situacao,
                                             data_contrato, data_ativacao, data_vigencia, data_cancelamento,
                                             plano,
                                             nome_cliente')
-            ->get()->unique(['id_contrato']);
+                ->get()->unique(['id_contrato']);
+        } else {
+
+            $this->data = \App\Models\AgeRv\Commission::whereMesCompetencia($this->month)
+                                                    ->whereAnoCompetencia($this->year)
+                                                    ->whereVendedor($this->name)
+                                                    ->whereStatus('Aprovado')
+                                                    ->get();
+        }
 
         $collab = Collaborator::whereNome($this->name)->first(['tipo_comissao_id', 'data_admissao', 'funcao_id']);
 
@@ -47,12 +58,14 @@ class NewSeller extends Controller
     public function response()
     {
 
-        $sales = new Sales($this->name, $this->functionId, $this->data);
+        $calendar = new Calendar($this->dashboard, $this->month, $this->year);
+
+        $sales = new Sales($this->name, $this->functionId, $this->data, $calendar);
         $cancel = new Cancel($this->data);
         $meta = new Meta($this->id, $this->month, $this->year, $this->dateAdmission);
         $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
         $valueStar = new ValueStar($metaPercent->getMetaPercent(), $this->collabChannelId, $this->month, $this->year);
-        $stars = new Stars($sales->getExtractValids(), $this->month, $this->year);
+        $stars = new Stars($sales->getExtractValids(), $calendar);
         $commission = new Commission($this->collabChannelId, $valueStar->getValueStar(), $stars->getStars(),
                                         $cancel->getCountCancel(), $this->month, $this->year);
 
@@ -60,8 +73,8 @@ class NewSeller extends Controller
             'name' => $this->name,
             'sales' => [
                 'count' => $sales->getCountValids(),
-                'salesLast7Days' => $sales->getSalesLast7Days(),
-                'salesInfoLast14Days' => $sales->getPercentDiffLast7_14Days(),
+                'salesLast7Days' => $this->dashboard ? '' : $sales->getSalesLast7Days(),
+                'salesInfoLast14Days' => $this->dashboard ? '' : $sales->getPercentDiffLast7_14Days(),
                 'salesForWeek' => $sales->getSalesForWeek(),
                 'extract' => $sales->getExtractValidsArray()
             ],
@@ -77,8 +90,9 @@ class NewSeller extends Controller
             ],
             'stars' => [
                 'totalStars' => $stars->getStars(),
-                'starsLast7Days' => $stars->getStarsLast7Days(),
-                'starsInfoLast14Days' => $stars->getPercentDiffLast7_14Days()
+                'starsForWeek' => $stars->getStarsForWeek(),
+                'starsLast7Days' => $this->dashboard ? '' : $stars->getStarsLast7Days(),
+                'starsInfoLast14Days' => $this->dashboard ? '' : $stars->getPercentDiffLast7_14Days()
             ],
             //'extractStars' => $stars->getPlansAndStars(),
             'mediator' => $cancel->getCountCancel() > 0 ? -10 : 10,

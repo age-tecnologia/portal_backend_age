@@ -14,13 +14,13 @@ class Sales
     private $collaboratorSalesValid;
     private $countSalesLast7Days = 0;
 
-    public function __construct($name, $function_id, $data)
+    public function __construct($name, $function_id, $data, $calendar)
     {
 
         $this->name = mb_convert_case($name, MB_CASE_LOWER, 'UTF-8');
         $this->function_id = $function_id;
         $this->data = $data;
-        $this->calendar = new Calendar();
+        $this->calendar = $calendar;
 
         $this->response();
     }
@@ -186,6 +186,8 @@ class Sales
 
     public function getSalesForWeek()
     {
+
+
         $weeks = $this->calendar->getWeeksDays();
 
 

@@ -17,17 +17,16 @@
     <p style="text-align: left; width: 100%;">Prezado(a): {{ $name }}</p>
 
     <p class="p-justify" style="text-align: justify-all; width: 100%">
-        1.	A AGE LOCACOES DE EQUIPAMENTOS DE INFORMATICA LTDA., inscrita no CNPJ/ME sob nº 40.120.934/0001-81,
-        pessoa jurídica de direito privado, com endereço na ST SCS, Quadra 07, Bloca A, nº 100, sala 819,
-        CEP: 70.307-902, na Cidade de Brasília, fazendo referência ao Contrato de Locação de Equipamentos,
-        vem expor e notificá-lo do quanto segue.
+        1. A <b>AGE LOCACOES DE EQUIPAMENTOS DE INFORMATICA LTDA.,</b> inscrita no
+        CNPJ/ME sob nº 40.120.934/0001-81, pessoa jurídica de direito privado, com
+        endereço na ST SCS, Quadra 07, Bloca A, nº 100, sala 819, CEP: 70.307-902, na Cidade de Brasília, fazendo
+        referência ao Contrato de Locação de Equipamentos, vem expor e notificá-lo do quanto segue.
     </p>
     <p class="p-justify" style="text-align: justify-all; width: 100%">
         2.	Em referência aos instrumentos contratuais firmados entre as Partes, em especial o CONTRATO DE LOCAÇÃO,
-        a <b>AGE</b>
-        verificou que, consta em nosso registro que, até o presente momento, <b>existem débitos em aberto e vencidos</b>
-        relativos às mensalidades dos Serviços de Conexão à Internet (Serviços de Valor Adicionado) e
-        outras avenças, dentre eles, a <b>não devolução da Unidade de Rede Óptica (ONU)  - Modem.</b>
+        <b>a AGE</b> verificou que, consta em nosso registro que, até o presente momento, <b>existem débitos em aberto e
+            vencidos</b> relativos às mensalidades dos Serviços de Conexão à Internet (Serviços de Valor Adicionado) e outras
+        avenças, dentre eles, a <b>não devolução da Unidade de Rede Óptica (ONU)  - Modem.</b>
     </p>
     <p class="p-justify" style="text-align: justify-all; width: 100%">
         3.	Nesse sentido, nos termos do art. 93 da Resolução nº 632/2014 da Agência Nacional

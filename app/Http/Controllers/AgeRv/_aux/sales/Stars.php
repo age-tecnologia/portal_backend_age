@@ -15,11 +15,12 @@ class Stars
     private $totalStarsLast7Days = 0;
 
 
-    public function __construct($data, $month = null, $year = null)
+    public function __construct($data, $calendar, $month = null, $year = null)
     {
         $this->data = $data;
         $this->month = $month;
         $this->year = $year;
+        $this->calendar = $calendar;
 
         $this->response();
     }
@@ -306,7 +307,6 @@ class Stars
 
         $stars = $this->convertStars();
 
-        $calendar = new Calendar();
 
 
         $daysName = [
@@ -314,7 +314,7 @@ class Stars
             'plans' => []
         ];
 
-        foreach($calendar->getLast7Days() as $k => $v) {
+        foreach($this->calendar->getLast7Days() as $k => $v) {
 
             $daysName['plans'][] = [
                 'dayName' => $v['initial'],
@@ -350,7 +350,6 @@ class Stars
 
         $stars = $this->convertStars();
 
-        $calendar = new Calendar();
 
 
         $daysName = [
@@ -358,7 +357,7 @@ class Stars
             'plans' => []
         ];
 
-        foreach($calendar->getLast14Days() as $k => $v) {
+        foreach($this->calendar->getLast14Days() as $k => $v) {
 
             $daysName['plans'][] = [
                 'dayName' => $v['initial'],
@@ -387,8 +386,6 @@ class Stars
 
 
     }
-
-
 
     protected function convertStars ()
     {
@@ -914,6 +911,34 @@ class Stars
             'diff' => $diff
         ];
 
+    }
+
+    public function getStarsForWeek()
+    {
+        $weeks = $this->calendar->getWeeksDays();
+        $stars = $this->convertStars();
+
+
+        foreach($weeks as $key => $value) {
+
+            foreach($value['days'] as $key2 => $value2) {
+
+                foreach ($stars['plans'] as $key3 => $value3) {
+
+
+                    if(Carbon::parse($value2)->format('Y-m-d') === Carbon::parse($value3['dateSale'])->format('Y-m-d')) {
+
+                        $weeks[$key]['sales'] += $value3['star'];
+
+                    }
+
+                }
+
+
+            }
+        }
+
+        return $weeks;
     }
 
 

@@ -27,8 +27,10 @@ class SalesRulesController extends Controller
             ->first();
 
 
-        $this->year = $request->input('year') ? $request->input('year') : Carbon::now()->format('Y');
-        $this->month = $request->input('month') ? $request->input('month') : Carbon::now()->format('m');
+
+            $this->year = $request->input('year') ? $request->input('year') : Carbon::now()->format('Y');
+            $this->month = $request->input('month') ? $request->input('month') : Carbon::now()->format('m');
+            $this->dashboard = $request->has('dashboard') ? $request->input('dashboard') : false;
 
 
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
@@ -49,7 +51,7 @@ class SalesRulesController extends Controller
 
         }  elseif ($c->funcao === 'Vendedor') {
 
-            $seller = new NewSeller($this->month, $this->year, $c->nome, $c->id);
+            $seller = new NewSeller($this->month, $this->year, $c->nome, $c->id, $this->dashboard);
 
             return $seller->response();
 

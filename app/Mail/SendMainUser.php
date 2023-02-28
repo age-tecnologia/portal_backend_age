@@ -30,9 +30,9 @@ class SendMainUser extends Mailable
      */
     public function build()
     {
-        return $this->view('mail')
+        return $this->view('mail.return_onu')
                     ->from('notificacao@agetelecom.com.br')
-                    ->subject('Devolução da ONU – (Modem)')
+                    ->subject('Notificação de Dívida e Devolução de Modem')
                     ->with(['name' => $this->name]);
     }
 }
