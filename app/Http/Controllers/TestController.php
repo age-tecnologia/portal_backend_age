@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ReportExport;
 use App\Exports\UsersExport;
 use App\Http\Controllers\AgeRv\_aux\sales\Stars;
+use App\Http\Controllers\AgeRv\VoalleSalesController;
 use App\Http\Controllers\DataWarehouse\Voalle\PeoplesController;
 use App\Http\Controllers\Ixc\Api\WebserviceClient;
 use App\Http\Controllers\Mail\Billing\EquipDivideController;
@@ -68,16 +69,24 @@ class TestController extends Controller
         set_time_limit(200000);
 
 
-        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+        $voalle = new VoalleSalesController();
+
+        $voalle->__invoke();
 
 
-        foreach ($array[0] as $key => $value) {
-            Mail::mailer('notification')->to($value[1])
-                ->send(new SendMainUser($value[0]));
-        }
 
+        return 'olá mundo';
 
-        return 'Break';
+//        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+//
+//
+//        foreach ($array[0] as $key => $value) {
+//            Mail::mailer('notification')->to($value[1])
+//                ->send(new SendMainUser($value[0]));
+//        }
+//
+//
+//        return 'Break';
 
 //
 //        $users = UserLdap::all();
@@ -1036,9 +1045,5 @@ class TestController extends Controller
             return $v->vendas_vendedor;
         }
     }
-
-
-
-
 
 }

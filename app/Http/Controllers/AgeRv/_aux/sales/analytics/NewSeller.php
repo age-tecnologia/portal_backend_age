@@ -58,6 +58,8 @@ class NewSeller extends Controller
     public function response()
     {
 
+
+
         $calendar = new Calendar($this->dashboard, $this->month, $this->year);
 
         $sales = new Sales($this->name, $this->functionId, $this->data, $calendar);

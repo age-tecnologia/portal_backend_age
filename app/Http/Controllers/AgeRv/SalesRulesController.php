@@ -26,8 +26,6 @@ class SalesRulesController extends Controller
             ->where('u.id', auth()->user()->id)
             ->first();
 
-
-
             $this->year = $request->input('year') ? $request->input('year') : Carbon::now()->format('Y');
             $this->month = $request->input('month') ? $request->input('month') : Carbon::now()->format('m');
             $this->dashboard = $request->has('dashboard') ? $request->input('dashboard') : false;

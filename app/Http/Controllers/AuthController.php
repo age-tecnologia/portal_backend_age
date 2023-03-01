@@ -88,6 +88,91 @@ class AuthController extends Controller
 
             } else {
 
+                return $this->login_new_ad($request);
+            }
+
+        } catch (BindException $e) {
+//            $error = $e->getDetailedError();
+//            echo $error->getErrorCode();
+//            echo $error->getErrorMessage();
+//            echo $error->getDiagnosticMessage();
+
+            $auth = new AuthController();
+            return $auth->login($request->input('email'), $request->input('password'));
+
+        }
+    }
+
+    public function login_new_ad($request)
+    {
+
+
+        $connection = new Connection([
+            'hosts' => ['10.25.3.170'],
+            'base_dn' => 'dc=age, dc=corp',
+            'username' => 'portal',
+            'password' => '0zg0kyTJbfj2',
+
+            // Optional Configuration Options
+            'port' => 389,
+            'use_ssl' => false,
+            'use_tls' => false,
+            'version' => 3,
+            'timeout' => 5,
+            'follow_referrals' => false,
+
+        ]);
+
+        $message = '';
+
+        try {
+            $connection->connect();
+
+            $username = $request->input('email') . '@age.corp';
+            $password = $request->input('password');
+
+            if ($connection->auth()->attempt($username, $password)) {
+
+
+                // Separa o nome e o sobrenome
+                $separeName = explode(".", explode("@", $username)[0]);
+
+                if (empty($separeName[1])) {
+                    $separeName[1] = "";
+                    $username = $separeName[0] . "@agetelecom.com.br";
+                } else {
+                    $username = $separeName[0] . "." . $separeName[1] . "@agetelecom.com.br";
+                }
+
+                $user = User::where('email', $username)->first();
+
+                if(isset($user->email)) {
+
+                    $password = '0@hnRB6R00qyRH&LHFg$zgWh3MHmOVo&$IliWjCr';
+
+                    $auth = new AuthController();
+                    return $auth->login($username, $password);
+
+
+                } else {
+
+                    $user = new User();
+                    $password = '0@hnRB6R00qyRH&LHFg$zgWh3MHmOVo&$IliWjCr';
+
+                    $user->create([
+                        'name' => $separeName[0],
+                        'email' => mb_convert_case($username, MB_CASE_LOWER, 'utf-8'),
+                        'isAD' => 1,
+                        'password' => Hash::make($password),
+                    ]);
+
+                    $auth = new AuthController();
+                    return $auth->login($username, $password);
+
+                }
+
+            } else {
+
                 $username = $request->input('email');
                 $password = $request->input('password');
 
@@ -105,6 +190,7 @@ class AuthController extends Controller
 
         }
     }
+
 
     /**
      * Get a JWT via given credentials.
