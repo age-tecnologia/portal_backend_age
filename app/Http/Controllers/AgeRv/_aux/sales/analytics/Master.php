@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AgeRv\_aux\sales\analytics;
 
+use App\Http\Controllers\AgeRv\_aux\sales\Calendar;
 use App\Http\Controllers\AgeRv\_aux\sales\Cancel;
 use App\Http\Controllers\AgeRv\_aux\sales\CollaboratorFilter;
 use App\Http\Controllers\AgeRv\_aux\sales\Commission;
@@ -104,14 +105,15 @@ class Master
         foreach($this->collaborators as $key => $value) {
 
             $this->collaboratorData = null;
+            $calendar = new Calendar(false, $this->month, $this->year);
 
 
-            $sales = new Sales($value->nome, $value->funcao_id, $this->data);
+            $sales = new Sales($value->nome, $value->funcao_id, $this->data, $calendar);
             $cancel = new Cancel($sales->getExtractData());
             $meta = new Meta($value->id, $this->month, $this->year, $value->data_admissao);
             $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
             $valueStar = new ValueStar($metaPercent->getMetaPercent(), $channelId, $this->month, $this->year);
-            $stars = new Stars($sales->getExtractValids());
+            $stars = new Stars($sales->getExtractValids(), $calendar);
             $commission = new Commission($channelId, $valueStar->getValueStar(), $stars->getStars(), $cancel->getCountCancel(), $this->month, $this->year);
 
             $data[] = [
