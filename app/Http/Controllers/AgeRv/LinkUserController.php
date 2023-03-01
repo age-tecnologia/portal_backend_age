@@ -22,14 +22,16 @@ class LinkUserController extends Controller
 
         if(isset($collab->id)) {
 
+
             $usersVinc = Collaborator::whereNotNull('user_id')->get(['user_id']);
 
             $users = User::whereNotIn('id', $usersVinc)->whereNivelAcessoId(1)->get(['id', 'name', 'email']);
 
             $name = explode(' ', mb_convert_case($request->input('name'), MB_CASE_LOWER, 'utf-8'));
 
+
             $users = $users->filter(function($item, $key) use($request, $name) {
-                if((str_contains($item->name, $name[0]) || (str_contains($item->name, $name[1]) ))){
+                if((str_contains(mb_convert_case($item->name, MB_CASE_LOWER, 'utf-8'), $name[0]) || (str_contains(mb_convert_case($item->name, MB_CASE_LOWER, 'utf-8'), $name[1])))){
                     return $item;
                 }
             });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AgeRv\_aux\sales\analytics;
 
+use App\Http\Controllers\AgeRv\_aux\sales\Calendar;
 use App\Http\Controllers\AgeRv\_aux\sales\Cancel;
 use App\Http\Controllers\AgeRv\_aux\sales\Commission;
 use App\Http\Controllers\AgeRv\_aux\sales\Meta;
@@ -23,12 +24,13 @@ class NewSupervisor extends Controller
     private $data;
     private $id;
 
-    public function __construct($month, $year, $name, $id)
+    public function __construct($month, $year, $name, $id, $dashboard)
     {
         $this->month = $month;
         $this->year = $year;
         $this->name = $name;
         $this->id = $id;
+        $this->dashboard = $dashboard;
 
 
         $this->data = VoalleSales::where(function ($query) {
@@ -44,6 +46,29 @@ class NewSupervisor extends Controller
                                             nome_cliente')
             ->get()->unique(['id_contrato']);
 
+
+        if(! $this->dashboard) {
+            $this->data = VoalleSales::where(function ($query) {
+                $query->whereMonth('data_ativacao','>=', $this->month)->whereMonth('data_vigencia', $this->month)->whereYear('data_ativacao', $this->year);
+            })
+                ->whereStatus('Aprovado')
+                ->whereSupervisor($this->name)
+                ->selectRaw('LOWER(supervisor) as supervisor, LOWER(vendedor) as vendedor,
+                                            id_contrato,
+                                            status, situacao,
+                                            data_contrato, data_ativacao, data_vigencia, data_cancelamento,
+                                            plano,
+                                            nome_cliente')
+                ->get()->unique(['id_contrato']);
+        } else {
+
+            $this->data = \App\Models\AgeRv\Commission::whereMesCompetencia($this->month)
+                ->whereAnoCompetencia($this->year)
+                ->whereSupervisor($this->name)
+                ->whereStatus('Aprovado')
+                ->get();
+        }
+
         $this->collab = Collaborator::whereNome($name)->first();
 
         $this->collabChannelId = $this->collab->tipo_comissao_id;
@@ -53,13 +78,14 @@ class NewSupervisor extends Controller
 
     public function response()
     {
+        $calendar = new Calendar($this->dashboard, $this->month, $this->year);
 
-        $sales = new Sales($this->name, $this->collab->funcao_id, $this->data);
+        $sales = new Sales($this->name, $this->collab->funcao_id, $this->data, $calendar);
         $cancel = new Cancel($this->data);
         $meta = new Meta($this->id, $this->month, $this->year);
         $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
         $valueStar = new ValueStar($metaPercent->getMetaPercent(), $this->collabChannelId, $this->month, $this->year);
-        $stars = new Stars($sales->getExtractValids(), $this->month, $this->year);
+        $stars = new Stars($sales->getExtractValids(), $calendar, $this->month, $this->year);
         $commission = new Commission($this->collabChannelId, $valueStar->getValueStar(), $stars->getStars(),
                                         $cancel->getCountCancel(), $this->month, $this->year);
 
