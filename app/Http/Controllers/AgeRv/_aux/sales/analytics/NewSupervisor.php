@@ -110,6 +110,7 @@ class NewSupervisor extends Controller
             ],
             'stars' => [
                 'totalStars' => $stars->getStars(),
+                'starsForWeek' => $stars->getStarsForWeek(),
                 'starsLast7Days' => $stars->getStarsLast7Days(),
                 'starsInfoLast14Days' => $stars->getPercentDiffLast7_14Days()
             ],
