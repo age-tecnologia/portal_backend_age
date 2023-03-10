@@ -68,22 +68,27 @@ class TestController extends Controller
     {
         set_time_limit(200000);
 
-
-        $voalle = new VoalleSalesController();
-
-        $voalle->__invoke();
-
-
-
-        return 'olá mundo';
-
 //        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 //
+//        $error = [];
 //
 //        foreach ($array[0] as $key => $value) {
-//            Mail::mailer('notification')->to($value[1])
-//                ->send(new SendMainUser($value[0]));
+//            if(filter_var($value[1], FILTER_VALIDATE_EMAIL)) {
+//
+//                Mail::mailer('notification')->to($value[1])
+//                    ->send(new SendMainUser($value[0]));
+//
+//            } else {
+//                $error[] = [
+//                    'nome' => $value[0],
+//                    'email' => $value[1]
+//                ];
+//            }
 //        }
+
+
+        return $error;
+
 //
 //
 //        return 'Break';

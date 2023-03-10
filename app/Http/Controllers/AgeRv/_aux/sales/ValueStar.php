@@ -226,7 +226,7 @@ class ValueStar
                 2 => [
                     'initial' => 100,
                     'final' => 119,
-                    'value' => number_format(9, 2, ',', '.')
+                    'value' => number_format(.9, 2, ',', '.')
                 ],
                 3 => [
                     'initial' => 120,
