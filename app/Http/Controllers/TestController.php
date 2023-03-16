@@ -87,7 +87,7 @@ class TestController extends Controller
 //        }
 
 
-        return $error;
+      //  return $error;
 
 //
 //
@@ -108,85 +108,52 @@ class TestController extends Controller
 //            'Vivian Machado'
 //        ];
 
-//        $array = [
-//          'Ana Kelly',
-//            'Artur da Silva',
-//            'Barbara Victoria',
-//            'Bruno Cezar',
-//            'Carlos Antonio Almeida',
-//            'Carlos Augusto Santos',
-//            'Dara Hevellyn',
-//            'Diogo Felipe Furtado',
-//            'Emmanoel Tavares',
-//            'Erisson Mattos',
-//            'Fernanda Rodrigues',
-//            'Filipe Alves',
-//            'Gabriel do Nascimento',
-//            'GLAUCIENE RODRIGUES RAMOS',
-//            'GLEYCE KELEN DA SILVA ARAUJO',
-//            'Italo Filipe',
-//            'Italo Oliveira',
-//            'Jessica Rodrigues',
-//            'Joao Felippe',
-//            'Jose Valderi',
-//            'Joyce de Souza',
-//            'Julia da Silva Leite',
-//            'Kaio Henrique Ferreira',
-//            'Kelvim Agostinho',
-//            'Luana Almeida',
-//            'Lucas Daniel',
-//            'Lucas Tavares',
-//            'Luciene Rodrigues',
-//            'Magnolia Santos Piedade',
-//            'Marcus VIctor',
-//            'Miguel Felix',
-//            'Natanael Servulo',
-//            'Richard Silveira',
-//            'Sabrina Sandra',
-//            'Teylor Ribeiro',
-//            'Victoria dos Santos',
-//            'Wilson Matheus'
-//        ];
-//
-//        $collabs = [];
-//        $fails = [];
-//
-//        foreach($array as $k => $v) {
-//            $collab = Collaborator::where('nome', 'like', '%'.$v.'%')->first(['id', 'nome']);
-//
-//            if(isset($collab->id)) {
-//                $collabs[] = $collab;
-//            } else {
-//                $fails[] = $v;
-//            }
-//        }
-//
-//
-//        if(count($fails) === 0) {
-//            foreach($collabs as $k => $v) {
-//                if(isset($v->id)) {
-//
-//                    $collab = CollaboratorMeta::whereColaboradorId($v->id)->where('mes_competencia', 12)->first();
-//
-//                    if(isset($collab->id)) {
-//                        $collab->update([
-//                            'meta' => 12
-//                        ]);
-//                    } else {
-//
-//                        CollaboratorMeta::create([
-//                            'colaborador_id' => $v->id,
-//                            'mes_competencia' => 12,
-//                            'ano_competencia' => 2022,
-//                            'meta' => 12,
-//                            'modified_by' => 1
-//                        ]);
-//
-//                    }
-//                }
-//            }
-//
-//        }
+
+        $listCollabs = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('collabs'));
+
+
+        $collabs = [];
+        $fails = [];
+
+
+        foreach($listCollabs[0] as $k => $v) {
+            $collab = Collaborator::where('nome', 'like', '%'.$v[0].'%')->first(['id', 'nome']);
+
+            if(isset($collab->id)) {
+                $collabs[] = $collab;
+            } else {
+                $fails[] = $v;
+            }
+        }
+
+
+        if(count($fails) !== 0) {
+            foreach($collabs as $k => $v) {
+                if(isset($v->id)) {
+
+                    $collab = CollaboratorMeta::whereColaboradorId($v->id)->where('mes_competencia', 01)
+                        ->where('ano_competencia', 2023)
+                        ->first();
+
+                    if(isset($collab->id)) {
+                        $collab->update([
+                            'meta' => 12
+                        ]);
+                    } else {
+
+                        CollaboratorMeta::create([
+                            'colaborador_id' => $v->id,
+                            'mes_competencia' => 01,
+                            'ano_competencia' => 2023,
+                            'meta' => 12,
+                            'modified_by' => 1
+                        ]);
+
+                    }
+                }
+            }
+
+        }
 
             return "BREAK";
 
@@ -575,7 +542,7 @@ class TestController extends Controller
 //        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 //
 ////        Mail::mailer('notification')->to('carlos.neto@agetelecom.com.br')
-////            ->send(new SendPromotion('Carlos Neto'));
+//            ->send(new SendPromotion('Carlos Neto'));
 ////
 ////        return "Ok";
 //

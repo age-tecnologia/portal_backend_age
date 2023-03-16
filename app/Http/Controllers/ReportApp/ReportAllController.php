@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ReportApp;
 
 use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
+use App\Models\AgeReport\AccessPermission;
 use App\Models\AgeReport\Report;
 use App\Models\AgeReport\ReportPermission;
 use App\Models\Leads;
@@ -18,8 +19,10 @@ class ReportAllController extends Controller
     public function getAll()
     {
         $level = auth()->user()->nivel_acesso_id;
+        $permission = AccessPermission::whereUserId(auth()->user()->nivel_acesso_id->id)->first();
 
-        if($level === 2 || $level === 3) {
+        if($level === 2 || $level === 3 ||
+            ($permission->funcao_id === 8 || $permission->funcao_id === 4)) {
             $reports = Report::all(['nome', 'nome_arquivo', 'url', 'isPeriodo','isPeriodoHora', 'id']);
 
             return $reports;

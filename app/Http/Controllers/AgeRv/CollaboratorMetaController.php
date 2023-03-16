@@ -120,25 +120,34 @@ class CollaboratorMetaController extends Controller
     public function metaAddSupervisors(Request $request)
     {
 
+
         foreach($request->json('supervisors') as $k => $v) {
 
+            $errors = [];
+
             $collaborator = Collaborator::where('nome', 'like', '%'.$v['name'].'%')->whereTipoComissaoId(3)->first();
+
 
             if(isset($collaborator->id)) {
                 $meta = new CollaboratorMeta();
 
                 $meta->create([
                     'colaborador_id' => $collaborator->id,
-                    'mes_competencia' => '12',
-                    'ano_competencia' => '2022',
+                    'mes_competencia' => $request->month,
+                    'ano_competencia' => $request->year,
                     'meta' => $v['meta'],
                     'modified_by' => 1
                 ]);
+            } else {
+                $errors[] = $v['name'];
             }
 
 
         }
 
-        return "metas adicionadas com sucesso";
+        return [
+            'msg' => "metas adicionadas com sucesso",
+            'errors' => $errors
+        ];
     }
 }
