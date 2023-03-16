@@ -19,7 +19,7 @@ class ReportAllController extends Controller
     public function getAll()
     {
         $level = auth()->user()->nivel_acesso_id;
-        $permission = AccessPermission::whereUserId(auth()->user()->nivel_acesso_id->id)->first();
+        $permission = AccessPermission::whereUserId(auth()->user()->id)->first();
 
         if($level === 2 || $level === 3 ||
             ($permission->funcao_id === 8 || $permission->funcao_id === 4)) {
