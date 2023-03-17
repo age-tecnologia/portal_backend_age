@@ -22,7 +22,8 @@ class SalesRulesController extends Controller
             ->leftJoin('portal_users as u', 'up.user_id', '=', 'u.id')
             ->leftJoin('portal_nivel_acesso as na', 'u.nivel_acesso_id', '=', 'na.id')
             ->leftJoin('agerv_colaboradores as c', 'c.user_id', '=', 'u.id')
-            ->select('u.name', 'na.nivel', 'cf.funcao', 'c.nome', 'c.id')
+            ->leftJoin('portal_colaboradores_funcoes as cf2', 'c.funcao_id', '=', 'cf2.id')
+            ->select('u.name', 'na.nivel', 'cf.funcao', 'cf2.funcao as funcao_collab', 'c.nome', 'c.id')
             ->where('u.id', auth()->user()->id)
             ->first();
 
@@ -41,13 +42,13 @@ class SalesRulesController extends Controller
 
             return $master->response();
 
-        } elseif ($c->funcao === 'Supervisor') {
+        } elseif ($c->funcao === 'Supervisor' || $c->funcao_collab === 'Supervisor') {
 
             $supervisor = new NewSupervisor($this->month, $this->year, $c->nome, $c->id, $this->dashboard);
 
             return $supervisor->response();
 
-        }  elseif ($c->funcao === 'Vendedor') {
+        }  elseif ($c->funcao === 'Vendedor' || $c->funcao_collab === 'Vendedor') {
 
             $seller = new NewSeller($this->month, $this->year, $c->nome, $c->id, $this->dashboard);
 

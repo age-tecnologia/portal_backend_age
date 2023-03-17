@@ -78,6 +78,7 @@ class NewSupervisor extends Controller
 
     public function response()
     {
+
         $calendar = new Calendar($this->dashboard, $this->month, $this->year);
 
         $sales = new Sales($this->name, $this->collab->funcao_id, $this->data, $calendar);
