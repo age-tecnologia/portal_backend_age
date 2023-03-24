@@ -15,6 +15,6 @@
 
 </head>
 <body>
-<img src="https://i.ibb.co/BPQxFRf/Attachment-1.jpg" alt="forma_de_pagamento_pix">
+<img src="https://agenotifica.s3.sa-east-1.amazonaws.com/age/Attachment-1.jpeg" alt="forma_de_pagamento_pix">
 </body>
 </html>

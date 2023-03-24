@@ -8,7 +8,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::prefix('sac')->group(function() {
 
-        Route::get('pix', [\App\Http\Controllers\AgeNotify\Sac\AlertPixController::class, 'sendEmail']);
+        Route::post('pix', [\App\Http\Controllers\AgeNotify\Sac\AlertPixController::class, 'sendEmail']);
 
     });
 });

@@ -54,6 +54,20 @@ return [
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN')
         ],
+        'sac' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_HOST_SAC', 'smtp.mailgun.org'),
+            'port' => env('MAIL_PORT_SAC', 587),
+            'encryption' => env('MAIL_ENCRYPTION_SAC', 'tls'),
+            'username' => env('MAIL_USERNAME_SAC'),
+            'password' => env('MAIL_PASSWORD_SAC'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN'),
+            'from' => [
+                'address' => env('MAIL_FROM_ADDRESS_SAC'),
+                'name' => 'Notificação Age Telecom'
+            ]
+        ],
 
         'ses' => [
             'transport' => 'ses',
@@ -101,10 +115,7 @@ return [
     |
     */
 
-    'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
-    ],
+
 
     /*
     |--------------------------------------------------------------------------

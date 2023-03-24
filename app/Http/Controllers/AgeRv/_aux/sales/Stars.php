@@ -10,7 +10,7 @@ class Stars
     private $data;
     private $month;
     private $year;
-    private $stars;
+    private $stars = 0;
     private $plansStarsPeriod;
     private $totalStarsLast7Days = 0;
 

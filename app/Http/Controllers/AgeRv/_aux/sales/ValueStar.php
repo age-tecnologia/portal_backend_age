@@ -9,7 +9,7 @@ class ValueStar
     private $month;
     private $year;
     private $minMeta;
-    private $valueStar;
+    private $valueStar = 0;
 
     public function __construct($metaPercent, $channelId, $month, $year)
     {

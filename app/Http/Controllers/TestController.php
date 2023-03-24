@@ -68,6 +68,7 @@ class TestController extends Controller
     {
         set_time_limit(200000);
 
+        return true;
 //        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 //
 //        $error = [];
