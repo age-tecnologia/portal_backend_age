@@ -68,7 +68,8 @@ class TestController extends Controller
     {
         set_time_limit(200000);
 
-        return true;
+
+
 //        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 //
 //        $error = [];
@@ -110,15 +111,21 @@ class TestController extends Controller
 //        ];
 
 
-        $listCollabs = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('collabs'));
-
+        $array = [
+            'Amanda Mariana De Morais',
+            'Barbara Kaliny',
+            'Jessica dos Santos Rocha',
+            'Maria Julia Macedo',
+            'Rayane Neves',
+            'Sthefany Rodrigues'
+        ];
 
         $collabs = [];
         $fails = [];
 
 
-        foreach($listCollabs[0] as $k => $v) {
-            $collab = Collaborator::where('nome', 'like', '%'.$v[0].'%')->first(['id', 'nome']);
+        foreach($array as $k => $v) {
+            $collab = Collaborator::where('nome', 'like', '%'.$v.'%')->first(['id', 'nome']);
 
             if(isset($collab->id)) {
                 $collabs[] = $collab;

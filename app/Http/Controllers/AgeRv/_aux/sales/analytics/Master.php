@@ -141,11 +141,11 @@ class Master
                     'extract' => $cancel->getExtractCancel()
                 ],
                 'meta' => $meta->getMeta(),
-                'metaPercent' => $metaPercent->getMetaPercent(),
+                'metaPercent' => number_format($metaPercent->getMetaPercent(), 2, ',', '.'),
                 'valueStar' => $valueStar->getValueStar(),
                 'stars' => $stars->getStars(),
                 'mediator' => $channelId !== 3 ? $cancel->getCountCancel() > 0 ? -10 : 10 : 0,
-                'commission' => $commission->getCommission(),
+                'commission' => number_format($commission->getCommission(), 2, ',', '.'),
                 'isCommissionable' => $commission->getCommission() > 0 ? true : false,
                 'commissionConsolidated' => $consolidated ? true : false
             ];
