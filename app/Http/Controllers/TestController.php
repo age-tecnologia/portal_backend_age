@@ -134,6 +134,8 @@ class TestController extends Controller
             }
         }
 
+        return $collabs;
+
 
         if(count($fails) !== 0) {
             foreach($collabs as $k => $v) {
