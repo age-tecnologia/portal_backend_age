@@ -24,7 +24,7 @@ class PeoplesController extends Controller
 
     public function create()
     {
-        set_time_limit(2000);
+        set_time_limit(20000);
         ini_set('memory_limit', '2048M');
 
         $query = 'select id, name, gender, type_tx_id, tx_id, email, cell_phone_1, street,neighborhood, city, postal_code from erp.people';
