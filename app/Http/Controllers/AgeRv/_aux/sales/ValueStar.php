@@ -47,7 +47,7 @@ class ValueStar
                 $this->valueStar = 4.5;
             }
 
-        } elseif ($this->channelId === 2) {
+        } elseif ($this->channelId === 2 || $this->channelId === 4) {
 
             if ($this->month <= '07' && $this->year === '2022') {
 

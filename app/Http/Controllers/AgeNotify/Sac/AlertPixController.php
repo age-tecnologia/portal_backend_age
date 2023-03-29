@@ -22,6 +22,7 @@ class AlertPixController extends Controller
         foreach ($array[0] as $key => $value) {
             if(filter_var($value[0], FILTER_VALIDATE_EMAIL)) {
 
+
                 Mail::mailer('sac')
                     ->to($value[0])
                     ->send(new SendAlertPix());

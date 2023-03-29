@@ -26,6 +26,14 @@ class Master
     private $collaboratorData;
     private $month;
     private $year;
+    private $commissionTotal = 0;
+    private $salesTotal = 0;
+    private $commissionedTotal = 0;
+    private $noCommissionedTotal = 0;
+    private $commissionChannelTotal = 0;
+    private $salesChannelTotal = 0;
+    private $commissionedChannelTotal = 0;
+    private $noCommissionedChannelTotal = 0;
 
     public function __construct($month, $year)
     {
@@ -72,6 +80,12 @@ class Master
 
             return [
                 'channels' => $this->channelsData(),
+                'infoTotal' => [
+                    'commissionTotal' => number_format($this->commissionTotal, 2, ',', '.'),
+                    'salesTotal' => $this->salesTotal,
+                    'commissionedsTotal' => $this->commissionedTotal,
+                    'noCommissionedsTotal' => $this->noCommissionedTotal
+                ]
             ];
 
         } else {return response()->json('Nenhum dado retornado.', 406);}
@@ -89,9 +103,20 @@ class Master
                 ->selectRaw('LOWER(nome) as nome, id, data_admissao, funcao_id')
                 ->get();
 
+            $this->commissionChannelTotal  = 0;
+            $this->salesChannelTotal = 0;
+            $this->commissionedChannelTotal = 0;
+            $this->noCommissionedChannelTotal = 0;
+
             $data[] = [
                 'name' => $value->canal,
-                'collaborators' => $this->collaboratorData($value->id, $value->canal)
+                'collaborators' => $this->collaboratorData($value->id, $value->canal),
+                'infoTotal' => [
+                    'salesTotal' => $this->salesChannelTotal,
+                    'commissionTotal' => number_format($this->commissionChannelTotal, 2, ',', '.'),
+                    'commissionedTotal' => $this->commissionedChannelTotal,
+                    'noCommissionedTotal' => $this->noCommissionedChannelTotal
+                ]
             ];
         }
 
@@ -128,13 +153,30 @@ class Master
             $stars = new Stars($sales->getExtractValids(), $calendar);
             $commission = new Commission($channelId, $valueStar->getValueStar(), $stars->getStars(), $cancel->getCountCancel(), $this->month, $this->year);
 
+            if($channelId !== 3) {
+                // Total de todos os canais - Líder não acrescenta duas vezes.
+                $this->salesTotal += $sales->getCountValids();
+
+            }
+
+            // Total de todos os canais
+            $this->commissionedTotal += $commission->getCommission() > 0 ? 1 : 0;
+            $this->noCommissionedTotal += $commission->getCommission() == 0 ? 1 : 0;
+            $this->commissionTotal += $commission->getCommission() > 0 ? $commission->getCommission() : 0;
+
+            // Total do canal
+            $this->commissionChannelTotal += $commission->getCommission() > 0 ? $commission->getCommission() : 0;
+            $this->salesChannelTotal += $sales->getCountValids();
+            $this->commissionedChannelTotal += $commission->getCommission() > 0 ? 1 : 0;
+            $this->noCommissionedChannelTotal += $commission->getCommission() == 0 ? 1 : 0;
+
             $data[] = [
                 'id' => $value->id,
                 'channel' => $channelName,
                 'name' => $value->nome,
                 'sales' => [
                     'count' => $sales->getCountValids(),
-                    'extract' => $sales->getExtractValidsArray()
+                    'extract' => $sales->getExtractSalesArray()
                 ],
                 'cancel' => [
                     'count' => $cancel->getCountCancel(),

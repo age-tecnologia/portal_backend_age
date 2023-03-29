@@ -61,6 +61,19 @@ class Sales
     {
         return $this->collaboratorData;
     }
+    public function getExtractSalesArray()
+    {
+
+        $array = [];
+
+        foreach($this->collaboratorData as $key => $value) {
+            $array[] = $value;
+        }
+
+        return $array;
+    }
+
+
 
     public function getCountValids()
     {
@@ -72,6 +85,7 @@ class Sales
         return $this->collaboratorSalesValid;
 
     }
+
 
     public function getExtractValidsArray()
     {
