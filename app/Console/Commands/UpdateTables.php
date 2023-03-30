@@ -39,6 +39,8 @@ class UpdateTables extends Command
     public function handle()
     {
 
+        set_time_limit(30000);
+
 
         $authContracts = new AuthenticationContractsController();
         $authContracts->__invoke();
