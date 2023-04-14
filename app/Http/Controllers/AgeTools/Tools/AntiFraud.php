@@ -15,8 +15,11 @@ class AntiFraud extends Controller
 
 
 
-            $query = 'select p."name", p.cell_phone_1, p.email, p.street, p."number", p.neighborhood, p.postal_code  from erp.people p
-                        left join erp.contracts c on c.client_id = p.id where
+            $query = 'select p."name", p.cell_phone_1, p.email, p.street, p."number", p.neighborhood, p.postal_code, c.v_stage, c.v_status, ac."user"
+                        from erp.contracts c
+                        left join erp.people p on c.client_id = p.id
+                        left join erp.authentication_contracts ac on c.id = ac.contract_id
+                         where
                         ';
 
             $lastCondition = 1;
