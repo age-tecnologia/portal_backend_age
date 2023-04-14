@@ -81,6 +81,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                     Route::resource('service-products', \App\Http\Controllers\DataWarehouse\Voalle\ServiceProductsController::class);
                     Route::resource('contract-assignment-activations', \App\Http\Controllers\DataWarehouse\Voalle\ContractAssignmentActivationsController::class);
                     Route::resource('contract-service-tags', \App\Http\Controllers\DataWarehouse\Voalle\ContractsServiceTagsController::class);
+                    Route::resource('requests-breaks', \App\Http\Controllers\DataWarehouse\Voalle\RequestAndBreaksController::class);
                 });
             });
         });
@@ -192,6 +193,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                 Route::resource('meta', \App\Http\Controllers\AgeRv\CollaboratorMetaController::class);
                 Route::get('meta-add-mass', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddMass']);
                 Route::get('meta-add-supervisors', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddSupervisors']);
+                Route::post('meta-add-sellers', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddSellers']);
                 Route::get('users-not-link', [\App\Http\Controllers\AgeRv\LinkUserController::class, 'getUsersNotLinkAgeRv']);
                 Route::put('user-link', [\App\Http\Controllers\AgeRv\LinkUserController::class, 'linkUserAndReleaseAccess']);
 

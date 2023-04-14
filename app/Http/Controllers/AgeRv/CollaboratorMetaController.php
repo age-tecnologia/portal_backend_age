@@ -150,4 +150,54 @@ class CollaboratorMetaController extends Controller
             'errors' => $errors
         ];
     }
+
+
+    public function metaAddSellers(Request $request)
+    {
+
+        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+
+        $collabs = [];
+        $errors = [];
+
+        foreach($array[0] as $key => $value) {
+            $collabs[] = trim($value[0]);
+        }
+
+        foreach($collabs as $key => $v) {
+
+            $collaborator = Collaborator::where('nome', 'like', '%'.$v.'%')->first();
+
+            if(isset($collaborator->id)) {
+
+                $collab = CollaboratorMeta::whereColaboradorId($collaborator->id)->where('mes_competencia', $request->month)
+                    ->where('ano_competencia', $request->year)
+                    ->first();
+
+                if(isset($collab->id)) {
+                    $collab->update([
+                        'meta' => $request->meta
+                    ]);
+                } else {
+                    $collab = new CollaboratorMeta();
+
+                    $collab->create([
+                        'colaborador_id' => $collaborator->id,
+                        'mes_competencia' => $request->month,
+                        'ano_competencia' => $request->year,
+                        'meta' => $request->meta,
+                        'modified_by' => 1
+                    ]);
+
+                }
+            } else {
+                $errors[] = $v;
+            }
+
+        }
+
+        return $errors;
+
+
+    }
 }
