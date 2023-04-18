@@ -20,7 +20,7 @@
 <body>
 <div id="container" style="width: 100vw; background-color: #e0e1e7">
     <div id="card" style="width: 40%; height: 100%; background-color: #fff; margin: 0 auto">
-        <div id="header" style="width: 100%; height: 23vh; background-image: url('https://i.ibb.co/64DjGzg/Prancheta-1-copiar-5.jpg'); background-size: cover; background-repeat: no-repeat">
+        <div id="header" style="width: 100%; height: 23vh; background-image: url('https://agenotifica.s3.sa-east-1.amazonaws.com/age/Prancheta+1+copiar+5.jpg'); background-size: cover; background-repeat: no-repeat">
 
         </div>
         <div id="main" style="padding: 3vh 2vw 3vh 4vw; margin: 0 auto">
@@ -30,7 +30,7 @@
             <br>
             <div id="section-2">
                 <p style="color: #82b4ff; font-weight: 500; font-size: .9rem">
-                    Primeira, gostariámos de lhe dar as boas-vindas pela <br>
+                    Primeiramente, gostariámos de lhe dar as boas-vindas pela <br>
                     sua inclusão no nosso portfólio de clientes <b style="color: #104176">Age Empresas.</b>
                 </p>
                 <br>
@@ -58,15 +58,15 @@
             <div id="section-5" style="width: 100%; margin: 3vh 0">
                 <div id="card-2" style="width: 80%; margin: 0 auto; border: 2px solid #B8D1F6; padding: 2vh 1vw">
                     <div id="item" style="margin-bottom: 2vh; display: flex; flex-direction: row; gap: 1vw; align-items: center">
-                        <img src="https://i.ibb.co/9w806jN/Prancheta-1-copiar-4.jpg" alt="suporte" style="width: 2vw; height: auto">
+                        <img src="https://agenotifica.s3.sa-east-1.amazonaws.com/age/Prancheta+1+copiar+4.jpg" alt="suporte" style="width: 2vw; height: auto">
                         <span style="color: #B8D1F6; font-size: .8rem"><b>suporte.empresas@agetelecom.com.br</b></span>
                     </div>
                     <div id="item" style="margin-bottom: 2vh; display: flex; flex-direction: row; gap: 1vw; align-items: center">
-                        <img src="https://i.ibb.co/nQwsXz0/Prancheta-1-copiar-3.jpg" alt="email" style="width: 2vw; height: auto">
+                        <img src="https://agenotifica.s3.sa-east-1.amazonaws.com/age/Prancheta+1+copiar+3.jpg" alt="email" style="width: 2vw; height: auto">
                         <span style="color: #B8D1F6; font-size: .8rem"><b>noc@agetelecom.com.br</b></span>
                     </div>
                     <div id="item" style="display: flex; flex-direction: row; gap: 1vw; align-items: center">
-                        <img src="https://i.ibb.co/2Y5ykPR/Prancheta-1-copiar-2.jpg" alt="whatsapp" style="width: 2vw; height: auto">
+                        <img src="https://agenotifica.s3.sa-east-1.amazonaws.com/age/Prancheta+1+copiar+2.jpg" alt="whatsapp" style="width: 2vw; height: auto">
                         <span style="color: #B8D1F6; font-size: .8rem"><b>Telefone: 4040-4498</b></span>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
 
         </div>
         <div id="footer"
-             style="background-image: url('https://i.ibb.co/jb0wjbv/rodap.jpg');
+             style="background-image: url('https://agenotifica.s3.sa-east-1.amazonaws.com/age/rodap%C3%A9+(1).jpg');
                  background-repeat: no-repeat; background-size: cover; width: 100%; height: 6vh ">
 
         </div>
