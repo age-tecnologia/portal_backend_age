@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div id="section-4" style="display: flex; flex-direction: row; gap: 1vw">
-                <img src="https://i.ibb.co/XyJ0Mbw/Prancheta-1-copiar.jpg" alt="seta" style="width: 2.5vw; height: auto">
+                <img src="https://agenotifica.s3.sa-east-1.amazonaws.com/age/Prancheta+1+copiar.jpg" alt="seta" style="width: 2.5vw; height: auto">
                 <p style="color: #104176; font-weight: 500; font-size: .8rem">Caso necessite de atendimento, estaremos <br> sempre prontos para atendê-lo através de nossos canais:</p>
             </div>
             <div id="section-5" style="width: 100%; margin: 3vh 0">
