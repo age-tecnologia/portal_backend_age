@@ -35,9 +35,9 @@ class Commission
 
         $this->commission = $this->valueStar * $this->stars;
 
-        if($this->cancel > 0 && $this->channelId !== 3) {
+        if($this->cancel > 0 && $this->channelId !== 3 && $this->channelId !== 6) {
             $this->commission = $this->commission * 0.9;
-        } elseif($this->cancel === 0 && $this->channelId !== 3) {
+        } elseif($this->cancel === 0 && $this->channelId !== 3 && $this->channelId !== 6) {
             $this->commission = $this->commission * 1.1;
         }
 

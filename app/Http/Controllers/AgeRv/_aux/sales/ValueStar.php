@@ -167,6 +167,18 @@ class ValueStar
                 }
 
             }
+        } elseif ($this->channelId === 6) {
+            if ($this->month >= '02' && $this->year === '2023') {
+                if ($this->metaPercent >= 70 && $this->metaPercent < 100) {
+                    $this->valueStar = 0.15;
+                } elseif ($this->metaPercent >= 100 && $this->metaPercent < 120) {
+                    $this->valueStar = 0.25;
+                } elseif ($this->metaPercent >= 120 && $this->metaPercent < 141) {
+                    $this->valueStar = 0.4;
+                } elseif ($this->metaPercent >= 141) {
+                    $this->valueStar = 1.6;
+                }
+            }
         }
 
     }
