@@ -10,6 +10,7 @@ use App\Http\Controllers\AgeRv\_aux\sales\Meta;
 use App\Http\Controllers\AgeRv\_aux\sales\MetaPercent;
 use App\Http\Controllers\AgeRv\_aux\sales\Sales;
 use App\Http\Controllers\AgeRv\_aux\sales\Stars;
+use App\Http\Controllers\AgeRv\_aux\sales\StarsRefatored;
 use App\Http\Controllers\AgeRv\_aux\sales\ValueStar;
 use App\Models\AgeRv\Channel;
 use App\Models\AgeRv\Collaborator;
