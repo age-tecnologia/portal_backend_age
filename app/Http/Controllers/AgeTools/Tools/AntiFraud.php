@@ -34,8 +34,8 @@ class AntiFraud extends Controller
                 'address' => 'LOWER(p.street)',
                 'neighborhood' => 'LOWER(p.neighborhood)',
                 'document' => 'LOWER(p.document)',
-                'tel' => 'LOWER(p.tel)',
-                'cel' => 'LOWER(p.cel)'
+                'tel' => 'LOWER(p.phone)',
+                'cel' => 'LOWER(p.cell_phone_1)'
             );
 
             // Verifica cada campo no objeto de requisição

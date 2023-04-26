@@ -24,7 +24,7 @@
 </head>
 <body>
 <div id="container" style="width: 100vw; background-color: #e0e1e7">
-    <div id="card" style="width: 40%; height: 100%; background-color: #fff; margin: 0 17%">
+    <div id="card" style="width: 40%; height: 100%; background-color: #fff; margin: 0 auto">
         <div id="header" style="width: 100%; height: 23vh; background-image: url('https://agenotifica.s3.sa-east-1.amazonaws.com/age/Prancheta+1+copiar+5.jpg'); background-size: cover; background-repeat: no-repeat">
 
         </div>
@@ -91,7 +91,5 @@
 
 </div>
 
-
-<img src="{{ asset('image/Screenshot_3.png')  }}" alt="">
 </body>
 </html>

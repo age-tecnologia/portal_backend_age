@@ -38,6 +38,11 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('api')
                 ->namespace($this->namespace)
+                ->prefix('api/portal/')
+                ->group(base_path('routes/api/ageportal.php'));
+
+            Route::middleware('api')
+                ->namespace($this->namespace)
                 ->prefix('api/agecontrol/')
                 ->group(base_path('routes/api/agecontrol.php'));
 
@@ -50,6 +55,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->prefix('api/agetools/')
                 ->group(base_path('routes/api/agetools.php'));
+
+            Route::middleware('api')
+                ->namespace($this->namespace)
+                ->prefix('api/takeblip/')
+                ->group(base_path('routes/api/takeblip.php'));
         });
     }
 

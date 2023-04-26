@@ -13,5 +13,5 @@ class Modules extends Model
 
 
     protected $table = 'portal_modulos';
-    protected $fillable = ['modulo', 'icone', 'descricao', 'ativo'];
+    protected $fillable = ['modulo', 'icone', 'descricao', 'rota', 'ativo'];
 }
