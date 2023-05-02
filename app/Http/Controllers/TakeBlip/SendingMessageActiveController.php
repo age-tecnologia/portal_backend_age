@@ -8,21 +8,31 @@ use Illuminate\Http\Request;
 
 class SendingMessageActiveController extends Controller
 {
+
+    private $log = [];
+
     public function index()
     {
 
 
 
+
         $cellphones = [
-          '5191211218'
+            '61984700440'
         ];
 
         foreach($cellphones as $key => $cellphone) {
-            $this->sendingMessage($cellphone);
-            $this->moveBlock($cellphone);
+
+            $cellphoneFormated = $this->removeCharacterSpecials($cellphone);
+
+            $this->sendingMessage($cellphoneFormated);
+            $this->intermediary($cellphoneFormated);
+            $this->moveBlock($cellphoneFormated);
 
         }
-        return true;
+
+
+        return $this->log;
 
 
 
@@ -42,7 +52,7 @@ class SendingMessageActiveController extends Controller
                 "type" => "template",
                 "template" => [
                     "namespace" => "0c731938_5304_4f41_9ccf_f0942721dd48",
-                    "name" => "ativocobranca",
+                    "name" => "envio_fatura_requisicao",
                     "language" => [
                         "code" => "PT_BR",
                         "policy" => "deterministic"
@@ -55,7 +65,7 @@ class SendingMessageActiveController extends Controller
         ];
 
         // Faz a requisição POST usando o cliente Guzzle HTTP
-        $response = $client->post('https://telek.http.msging.net/messages', [
+        $response = $client->post('https://agetelecom.http.msging.net/messages', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Key YWdldGVsZWNvbXJvdXRlcjpYdlBjZWNRaUs0VTdKT2RNT2VmdQ=='
@@ -65,6 +75,40 @@ class SendingMessageActiveController extends Controller
 
         // Obtém o corpo da resposta
         $body = $response->getBody();
+
+        $this->log[] = ['sending' => 'success'];
+
+    }
+
+    private function intermediary($cellphone) {
+
+        // Cria uma instância do cliente Guzzle HTTP
+        $client = new Client();
+
+        // Cria o array com os dados a serem enviados
+        $data = [
+            "id" => uniqid(),
+            "to" => "postmaster@msging.net",
+            "method" => "set",
+            "uri" => "/contexts/55$cellphone@wa.gw.msging.net/Master-State",
+            "type" => "text/plain",
+            "resource" => "contatoativoenviodefatura"
+        ];
+
+        // Faz a requisição POST usando o cliente Guzzle HTTP
+        $response = $client->post('https://agetelecom.http.msging.net/commands', [
+            'json' => $data,
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Key YWdldGVsZWNvbXJvdXRlcjpYdlBjZWNRaUs0VTdKT2RNT2VmdQ=='
+            ]
+        ]);
+
+        // Obtém o corpo da resposta
+        $body = $response->getBody();
+
+        $this->log[] = ['intermediary' => 'success'];
+
 
     }
 
@@ -78,13 +122,13 @@ class SendingMessageActiveController extends Controller
             "id" => uniqid(),
             "to" => "postmaster@msging.net",
             "method" => "set",
-            "uri" => "/contexts/55$cellphone@wa.gw.msging.net/stateid@ca3df1c5-8183-47e0-9529-5368f44c4951",
+            "uri" => "/contexts/55$cellphone@wa.gw.msging.net/stateid@684abf3b-a37b-4c29-bb28-4600739efde0",
             "type" => "text/plain",
-            "resource" => "53e35c35-0c06-44c2-b302-74803bf51304"
+            "resource" => "b1814ddb-4d3b-4857-904f-cd5a0a6a9c5e"
         ];
 
         // Faz a requisição POST usando o cliente Guzzle HTTP
-        $response = $client->post('https://telek.http.msging.net/commands', [
+        $response = $client->post('https://agetelecom.http.msging.net/commands', [
             'json' => $data,
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -95,5 +139,13 @@ class SendingMessageActiveController extends Controller
         // Obtém o corpo da resposta
         $body = $response->getBody();
 
+        $this->log[] = ['move' => 'success'];
+
+
+    }
+
+    private function removeCharacterSpecials($cellphone) {
+        $cellphone = preg_replace('/[^0-9]/', '', $cellphone);
+        return $cellphone;
     }
 }

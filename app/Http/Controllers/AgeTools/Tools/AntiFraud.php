@@ -38,6 +38,7 @@ class AntiFraud extends Controller
                 'cel' => 'LOWER(p.cell_phone_1)'
             );
 
+
             // Verifica cada campo no objeto de requisição
             foreach ($fieldsMap as $field => $fieldSQL) {
                 if (isset($request->$field)) {
@@ -54,7 +55,7 @@ class AntiFraud extends Controller
 
             $query = $query.' limit 20';
 
-            $result = DB::connection('pgsql')->select($query);
+            $result = DB::connection('pgsql')->select(DB::raw($query));
 
             return response()->json([$result], 200);
 

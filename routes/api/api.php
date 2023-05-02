@@ -203,6 +203,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
             Route::prefix('analytics')->group(function () {
                 Route::get('/', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
                 Route::get('/payment', [\App\Http\Controllers\AgeRv\SalesRulesController::class, 'index']);
+                Route::resource('/consolidated', \App\Http\Controllers\AgeRv\CommissionConsolidatedController::class);
                 Route::post('/simulator', [\App\Http\Controllers\AgeRv\Management\SimulatorController::class, 'index']);
             });
 

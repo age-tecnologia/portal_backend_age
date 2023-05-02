@@ -15,6 +15,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "maatwebsite/excel": "^3.1",
+        "spatie/browsershot": "^3.57",
         "tymon/jwt-auth": "*"
     },
     "require-dev": {

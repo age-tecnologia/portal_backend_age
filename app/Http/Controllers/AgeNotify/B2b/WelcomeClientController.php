@@ -32,7 +32,7 @@ class WelcomeClientController extends Controller
 
         $pdfOutput = $dom->output();
 
-        $filePath = public_path('image/test.pdf');
+        $filePath = public_path('image/test2.pdf');
         file_put_contents($filePath, $pdfOutput);
 
         return true;

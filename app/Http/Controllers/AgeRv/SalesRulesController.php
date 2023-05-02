@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\AgeRv;
 
+use App\Http\Controllers\AgeRv\_aux\sales\analytics\Coordenator;
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\Master;
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\NewSeller;
 use App\Http\Controllers\AgeRv\_aux\sales\analytics\NewSupervisor;
@@ -32,6 +33,7 @@ class SalesRulesController extends Controller
             $this->dashboard = $request->has('dashboard') ? $request->input('dashboard') : false;
 
 
+
         // Verifica o nível de acesso, caso se enquadre, permite o acesso máximo ou minificado.
         if($c->nivel === 'Master' ||
             $c->funcao === 'Diretoria' ||
@@ -54,7 +56,12 @@ class SalesRulesController extends Controller
 
             return $seller->response();
 
-        } else {
+        }   elseif ($c->funcao === 'Coordenador') {
+
+            $coordenator = new Coordenator($this->month, $this->year, $c->nome, $c->id, $this->dashboard);
+            return $coordenator->response();
+
+        }  else {
             return response()->json(["Unauthorized"], 401);
         }
     }
