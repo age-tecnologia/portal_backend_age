@@ -192,7 +192,7 @@ Route::middleware('LogAccess', \App\Http\Middleware\LogAccess::class)->group(fun
                 Route::get('new-password/{id}', [\App\Http\Controllers\UsersController::class, 'newPasswordAgeRv']);
                 Route::resource('meta', \App\Http\Controllers\AgeRv\CollaboratorMetaController::class);
                 Route::get('meta-add-mass', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddMass']);
-                Route::get('meta-add-supervisors', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddSupervisors']);
+                Route::post('meta-add-supervisors', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddSupervisors']);
                 Route::post('meta-add-sellers', [\App\Http\Controllers\AgeRv\CollaboratorMetaController::class, 'metaAddSellers']);
                 Route::get('users-not-link', [\App\Http\Controllers\AgeRv\LinkUserController::class, 'getUsersNotLinkAgeRv']);
                 Route::put('user-link', [\App\Http\Controllers\AgeRv\LinkUserController::class, 'linkUserAndReleaseAccess']);

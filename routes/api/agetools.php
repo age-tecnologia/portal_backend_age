@@ -13,5 +13,8 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/', 'index');
         });
 
+        Route::resource('mailers', \App\Http\Controllers\AgeTools\Tools\Mailer\MailersController::class);
+        Route::resource('templates', \App\Http\Controllers\AgeTools\Tools\Mailer\TemplatesController::class);
+
     });
 });

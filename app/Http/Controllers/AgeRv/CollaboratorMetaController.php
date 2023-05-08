@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\AgeRv\Collaborator;
 use App\Models\AgeRv\CollaboratorMeta;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Meta;
 
@@ -120,26 +122,44 @@ class CollaboratorMetaController extends Controller
     public function metaAddSupervisors(Request $request)
     {
 
+        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 
-        foreach($request->json('supervisors') as $k => $v) {
+
+        $success = new Collection();
+
+
+
+        foreach($array[0] as $k => $v) {
 
             $errors = [];
 
-            $collaborator = Collaborator::where('nome', 'like', '%'.$v['name'].'%')->whereTipoComissaoId(3)->first();
+
+            $collaborator = Collaborator::where('nome', 'like', '%'.$v[0].'%')->whereTipoComissaoId(3)->first();
 
 
             if(isset($collaborator->id)) {
                 $meta = new CollaboratorMeta();
 
-                $meta->create([
+
+                $meta->firstOrCreate(
+                    [   'colaborador_id' => $collaborator->id,
+                        'mes_competencia' => $request->month,
+                        'ano_competencia' => $request->year,]
+                    ,[
                     'colaborador_id' => $collaborator->id,
                     'mes_competencia' => $request->month,
                     'ano_competencia' => $request->year,
                     'meta' => $v['meta'],
                     'modified_by' => 1
                 ]);
+
+                $success->push([
+                   'colaborador_id' => $collaborator->id,
+                   'collaborator' => $v[0],
+                   'meta' => $v[1]
+                ]);
             } else {
-                $errors[] = $v['name'];
+                $errors[] = $v[0];
             }
 
 
@@ -147,7 +167,8 @@ class CollaboratorMetaController extends Controller
 
         return [
             'msg' => "metas adicionadas com sucesso",
-            'errors' => $errors
+            'errors' => $errors,
+            'success' => $success
         ];
     }
 
