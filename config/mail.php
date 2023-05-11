@@ -69,7 +69,21 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
             'from' => [
                 'address' => env('MAIL_FROM_ADDRESS_SAC'),
-                'name' => 'Notificação Age Telecom'
+                'name' => 'Sac Age Telecom'
+            ]
+        ],
+        'b2b' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_HOST_B2B', 'smtp.mailgun.org'),
+            'port' => env('MAIL_PORT_B2B', 587),
+            'encryption' => env('MAIL_ENCRYPTION_B2B', 'tls'),
+            'username' => env('MAIL_USERNAME_B2B'),
+            'password' => env('MAIL_PASSWORD_B2B'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN'),
+            'from' => [
+                'address' => env('MAIL_FROM_ADDRESS_B2B'),
+                'name' => 'Age Empresas'
             ]
         ],
 

@@ -13,15 +13,17 @@ class TemplatesController extends Controller
 
     public function index(Request $request)
     {
-        $templates = Template::whereMailerId($request->mailerId)->get(['id', 'nome', 'template']);
+        $templates = Template::whereMailerId($request->mailerId)->get(['id', 'nome', 'template', 'formulario']);
 
         $data = new Collection();
         $batch = new BatchController();
 
         foreach ($templates as $key => $template) {
             $data->push([
+                'id' => $template->id,
                'name' => $template->nome,
                'template' => $template->template,
+               'form' => $template->formulario,
                'info' =>  $batch->getBatchAndEmailsSendingsTemplate($template->id)
             ]);
         }

@@ -22,25 +22,26 @@ class WelcomeClientController extends Controller
     {
 
 
-        $template = view('mail.ageNotify.b2b.welcome_client_template',
-            ['client' => 'Carlos Neto', 'contract' => 20391, 'vigence' => '2023-05-01'])->render();
+//        $template = view('mail.ageNotify.b2b.welcome_client_template',
+//            ['client' => 'Carlos Neto', 'contract' => 20391, 'vigence' => '2023-05-01'])->render();
+//
+//        $dom = new Dompdf();
+//
+//        $dom->loadHtml($template);
+//        $dom->render();
+//
+//        $pdfOutput = $dom->output();
+//
+//        $filePath = public_path('image/test2.pdf');
+//        file_put_contents($filePath, $pdfOutput);
+//
+//        return true;
+//
+//      //  $image = Image::make($template);
+//
+//      //  return $image->response('png');
 
-        $dom = new Dompdf();
-
-        $dom->loadHtml($template);
-        $dom->render();
-
-        $pdfOutput = $dom->output();
-
-        $filePath = public_path('image/test2.pdf');
-        file_put_contents($filePath, $pdfOutput);
-
-        return true;
-
-      //  $image = Image::make($template);
-
-      //  return $image->response('png');
-
+        return $this->send();
 
     }
 
@@ -48,9 +49,12 @@ class WelcomeClientController extends Controller
 
     private function send()
     {
-        Mail::mailer('notification')
+
+
+
+        Mail::mailer('b2b')
             ->to('carlos.neto@agetelecom.com.br')
-            ->send(new SendWelcomeClient(), 'text-html');
+            ->send(new SendWelcomeClient('DCCO SOLUCOES EM ENERGIA E EQUIPAMENTOS LTDA', '548741', '10/05/2024', 'Contratos PJ - B2B Empresarial Fidelizado'), 'text-html');
 
         return true;
     }

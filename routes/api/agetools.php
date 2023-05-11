@@ -13,8 +13,15 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::get('/', 'index');
         });
 
-        Route::resource('mailers', \App\Http\Controllers\AgeTools\Tools\Mailer\MailersController::class);
-        Route::resource('templates', \App\Http\Controllers\AgeTools\Tools\Mailer\TemplatesController::class);
+        Route::prefix('mailer')->group(function () {
+            Route::resource('mailers', \App\Http\Controllers\AgeTools\Tools\Mailer\MailersController::class);
+            Route::controller(\App\Http\Controllers\AgeTools\Tools\Mailer\TemplatesController::class)->prefix('templates')->group(function () {
+                Route::get('/', 'index');
+            });
+            Route::controller(\App\Http\Controllers\AgeTools\Tools\Mailer\SendEmailController::class)->prefix('email')->group(function () {
+                Route::post('sending', 'index');
+            });
+        });
 
     });
 });

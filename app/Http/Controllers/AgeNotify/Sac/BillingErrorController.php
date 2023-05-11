@@ -25,9 +25,9 @@ class BillingErrorController extends Controller
             if(filter_var($value[0], FILTER_VALIDATE_EMAIL)) {
 
 
-                Mail::mailer('sac')
-                    ->to($value[0])
-                    ->send(new SendBillingError());
+//                Mail::mailer('sac')
+//                    ->to($value[0])
+//                    ->send(new SendBillingError());
 
             } else {
                 $error[] = [

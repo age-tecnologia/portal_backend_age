@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail\AgeNotify\B2b;
+namespace App\Mail\AgeTools\Tools\Mailer;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,27 +9,23 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendWelcomeClient extends Mailable
+class PatternSending extends Mailable
 {
-    private $data = [];
-
     use Queueable, SerializesModels;
+
+    private $htmlTemplate;
+    private string $title;
+    private $variables;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($client, $contract, $vigence, $type)
+    public function __construct($title, $html, $variables)
     {
-
-        $this->data = [
-            'client' => $client,
-            'contract' => $contract,
-            'vigence' => $vigence,
-            'type' => $type
-        ];
-
+        $this->title = $title;
+        $this->html = $html;
     }
 
     /**
@@ -40,7 +36,7 @@ class SendWelcomeClient extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Boas-vindas!'
+            subject: $this->title,
         );
     }
 
@@ -52,8 +48,8 @@ class SendWelcomeClient extends Mailable
     public function content()
     {
         return new Content(
-            view: 'mail.ageNotify.b2b.welcome_client',
-            with: ['data' => $this->data]
+            view: 'mail.template',
+            with: ['html' => $this->htmlTemplate]
         );
     }
 

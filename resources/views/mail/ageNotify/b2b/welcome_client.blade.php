@@ -30,7 +30,7 @@
         </div>
         <div id="main" style="padding: 3vh 2vw 3vh 4vw; margin: 0 auto">
             <div id="section">
-                <h1 style="font-size: 1.4rem; color: #104176; font-weight: 600">Prezado {{ $client }}, como vai?</h1>
+                <h1 style="font-size: 1.4rem; color: #104176; font-weight: 600">Prezado {{ $data['client'] }}, como vai?</h1>
             </div>
             <br>
             <div id="section-2">
@@ -49,11 +49,13 @@
                 <div id="card-info" style="margin: 0 auto; width: 80%; background-color: #B8D1F6; padding: 2vh 1vw">
                     <p style="color: #104176; font-weight: 700; font-size: .8rem">Estes são seus dados: </p>
                     <br>
-                    <p style="color: #104176; font-weight: 700; font-size: .8rem">Razão Social: {{ $client }}</p>
+                    <p style="color: #104176; font-weight: 700; font-size: .8rem">Razão Social: {{ $data['client'] }}</p>
                     <br>
-                    <p style="color: #104176; font-weight: 700; font-size: .8rem">Número do Contrato do cliente: {{ $contract }}</p>
+                    <p style="color: #104176; font-weight: 700; font-size: .8rem">Tipo: {{ $data['type'] }}</p>
                     <br>
-                    <p style="color: #104176; font-weight: 700; font-size: .8rem">Vigência do Contrato até: {{ $vigence  }} </p>
+                    <p style="color: #104176; font-weight: 700; font-size: .8rem">Número do Contrato do cliente: {{ $data['contract'] }}</p>
+                    <br>
+                    <p style="color: #104176; font-weight: 700; font-size: .8rem">Vigência do Contrato até: {{ $data['vigence']  }} </p>
                 </div>
             </div>
             <div id="section-4" style="display: flex; flex-direction: row; gap: 1vw; align-items: center">
