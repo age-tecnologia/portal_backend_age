@@ -21,7 +21,7 @@ class SendEmailController extends Controller
 
     private string $email;
     private $data;
-    private array $errors;
+    private array $errors = [];
     private $template;
     private $mailer;
 
@@ -82,8 +82,14 @@ class SendEmailController extends Controller
         $this->template = Template::whereMailerId($this->data->mailerId)->whereId($this->data->templateId)
                             ->first(['id', 'nome', 'template']);
 
-      //  $verifyLimitSending = new VerifyLimitSendings($this->mailer, $this->mailer->id);
+        $verifyLimitSending = new VerifyLimitSendings($this->mailer, $this->mailer->id);
+        $verifyLimitSending = $verifyLimitSending->verify();
 
+        if(! empty($verifyLimitSending['errors'])) {
+            foreach($verifyLimitSending['errors'] as $key => $error) {
+                $this->errors[] = $error;
+            }
+        }
 
 
         if(! isset($this->mailer->id)) {
