@@ -30,7 +30,7 @@ class SendEmailController extends Controller
         try {
 
 
-            $this->inputData(json_encode($request->json('data')));
+            $this->inputData($request->json('data'));
             $this->isValidEMail();
 
 
