@@ -84,7 +84,6 @@ class SendEmailController extends Controller
 
         $verifyLimitSending = new VerifyLimitSendings($this->mailer, $this->mailer->id);
 
-        return $verifyLimitSending->verify();
 
 
         if(! isset($this->mailer->id)) {
