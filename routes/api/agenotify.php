@@ -14,4 +14,4 @@ Route::group(['middleware' => 'auth:api'], function () {
     });
 });
 
-Route::get('/b2b/welcome-client', [\App\Http\Controllers\AgeNotify\B2b\WelcomeClientController::class, 'index']);
+Route::post('/b2b/welcome-client', [\App\Http\Controllers\AgeNotify\B2b\WelcomeClientController::class, 'send']);

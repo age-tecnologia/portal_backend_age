@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\AgeTools\Tools\Mailer;
 
+use App\Http\Controllers\AgeTools\Tools\Mailer\_aux\VerifyLimitSendings;
 use App\Http\Controllers\Controller;
 use App\Mail\AgeTools\Tools\Mailer\PatternSending;
+use App\Models\AgeTools\Tools\Mailer\Batch;
+use App\Models\AgeTools\Tools\Mailer\EmailSending;
 use App\Models\AgeTools\Tools\Mailer\Mailer;
 use App\Models\AgeTools\Tools\Mailer\Template;
 use Egulias\EmailValidator\EmailValidator;
@@ -27,7 +30,7 @@ class SendEmailController extends Controller
         try {
 
 
-            $this->inputData($request->json('data'));
+            $this->inputData(json_encode($request->json('data')));
             $this->isValidEMail();
 
 
@@ -35,7 +38,7 @@ class SendEmailController extends Controller
                 throw new \Exception(implode(', ', $this->errors), 400);
             }
 
-            $this->processingSend();
+            return $this->processingSend();
 
 
             if(!empty($this->errors)) {
@@ -78,6 +81,10 @@ class SendEmailController extends Controller
 
         $this->template = Template::whereMailerId($this->data->mailerId)->whereId($this->data->templateId)
                             ->first(['id', 'nome', 'template']);
+
+        $verifyLimitSending = new VerifyLimitSendings($this->mailer, $this->mailer->id);
+
+        return $verifyLimitSending->verify();
 
 
         if(! isset($this->mailer->id)) {
@@ -128,13 +135,35 @@ class SendEmailController extends Controller
 
         }
 
-
         $mailer =  $mailer = Mail::to($to)
                             ->send(new PatternSending($this->template->nome, $this->template->template, $variables));
 
 
 
+
+        $this->saveInfo($this->mailer->id, $this->template->id, $to);
+
+
         return response()->json('E-mail enviado com sucesso', 200);
+
+    }
+
+    private function saveInfo($mailerId, $templateId, $recipientEmail) : void
+    {
+
+        $saveBatch = Batch::create([
+           'mailer_id' => $mailerId,
+            'template_id' => $templateId,
+            'enviado_por' => auth()->user()->id
+        ]);
+
+        $saveSendingEmail = EmailSending::create([
+           'lote_id' => $saveBatch->id,
+           'email_destinatario' => $recipientEmail,
+            'status' => 1
+        ]);
+
+
 
     }
 

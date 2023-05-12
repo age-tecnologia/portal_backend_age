@@ -16,9 +16,7 @@
 </head>
 <body>
 
-<div>
-    teeeeeeeeste
-</div>
+{!! $html !!}
 
 </body>
 </html>

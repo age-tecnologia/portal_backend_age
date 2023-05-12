@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AgeNotify\B2b;
 use App\Http\Controllers\Controller;
 use App\Mail\AgeNotify\B2b\SendWelcomeClient;
 use App\Mail\AgeNotify\Sac\SendAlertPix;
+use Carbon\Carbon;
 use Dompdf\Dompdf;
 use http\Message;
 use Illuminate\Http\Request;
@@ -47,16 +48,62 @@ class WelcomeClientController extends Controller
 
 
 
-    private function send()
+    public function send(Request $request)
     {
 
+        set_time_limit(20000000);
 
 
-        Mail::mailer('b2b')
-            ->to('carlos.neto@agetelecom.com.br')
-            ->send(new SendWelcomeClient('DCCO SOLUCOES EM ENERGIA E EQUIPAMENTOS LTDA', '548741', '10/05/2024', 'Contratos PJ - B2B Empresarial Fidelizado'), 'text-html');
+        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 
-        return true;
+        $error = [];
+        $success = [];
+
+
+        foreach ($array[0] as $key => $value) {
+            if(filter_var(trim($value[0]), FILTER_VALIDATE_EMAIL)) {
+
+
+                $countString = substr_count($value[2], '-');
+
+
+
+                for($i = 0; $i < $countString; $i++) {
+
+                    if($i === 0) {
+                        $field = $value[2];
+                    } else {
+                        $field = $fieldFormatted;
+                    }
+
+                    $character = "-";
+                    $position = strpos($field, $character);
+                    $fieldFormatted = substr($field, $position + strlen($character));
+                }
+
+
+
+//                Mail::mailer('b2b')
+//                    ->to($value[0])
+//                    ->send(new SendWelcomeClient(trim($fieldFormatted), $value[1], $value[4], $value[3]), 'text-html');
+
+
+            } else {
+                $error[] = [
+                    'email' => $value[0]
+                ];
+            }
+        }
+
+
+        return [
+            $error,
+            'count_errors' => count($error),
+            'emails' => count($array[0]),
+            'msg' => 'sucesso.'
+        ];
+
+
     }
 
 
