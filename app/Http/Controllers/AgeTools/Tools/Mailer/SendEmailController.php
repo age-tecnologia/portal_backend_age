@@ -38,7 +38,7 @@ class SendEmailController extends Controller
                 throw new \Exception(implode(', ', $this->errors), 400);
             }
 
-            return $this->processingSend();
+            $this->processingSend();
 
 
             if(!empty($this->errors)) {
@@ -82,7 +82,7 @@ class SendEmailController extends Controller
         $this->template = Template::whereMailerId($this->data->mailerId)->whereId($this->data->templateId)
                             ->first(['id', 'nome', 'template']);
 
-        $verifyLimitSending = new VerifyLimitSendings($this->mailer, $this->mailer->id);
+      //  $verifyLimitSending = new VerifyLimitSendings($this->mailer, $this->mailer->id);
 
 
 
