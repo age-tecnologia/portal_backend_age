@@ -177,11 +177,11 @@ class Master
                 'name' => $value->nome,
                 'sales' => [
                     'count' => $sales->getCountValids(),
-              //      'extract' => $sales->getExtractSalesArray()
+                    'extract' => $sales->getExtractSalesArray()
                 ],
                 'cancel' => [
                     'count' => $cancel->getCountCancel(),
-             //       'extract' => $cancel->getExtractCancel()
+                    'extract' => $cancel->getExtractCancel()
                 ],
                 'meta' => $meta->getMeta(),
                 'metaPercent' => number_format($metaPercent->getMetaPercent(), 2, '.', '.'),
@@ -189,8 +189,8 @@ class Master
                 'stars' => $stars->getStars(),
                 'mediator' => $channelId !== 3 ? $cancel->getCountCancel() > 0 ? -10 : 10 : 0,
                 'commission' => number_format($commission->getCommission(), 2, '.', '.'),
-//                'isCommissionable' => $commission->getCommission() > 0 ? true : false,
-//                'commissionConsolidated' => $consolidated ? true : false
+                'isCommissionable' => $commission->getCommission() > 0 ? true : false,
+                'commissionConsolidated' => $consolidated ? true : false
             ];
 
         }
