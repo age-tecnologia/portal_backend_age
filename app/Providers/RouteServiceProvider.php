@@ -60,6 +60,13 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->prefix('api/takeblip/')
                 ->group(base_path('routes/api/takeblip.php'));
+
+            Route::middleware('api')
+                ->namespace($this->namespace)
+                ->prefix('api/agerv/')
+                ->group(base_path('routes/api/agerv.php'));
+
+
         });
     }
 

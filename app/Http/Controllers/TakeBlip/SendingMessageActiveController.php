@@ -3,36 +3,86 @@
 namespace App\Http\Controllers\TakeBlip;
 
 use App\Http\Controllers\Controller;
+use App\Models\Integrator\Takeblip\MessageActive;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SendingMessageActiveController extends Controller
 {
 
     private $log = [];
 
-    public function index()
+    public function index(Request $request)
     {
 
 
+        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
+
+        set_time_limit(200000);
+
+        $contracts = [];
 
 
-        $cellphones = [
-            ' 61 98106-9695'
-        ];
+        $i = 0;
 
-        foreach($cellphones as $key => $cellphone) {
+        foreach($array[0] as $k => $v) {
 
-            $cellphoneFormated = $this->removeCharacterSpecials($cellphone);
-
-            $this->sendingMessage($cellphoneFormated);
-            $this->intermediary($cellphoneFormated);
-            $this->moveBlock($cellphoneFormated);
+            $contracts[] = $v[0];
 
         }
 
+        $cellphonesList = implode(",", $contracts);
 
-        return $this->log;
+
+
+        $query = "SELECT
+                          c.id,
+                          p.v_name,
+                          c.collection_day,
+                          CASE
+                              WHEN p.cell_phone_1 IS NOT NULL THEN p.cell_phone_1
+                              ELSE p.cell_phone_2
+                          END AS \"cellphone\"
+                      FROM
+                          erp.contracts c
+                      LEFT JOIN
+                          erp.people p ON p.id = c.client_id
+                      WHERE
+                          c.id in ($cellphonesList)  and c.collection_day = 17 order by c.id asc";
+
+
+
+
+
+        $cellphoneContracts = DB::connection("pgsql")->select($query);
+        
+
+        try {
+            foreach($cellphoneContracts as $key => $cellphone) {
+
+                try {
+                    $cellphoneFormated = $this->removeCharacterSpecials($cellphone->cellphone);
+
+                    $this->sendingMessage($cellphoneFormated);
+                    $this->intermediary($cellphoneFormated);
+                    $this->moveBlock($cellphoneFormated);
+                    $this->saveData($cellphone, $cellphoneFormated);
+                } catch (\Exception $e) {
+                    throw $e;
+                }
+
+            }
+        } catch (\Exception $e) {
+            $e;
+        }
+
+
+        return [
+            'cellphones' => $cellphoneContracts
+        ];
 
 
 
@@ -76,7 +126,6 @@ class SendingMessageActiveController extends Controller
         // Obtém o corpo da resposta
         $body = $response->getBody();
 
-        $this->log[] = ['sending' => 'success'];
 
     }
 
@@ -107,7 +156,6 @@ class SendingMessageActiveController extends Controller
         // Obtém o corpo da resposta
         $body = $response->getBody();
 
-        $this->log[] = ['intermediary' => 'success'];
 
 
     }
@@ -139,7 +187,6 @@ class SendingMessageActiveController extends Controller
         // Obtém o corpo da resposta
         $body = $response->getBody();
 
-        $this->log[] = ['move' => 'success'];
 
 
     }
@@ -148,4 +195,22 @@ class SendingMessageActiveController extends Controller
         $cellphone = preg_replace('/[^0-9]/', '', $cellphone);
         return $cellphone;
     }
+
+    private function saveData($data, $cellFormatted)
+    {
+        $takeMsgActive = new MessageActive();
+
+
+        $takeMsgActive->create([
+           'cliente' => $data->v_name,
+           'numero_original' => $data->cellphone,
+           'numero_enviado' => $cellFormatted,
+           'lote' => 1,
+           'vencimento' => $data->collection_day,
+           'data_envio_whatsapp' => Carbon::now(),
+           'sucesso' => 1,
+        ]);
+
+    }
+
 }

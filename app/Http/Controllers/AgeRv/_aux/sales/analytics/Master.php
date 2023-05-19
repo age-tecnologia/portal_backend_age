@@ -85,7 +85,8 @@ class Master
                     'commissionTotal' => number_format($this->commissionTotal, 2, ',', '.'),
                     'salesTotal' => $this->salesTotal,
                     'commissionedsTotal' => $this->commissionedTotal,
-                    'noCommissionedsTotal' => $this->noCommissionedTotal
+                    'noCommissionedsTotal' => $this->noCommissionedTotal,
+                    'monthsAvailable' => $this->getMonthsAvailable()
                 ]
             ];
 
@@ -116,7 +117,7 @@ class Master
                     'salesTotal' => $this->salesChannelTotal,
                     'commissionTotal' => number_format($this->commissionChannelTotal, 2, ',', '.'),
                     'commissionedTotal' => $this->commissionedChannelTotal,
-                    'noCommissionedTotal' => $this->noCommissionedChannelTotal
+                    'noCommissionedTotal' => $this->noCommissionedChannelTotal,
                 ]
             ];
         }
@@ -190,7 +191,7 @@ class Master
                 'mediator' => $channelId !== 3 ? $cancel->getCountCancel() > 0 ? -10 : 10 : 0,
                 'commission' => number_format($commission->getCommission(), 2, '.', '.'),
                 'isCommissionable' => $commission->getCommission() > 0 ? true : false,
-                'commissionConsolidated' => $consolidated ? true : false
+                'commissionConsolidated' => $consolidated ? true : false,
             ];
 
         }
@@ -223,6 +224,16 @@ class Master
         }
 
 
+    }
+
+    private function getMonthsAvailable()
+    {
+        $months = \App\Models\AgeRv\Commission::whereAnoCompetencia(Carbon::now()->format('Y'))
+            ->orderBy('mes_competencia')
+            ->get(['mes_competencia'])
+            ->unique('mes_competencia');
+
+        return $months;
     }
 
 
