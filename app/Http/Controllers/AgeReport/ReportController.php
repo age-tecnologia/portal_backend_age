@@ -137,6 +137,8 @@ class ReportController extends Controller
             $query = \Illuminate\Support\Str::replaceFirst('paramTypeDate', 'DATE', $this->report->query);
             $query = \Illuminate\Support\Str::replaceFirst('paramTypeComparative', ' between ', $query);
             $query .= '\''.$request->input('firstPeriod').'\' and \''.$request->input('lastPeriod').'\'';
+
+
         } elseif ($type === 3) {
 
             $query = \Illuminate\Support\Str::replaceFirst('paramTypeDate', 'DATE', $this->report->query);
@@ -150,8 +152,6 @@ class ReportController extends Controller
             $query .= '\''.$request->input('date').'\'';
 
         }
-
-//coment
 
 
         $result = DB::connection($this->report->banco_solicitado)->select($query);

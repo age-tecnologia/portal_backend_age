@@ -20,9 +20,9 @@ class SalesRulesController extends Controller
     public function index(Request $request)
     {
 
-        $router = new PermissionBuilder();
-
-        return $router->build();
+//        $router = new PermissionBuilder();
+//
+//        return $router->build();
 
         // Trás o nível de permissão do usuário (master, admin) e a função (Diretoria, gerente).
         $c = DB::table('agerv_usuarios_permitidos as up')
