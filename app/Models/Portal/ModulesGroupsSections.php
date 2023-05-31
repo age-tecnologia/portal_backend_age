@@ -16,4 +16,14 @@ class ModulesGroupsSections extends Model
 
     protected $fillable = ['grupo_id', 'secao_id', 'criado_por', 'atualizado_por', 'ativo'];
 
+    public function groups()
+    {
+        return $this->belongsTo(ModulesGroups::class, 'grupo_id');
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(ModulesSections::class, 'secao_id');
+    }
+
 }

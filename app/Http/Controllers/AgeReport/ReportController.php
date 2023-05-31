@@ -96,39 +96,62 @@ class ReportController extends Controller
 
     public function download(Request $request, $id)
     {
+
+
         $this->report = Report::find($id);
 
         set_time_limit(2000);
         ini_set('memory_limit', '2048M');
 
 
-        if($this->report->isPeriodo === 1) {
+        if($request->has('date')) {
+
+            return $this->reportPeriod($request, 3);
+
+        } elseif ($request->has('month') && $request->has('year')) {
+
+            return $this->reportPeriod($request, 4);
+
+        } elseif ($request->has('firstPeriod') && $request->has('lastPeriod')) {
+
             return $this->reportPeriod($request, 1);
 
-        } elseif($this->report->isPeriodoHora === 1) {
-
-            return $this->reportPeriod($request, 2);
 
         } else {
-
             return $this->report($this->report->query);
-
         }
+
+
 
     }
 
     private function reportPeriod($request, $type) {
 
+
+
+
         if($type === 1) {
             $firstPeriod = $request->has('firstPeriod') ? Carbon::parse($request->input('firstPeriod'))->format('Y-m-d') : null;
             $lastPeriod = $request->has('lastPeriod') ? Carbon::parse($request->input('lastPeriod'))->format('Y-m-d') : null;
-        } elseif($type === 2) {
-            $firstPeriod = $request->has('firstPeriod') ? Carbon::parse($request->input('firstPeriod'))->format('Y-m-d H:i:s') : null;
-            $lastPeriod = $request->has('lastPeriod') ? Carbon::parse($request->input('lastPeriod'))->format('Y-m-d H:i:s') : null;
+
+            $query = \Illuminate\Support\Str::replaceFirst('paramTypeDate', 'DATE', $this->report->query);
+            $query = \Illuminate\Support\Str::replaceFirst('paramTypeComparative', ' between ', $query);
+            $query .= '\''.$request->input('firstPeriod').'\' and \''.$request->input('lastPeriod').'\'';
+        } elseif ($type === 3) {
+
+            $query = \Illuminate\Support\Str::replaceFirst('paramTypeDate', 'DATE', $this->report->query);
+            $query = \Illuminate\Support\Str::replaceFirst('paramTypeComparative', ' = ', $query);
+            $query .= '\''.$request->input('date').'\'';
+
+        } elseif ($type === 4) {
+
+            $query = \Illuminate\Support\Str::replaceFirst('paramTypeDate', 'DATE', $this->report->query);
+            $query = \Illuminate\Support\Str::replaceFirst('paramTypeComparative', ' = ', $query);
+            $query .= '\''.$request->input('date').'\'';
+
         }
 
-        $query = \Illuminate\Support\Str::replaceFirst('#', $firstPeriod, $this->report->query);
-        $query = \Illuminate\Support\Str::replaceFirst('#', $lastPeriod, $query);
+//coment
 
 
         $result = DB::connection($this->report->banco_solicitado)->select($query);

@@ -51,14 +51,14 @@ class SendingMessageActiveController extends Controller
                       LEFT JOIN
                           erp.people p ON p.id = c.client_id
                       WHERE
-                          c.id in ($cellphonesList)  and c.collection_day = 17 order by c.id asc";
+                          c.id in ($cellphonesList)  and c.collection_day = 25 order by c.id asc";
 
 
 
 
 
         $cellphoneContracts = DB::connection("pgsql")->select($query);
-        
+
 
         try {
             foreach($cellphoneContracts as $key => $cellphone) {

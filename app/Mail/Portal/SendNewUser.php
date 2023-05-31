@@ -25,7 +25,7 @@ class SendNewUser extends Mailable
 
     public function build()
     {
-        return $this->from('portal_age@agetelecom.com.br', 'Portal Age Telecom');
+        return $this->from('portal_age@agetelecom.com.br', 'portal Age Telecom');
     }
 
     /**
