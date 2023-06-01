@@ -23,5 +23,12 @@ Route::group(['middleware' => 'auth:api'], function () {
             });
         });
 
+        Route::prefix('schedule')->group(function () {
+            Route::controller(\App\Http\Controllers\AgeTools\Tools\Schedule\ScheduleController::class)->prefix('dashboard')->group(function () {
+                Route::get('filters', 'getFilters');
+                Route::get('data', 'getData');
+            });
+        });
+
     });
 });
