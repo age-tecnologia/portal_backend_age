@@ -25,13 +25,14 @@ class ScheduleController extends Controller
                     ) = \''.$request->dateSchedule.'\''; // 2021-05-10
 
 
-        if($request->idNotes > 0) {
-            $query .= ' AND ai.incident_type_id = '.$request->idNotes;
+        if($request->typeNote > 0) {
+            $query .= ' AND ai.incident_type_id = '.$request->typeNote;
         }
 
         if($request->region > 0) {
             $query .= ' AND a.region_id = '.$request->region;
         }
+
 
         $result = DB::connection('pgsql')->select($query);
 
