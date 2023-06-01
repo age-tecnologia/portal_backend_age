@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\AgeTools\Tools\Schedule;
 
+use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\AgeReport\Report;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Nette\Utils\Random;
 
 class ScheduleController extends Controller
 {
@@ -41,6 +44,17 @@ class ScheduleController extends Controller
     }
 
 
+    public function downloadExcel(Request $request)
+    {
+
+        $headers = [];
+        foreach($request->headersExcel as $key => $value) {
+            $headers[] = $value;
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($request->data, $headers), 'agenda.xlsx');
+
+    }
 
     public function getFilters()
     {

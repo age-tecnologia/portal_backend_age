@@ -175,6 +175,7 @@ class ReportController extends Controller
 
         $result = DB::connection($this->report->banco_solicitado)->select($query);
 
+
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($result, $arrHeaders), $this->report->nome_arquivo);
 
     }
