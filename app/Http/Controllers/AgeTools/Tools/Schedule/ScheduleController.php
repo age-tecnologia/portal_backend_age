@@ -28,8 +28,18 @@ class ScheduleController extends Controller
                     ) = \''.$request->dateSchedule.'\''; // 2021-05-10
 
 
-        if($request->typeNote > 0) {
-            $query .= ' AND ai.incident_type_id = '.$request->typeNote;
+        if(!empty($request->typeNote)) {
+
+            $multipleId = [];
+
+            foreach($request->typeNote as $key => $value) {
+                $multipleId[] = intval($value);
+            }
+
+            $multipleId = implode(',' , $multipleId);
+
+
+            $query .= ' AND ai.incident_type_id IN( '.$multipleId.')';
         }
 
         if($request->region > 0) {
@@ -128,7 +138,8 @@ class ScheduleController extends Controller
                         c.v_stage  AS "stage_contract",
                         c.v_status  AS "status_contract",
                         sc.title as "context",
-                        sp.title as "problem"
+                        sp.title as "problem",
+                        cpa.neighborhood  as "region"
                     FROM erp.assignment_incidents ai
                     left JOIN erp.assignments a ON a.id = ai.assignment_id
                     left join erp.teams t on t.id = ai.team_id
