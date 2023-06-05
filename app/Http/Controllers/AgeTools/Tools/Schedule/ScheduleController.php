@@ -21,7 +21,7 @@ class ScheduleController extends Controller
         // Verifica se um nome foi enviado
         if ($request->has('name')) {
             // Adiciona uma cláusula WHERE para filtrar pela região selecionada
-            $query .= ' where p.v_name LIKE \'%'.$request->name.'%\' limit 50';
+            $query .= ' where LOWER(p.v_name) LIKE \'%'.mb_convert_case($request->name, MB_CASE_LOWER, 'UTF-8').'%\' limit 50';
         } else {
 
 
@@ -125,10 +125,18 @@ class ScheduleController extends Controller
                         it.title as "type_note",
                         t.title as "team",
                          (
-                        select tech.v_name
-                        from erp.reports r3
-                        left join erp.people tech on tech.id = r3.person_id
-                        where r3.assignment_id = a.id and tech.technical is true order by r3.id desc limit 1
+                        SELECT
+                        CASE
+                            WHEN tech.v_name IS NULL THEN tech2.v_name
+                            ELSE tech.v_name
+                        END AS "Técnico"
+                        FROM erp.reports r3
+                        JOIN erp.assignments a2 ON r3.assignment_id = a2.id
+                        LEFT JOIN erp.people tech ON tech.id = r3.person_id AND tech.technical IS TRUE
+                        LEFT JOIN erp.people tech2 ON tech2.id = a.responsible_id AND tech2.technical IS TRUE
+                        WHERE (tech.technical IS TRUE OR tech2.technical IS TRUE)
+                        ORDER BY r3.id DESC
+                        LIMIT 1
                         ) as "technical",
                         (
                         select r3.beginning_date  from erp.reports r3 left join erp.people tech on tech.id = r3.person_id
