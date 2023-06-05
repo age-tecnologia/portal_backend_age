@@ -18,6 +18,14 @@ class ScheduleController extends Controller
 
         $query = $this->getQuery();
 
+        // Verifica se um nome foi enviado
+        if ($request->has('name')) {
+            // Adiciona uma cláusula WHERE para filtrar pela região selecionada
+            $query .= ' where p.v_name LIKE \'%'.$request->name.'%\' limit 50';
+        } else {
+
+
+
         // Adiciona uma cláusula WHERE para filtrar pela data da agenda
         $query .= ' WHERE (
         SELECT DATE(s.start_date)
@@ -49,6 +57,7 @@ class ScheduleController extends Controller
             $query .= ' AND a.region_id = '.$request->region;
         }
 
+        }
         // Executa a consulta e obtém o resultado
         $result = DB::connection('pgsql')->select($query);
 
