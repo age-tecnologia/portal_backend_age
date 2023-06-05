@@ -16,78 +16,84 @@ class ScheduleController extends Controller
     public function getData(Request $request)
     {
 
-
         $query = $this->getQuery();
 
+        // Adiciona uma cláusula WHERE para filtrar pela data da agenda
         $query .= ' WHERE (
-                        SELECT DATE(s.start_date)
-                        FROM erp.schedules s
-                        WHERE s.assignment_id = a.id
-                        ORDER BY s.id DESC
-                        LIMIT 1
-                    ) = \''.$request->dateSchedule.'\''; // 2021-05-10
+        SELECT DATE(s.start_date)
+        FROM erp.schedules s
+        WHERE s.assignment_id = a.id
+        ORDER BY s.id DESC
+        LIMIT 1
+    ) = \''.$request->dateSchedule.'\''; // 2021-05-10
 
-
-        if(!empty($request->typeNote)) {
-
+        // Verifica se há algum tipo de nota selecionado
+        if (!empty($request->typeNote)) {
             $multipleId = [];
 
-            foreach($request->typeNote as $key => $value) {
+            // Transforma os tipos de nota em um array de IDs inteiros
+            foreach ($request->typeNote as $key => $value) {
                 $multipleId[] = intval($value);
             }
 
-            $multipleId = implode(',' , $multipleId);
+            // Transforma o array de IDs em uma string separada por vírgulas
+            $multipleId = implode(',', $multipleId);
 
-
-            $query .= ' AND ai.incident_type_id IN( '.$multipleId.')';
+            // Adiciona uma cláusula WHERE para filtrar pelos tipos de nota selecionados
+            $query .= ' AND ai.incident_type_id IN ('.$multipleId.')';
         }
 
-        if($request->region > 0) {
+        // Verifica se uma região foi selecionada
+        if ($request->region > 0) {
+            // Adiciona uma cláusula WHERE para filtrar pela região selecionada
             $query .= ' AND a.region_id = '.$request->region;
         }
 
-
+        // Executa a consulta e obtém o resultado
         $result = DB::connection('pgsql')->select($query);
 
+        // Retorna os resultados como uma resposta JSON
         return response()->json($result, 200);
-
     }
-
 
     public function downloadExcel(Request $request)
     {
-
         $headers = [];
-        foreach($request->headersExcel as $key => $value) {
+
+        // Obtém os cabeçalhos para o arquivo Excel
+        foreach ($request->headersExcel as $key => $value) {
             $headers[] = $value;
         }
 
+        // Gera o arquivo Excel usando a biblioteca Maatwebsite\Excel
         return \Maatwebsite\Excel\Facades\Excel::download(new ReportExport($request->data, $headers), 'agenda.xlsx');
-
     }
 
     public function getFilters()
     {
         $data = [];
 
+        // Obtém os tipos de notas
         $typeNotes = $this->getTypesNotes();
 
-        foreach($typeNotes as $key => $value) {
+        foreach ($typeNotes as $key => $value) {
             $data['typeNotes'][] = $value;
         }
 
+        // Obtém as regiões
         $regions = $this->getRegions();
 
-        foreach($regions as $key => $value) {
+        foreach ($regions as $key => $value) {
             $data['regions'][] = $value;
         }
 
+        // Retorna os dados filtrados
         return $data;
     }
 
     private function getTypesNotes()
     {
-
+        // Obtém os tipos de notas do banco de dados
         $result = DB::connection('pgsql')->select('select id, title from erp.incident_types order by title asc');
 
         return $result;
@@ -95,6 +101,7 @@ class ScheduleController extends Controller
 
     private function getRegions()
     {
+        // Obtém as regiões do banco de dados
         $result = DB::connection('pgsql')->select('select id, title from erp.regions order by title asc');
 
         return $result;
@@ -133,6 +140,7 @@ class ScheduleController extends Controller
                         from erp.schedules s
                         where s.assignment_id = a.id order by s.id desc limit 1
                         ) as "date_end_schedule",
+                        p.id as "id_client",
                         p.name AS "name_client",
                         c.id AS "contract_id",
                         c.v_stage  AS "stage_contract",
