@@ -131,10 +131,9 @@ class ScheduleController extends Controller
                             ELSE tech.v_name
                         END AS "Técnico"
                         FROM erp.reports r3
-                        JOIN erp.assignments a2 ON r3.assignment_id = a2.id
                         LEFT JOIN erp.people tech ON tech.id = r3.person_id AND tech.technical IS TRUE
                         LEFT JOIN erp.people tech2 ON tech2.id = a.responsible_id AND tech2.technical IS TRUE
-                        WHERE (tech.technical IS TRUE OR tech2.technical IS TRUE)
+                        WHERE (tech.technical IS TRUE OR tech2.technical IS TRUE) and r3.assignment_id = a.id
                         ORDER BY r3.id DESC
                         LIMIT 1
                         ) as "technical",
