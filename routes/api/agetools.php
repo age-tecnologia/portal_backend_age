@@ -29,6 +29,11 @@ Route::group(['middleware' => 'auth:api'], function () {
                 Route::get('data', 'getData');
                 Route::post('download-excel', 'downloadExcel');
             });
+            Route::controller(\App\Http\Controllers\AgeTools\Tools\Schedule\Note\ExecutedController::class)->prefix('notes')->group(function () {
+
+                Route::post('new-executed', 'store');
+
+            });
         });
 
     });

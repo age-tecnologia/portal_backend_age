@@ -5,6 +5,7 @@ namespace App\Http\Controllers\AgeTools\Tools\Schedule;
 use App\Exports\ReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\AgeReport\Report;
+use App\Models\AgeTools\Tools\Schedule\Note\Executed;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,7 @@ class ScheduleController extends Controller
         // Verifica se um nome foi enviado
         if ($request->has('name')) {
             // Adiciona uma cláusula WHERE para filtrar pela região selecionada
-            $query .= ' where LOWER(p.v_name) LIKE \'%'.mb_convert_case($request->name, MB_CASE_LOWER, 'UTF-8').'%\' limit 50';
+            $query .= ' where LOWER(p.v_name) LIKE \'%'.mb_convert_case($request->name, MB_CASE_LOWER, 'UTF-8').'%\' order by ai.protocol asc limit 50';
         } else {
 
 
@@ -56,10 +57,15 @@ class ScheduleController extends Controller
             // Adiciona uma cláusula WHERE para filtrar pela região selecionada
             $query .= ' AND a.region_id = '.$request->region;
         }
+            $query .= ' ORDER BY ai.protocol ASC';
 
         }
+
+
         // Executa a consulta e obtém o resultado
         $result = DB::connection('pgsql')->select($query);
+
+        $result = $this->checkExecutedNote($result);
 
         // Retorna os resultados como uma resposta JSON
         return response()->json($result, 200);
@@ -116,6 +122,22 @@ class ScheduleController extends Controller
         return $result;
     }
 
+    private function checkExecutedNote($data)
+    {
+        $executedNote = new Executed();
+
+        foreach($data as $key => $value) {
+            $result = $executedNote->whereProtocolo($value->protocol)->first();
+
+            if(isset($result->id)) {
+                $data[$key]->executed = true;
+            } else {
+                $data[$key]->executed = false;
+            }
+        }
+
+        return $data;
+    }
 
     private function getQuery()
     {
