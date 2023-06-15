@@ -154,9 +154,9 @@ class CollaboratorMetaController extends Controller
                 ]);
 
                 $success->push([
-                   'colaborador_id' => $collaborator->id,
-                   'collaborator' => $v[0],
-                   'meta' => $v[1]
+                    'colaborador_id' => $collaborator->id,
+                    'collaborator' => $v[0],
+                    'meta' => $v[1]
                 ]);
             } else {
                 $errors[] = $v[0];
@@ -182,12 +182,15 @@ class CollaboratorMetaController extends Controller
         $errors = [];
 
         foreach($array[0] as $key => $value) {
-            $collabs[] = trim($value[0]);
+            $collabs[] = [
+                'name' => trim($value[0]),
+                'admmission' => $value[2],
+            ];
         }
 
         foreach($collabs as $key => $v) {
 
-            $collaborator = Collaborator::where('nome', 'like', '%'.$v.'%')->first();
+            $collaborator = Collaborator::where('nome', 'like', '%'.$v['name'].'%')->first();
 
             if(isset($collaborator->id)) {
 
@@ -195,9 +198,18 @@ class CollaboratorMetaController extends Controller
                     ->where('ano_competencia', $request->year)
                     ->first();
 
+                $date = Carbon::createFromFormat('d/m/Y', $v['admmission'])->format('m');
+                $meta = 0;
+
+                if($date === '03') {
+                    $meta = 20.25;
+                } elseif ($date === '04') {
+                    $meta = 13.5;
+                }
+
                 if(isset($collab->id)) {
                     $collab->update([
-                        'meta' => $request->meta
+                        'meta' => $meta
                     ]);
                 } else {
                     $collab = new CollaboratorMeta();
@@ -206,11 +218,12 @@ class CollaboratorMetaController extends Controller
                         'colaborador_id' => $collaborator->id,
                         'mes_competencia' => $request->month,
                         'ano_competencia' => $request->year,
-                        'meta' => $request->meta,
+                        'meta' => $meta,
                         'modified_by' => 1
                     ]);
 
                 }
+
             } else {
                 $errors[] = $v;
             }

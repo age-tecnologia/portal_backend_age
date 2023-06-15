@@ -153,7 +153,7 @@ class Master
             $metaPercent = new MetaPercent($sales->getCountValids(), $meta->getMeta());
             $valueStar = new ValueStar($metaPercent->getMetaPercent(), $channelId, $this->month, $this->year);
             $stars = new Stars($sales->getExtractValids(), $calendar);
-            $commission = new Commission($channelId, $valueStar->getValueStar(), $stars->getStars(), $cancel->getCountCancel(), $this->month, $this->year);
+            $commission = new Commission($channelId, $valueStar->getValueStar(), $stars->getStars(), $cancel->getCountCancel(), $this->month, $this->year, $metaPercent->getMetaPercent());
 
             if($channelId !== 3) {
                 // Total de todos os canais - Líder não acrescenta duas vezes.
@@ -172,27 +172,51 @@ class Master
             $this->commissionedChannelTotal += $commission->getCommission() > 0 ? 1 : 0;
             $this->noCommissionedChannelTotal += $commission->getCommission() == 0 ? 1 : 0;
 
-            $data[] = [
-                'id' => $value->id,
-                'channel' => $channelName,
-                'name' => $value->nome,
-                'sales' => [
-                    'count' => $sales->getCountValids(),
-                    'extract' => $sales->getExtractSalesArray()
-                ],
-                'cancel' => [
-                    'count' => $cancel->getCountCancel(),
-                    'extract' => $cancel->getExtractCancel()
-                ],
-                'meta' => $meta->getMeta(),
-                'metaPercent' => number_format($metaPercent->getMetaPercent(), 2, '.', '.'),
-                'valueStar' => $valueStar->getValueStar(),
-                'stars' => $stars->getStars(),
-                'mediator' => $channelId !== 3 ? $cancel->getCountCancel() > 0 ? -10 : 10 : 0,
-                'commission' => number_format($commission->getCommission(), 2, '.', '.'),
-                'isCommissionable' => $commission->getCommission() > 0 ? true : false,
-                'commissionConsolidated' => $consolidated ? true : false,
-            ];
+            if($channelId === 3) {
+                $data[] = [
+                    'id' => $value->id,
+                    'channel' => $channelName,
+                    'name' => $value->nome,
+                    'sales' => [
+                        'count' => $sales->getCountValids(),
+                        'extract' => $sales->getExtractSalesArray()
+                    ],
+                    'cancel' => [
+                        'count' => $cancel->getCountCancel(),
+                        'extract' => $cancel->getExtractCancel()
+                    ],
+                    'meta' => $meta->getMeta(),
+                    'metaPercent' => number_format($metaPercent->getMetaPercent(), 2, '.', '.'),
+                    'valueStar' => 0,
+                    'stars' => 0,
+                    'mediator' => 0,
+                    'commission' => number_format($commission->getCommission(), 2, '.', '.'),
+                    'isCommissionable' => $commission->getCommission() > 0 ? true : false,
+                    'commissionConsolidated' => $consolidated ? true : false,
+                ];
+            } else {
+                $data[] = [
+                    'id' => $value->id,
+                    'channel' => $channelName,
+                    'name' => $value->nome,
+                    'sales' => [
+                        'count' => $sales->getCountValids(),
+                        'extract' => $sales->getExtractSalesArray()
+                    ],
+                    'cancel' => [
+                        'count' => $cancel->getCountCancel(),
+                        'extract' => $cancel->getExtractCancel()
+                    ],
+                    'meta' => $meta->getMeta(),
+                    'metaPercent' => number_format($metaPercent->getMetaPercent(), 2, '.', '.'),
+                    'valueStar' => $valueStar->getValueStar(),
+                    'stars' => $stars->getStars(),
+                    'mediator' => $channelId !== 3 ? $cancel->getCountCancel() > 0 ? -10 : 10 : 0,
+                    'commission' => number_format($commission->getCommission(), 2, '.', '.'),
+                    'isCommissionable' => $commission->getCommission() > 0 ? true : false,
+                    'commissionConsolidated' => $consolidated ? true : false,
+                ];
+            }
 
         }
 

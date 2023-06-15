@@ -39,24 +39,30 @@ class SendingMessageActiveController extends Controller
 
 
         $query = "SELECT
-                          c.id,
-                          p.v_name,
-                          c.collection_day,
-                          CASE
-                              WHEN p.cell_phone_1 IS NOT NULL THEN p.cell_phone_1
-                              ELSE p.cell_phone_2
-                          END AS \"cellphone\"
-                      FROM
-                          erp.contracts c
-                      LEFT JOIN
-                          erp.people p ON p.id = c.client_id
-                      WHERE
-                          c.id in ($cellphonesList)  and c.collection_day >= 10 order by c.id asc";
-
+            c.id,
+            p.v_name,
+            c.collection_day,
+          	frt.title,
+            CASE
+                WHEN p.cell_phone_1 IS NOT NULL THEN p.cell_phone_1
+                ELSE p.cell_phone_2
+            END AS cellphone
+          FROM
+            erp.contracts c
+          LEFT JOIN
+            erp.people p ON p.id = c.client_id
+          LEFT JOIN
+            erp.financial_receivable_titles frt on frt.contract_id = c.id
+          WHERE
+            c.id not in ($cellphonesList) AND
+            c.v_stage = 'Aprovado' AND
+            (c.v_status != 'Cancelado' AND c.v_status != 'Cortesia') and frt.title like '%FAT%' and frt.issue_date between '2023-06-01' and '2023-06-30'
+          ORDER BY c.id ASC";
 
 
 
         $cellphoneContracts = DB::connection("pgsql")->select($query);
+
 
 
         try {
