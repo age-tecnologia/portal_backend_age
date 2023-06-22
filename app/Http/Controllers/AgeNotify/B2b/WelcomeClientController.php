@@ -61,12 +61,13 @@ class WelcomeClientController extends Controller
 
 
         foreach ($array[0] as $key => $value) {
-            if(filter_var(trim($value[0]), FILTER_VALIDATE_EMAIL)) {
+            if(filter_var(trim($value[1]), FILTER_VALIDATE_EMAIL)) {
 
 
                 $countString = substr_count($value[2], '-');
 
 
+                $fieldFormatted = '';
 
                 for($i = 0; $i < $countString; $i++) {
 
@@ -83,9 +84,9 @@ class WelcomeClientController extends Controller
 
 
 
-//                Mail::mailer('b2b')
-//                    ->to($value[0])
-//                    ->send(new SendWelcomeClient(trim($fieldFormatted), $value[1], $value[4], $value[3]), 'text-html');
+                Mail::mailer('b2b')
+                    ->to($value[1])
+                    ->send(new SendWelcomeClient(trim($value[0]), $value[2], $value[4], $value[3]), 'text-html');
 
 
             } else {

@@ -121,7 +121,7 @@ class CollaboratorMetaController extends Controller
 
     public function metaAddSupervisors(Request $request)
     {
-
+        set_time_limit(20000);
         $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
 
 
@@ -202,9 +202,9 @@ class CollaboratorMetaController extends Controller
                 $meta = 0;
 
                 if($date === '03') {
-                    $meta = 20.25;
+                    $meta = 18.75;
                 } elseif ($date === '04') {
-                    $meta = 13.5;
+                    $meta = 12.5;
                 }
 
                 if(isset($collab->id)) {

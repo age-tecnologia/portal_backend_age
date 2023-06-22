@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 class AccessModulesController extends Controller
 {
 
-    public function getModules()
+    public function getModulesAndSections()
     {
-        $modules = Modules::all();
+        $modules = Modules::with('sections')->get(['id', 'modulo', 'icone', 'descricao', 'rota']);
 
 
         return $modules;

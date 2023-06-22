@@ -14,7 +14,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::controller(\App\Http\Controllers\AgePortal\_Aux\AccessModulesController::class)
                 ->prefix('access')
                 ->group(function() {
-                    Route::get('/', 'getModules');
+                    Route::get('/', 'getModulesAndSections');
                 });
 
         });

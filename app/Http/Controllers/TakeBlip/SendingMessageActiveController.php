@@ -64,25 +64,26 @@ class SendingMessageActiveController extends Controller
         $cellphoneContracts = DB::connection("pgsql")->select($query);
 
 
+        return $cellphoneContracts;
 
-        try {
-            foreach($cellphoneContracts as $key => $cellphone) {
-
-                try {
-                    $cellphoneFormated = $this->removeCharacterSpecials($cellphone->cellphone);
-
-                    $this->sendingMessage($cellphoneFormated);
-                    $this->intermediary($cellphoneFormated);
-                    $this->moveBlock($cellphoneFormated);
-                    $this->saveData($cellphone, $cellphoneFormated);
-                } catch (\Exception $e) {
-                    throw $e;
-                }
-
-            }
-        } catch (\Exception $e) {
-            $e;
-        }
+//        try {
+//            foreach($cellphoneContracts as $key => $cellphone) {
+//
+//                try {
+//                    $cellphoneFormated = $this->removeCharacterSpecials($cellphone->cellphone);
+//
+//                    $this->sendingMessage($cellphoneFormated);
+//                    $this->intermediary($cellphoneFormated);
+//                    $this->moveBlock($cellphoneFormated);
+//                    $this->saveData($cellphone, $cellphoneFormated);
+//                } catch (\Exception $e) {
+//                    throw $e;
+//                }
+//
+//            }
+//        } catch (\Exception $e) {
+//            $e;
+//        }
 
 
         return [

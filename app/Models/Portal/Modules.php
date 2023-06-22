@@ -12,14 +12,15 @@ class Modules extends Model
 
 
     protected $table = 'portal_modulos';
-    protected $fillable = ['modulo', 'icone', 'descricao', 'rota', 'ativo'];
+    protected $fillable = ['modulo', 'icone', 'cor_fundo', 'descricao', 'rota', 'ativo'];
 
 
     public function sections()
     {
         return $this->hasMany(ModulesSections::class, 'modulo_id')
                 ->whereAtivo(1)
-                ->select('id', 'secao', 'url', 'icone', 'modulo_id');
+                ->orderBy('ordernacao')
+                ->select('id', 'secao', 'url', 'icone', 'cor_fundo', 'modulo_id', 'descricao');
 
     }
 

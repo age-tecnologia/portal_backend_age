@@ -28,13 +28,7 @@ class ScheduleController extends Controller
 
 
         // Adiciona uma cláusula WHERE para filtrar pela data da agenda
-        $query .= ' WHERE (
-        SELECT DATE(s.start_date)
-        FROM erp.schedules s
-        WHERE s.assignment_id = a.id
-        ORDER BY s.id DESC
-        LIMIT 1
-    ) = \''.$request->dateSchedule.'\''; // 2021-05-10
+        $query .= ' where DATE(s.start_date) = \''.$request->dateSchedule.'\''; // 2021-05-10
 
         // Verifica se há algum tipo de nota selecionado
         if (!empty($request->typeNote)) {
@@ -141,67 +135,59 @@ class ScheduleController extends Controller
 
     private function getQuery()
     {
-        $query = 'SELECT
-                        ai.protocol as "protocol",
-                        is2.title  AS "status",
-                        it.title as "type_note",
-                        t.title as "team",
-                         (
-                        SELECT
-                        CASE
-                            WHEN tech.v_name IS NULL THEN tech2.v_name
-                            ELSE tech.v_name
-                        END AS "Técnico"
-                        FROM erp.reports r3
-                        LEFT JOIN erp.people tech ON tech.id = r3.person_id AND tech.technical IS TRUE
-                        LEFT JOIN erp.people tech2 ON tech2.id = a.responsible_id AND tech2.technical IS TRUE
-                        WHERE (tech.technical IS TRUE OR tech2.technical IS TRUE) and r3.assignment_id = a.id
-                        ORDER BY r3.id DESC
-                        LIMIT 1
-                        ) as "technical",
-                        (
-                        select r3.beginning_date  from erp.reports r3 left join erp.people tech on tech.id = r3.person_id
-                        where r3.assignment_id = a.id and tech.technical is true order by r3.id desc limit 1
-                        ) as "date_start_attendance",
-                        (
-                        select r3.final_date
-                        from erp.reports r3 left join erp.people tech on tech.id = r3.person_id
-                        where r3.assignment_id = a.id and tech.technical is true order by r3.id desc limit 1
-                        ) as "date_end_attendance",
-                        (
-                        select s.start_date
-                        from erp.schedules s
-                        where s.assignment_id = a.id order by s.id desc limit 1
-                        ) as "date_start_schedule",
-                        (
-                        select s.end_date
-                        from erp.schedules s
-                        where s.assignment_id = a.id order by s.id desc limit 1
-                        ) as "date_end_schedule",
-                        p.id as "id_client",
-                        p.name AS "name_client",
-                        c.id AS "contract_id",
-                        c.v_stage  AS "stage_contract",
-                        c.v_status  AS "status_contract",
-                        sc.title as "context",
-                        sp.title as "problem",
-                        cpa.neighborhood  as "region"
-                    FROM erp.assignment_incidents ai
-                    left JOIN erp.assignments a ON a.id = ai.assignment_id
-                    left join erp.teams t on t.id = ai.team_id
-                    left JOIN erp.incident_types it ON it.id = ai.incident_type_id
-                    left JOIN erp.contract_service_tags cst ON cst.id = ai.contract_service_tag_id
-                    left join erp.incident_status is2 on is2.id = ai.incident_status_id
-                    left JOIN erp.contracts c ON c.id = cst.contract_id
-                    left JOIN erp.contract_types ct ON ct.id = c.contract_type_id
-                    left JOIN erp.companies_places cp ON cp.id = c.company_place_id
-                    left JOIN erp.people p ON p.id = ai.client_id
-                    left join erp.regions r2 on r2.id = a.region_id
-                    LEFT JOIN erp.authentication_contracts ac ON ac.service_tag_id = cst.id
-                    LEFT JOIN erp.people_addresses cpa ON cpa.id = c.people_address_id
-                    LEFT JOIN erp.people r ON r.id = a.responsible_id
-                    left join erp.solicitation_problems sp on sp.id = ai.solicitation_problem_id
-                    left join erp.solicitation_classifications sc on sc.id = ai.solicitation_classification_id';
+        $query = 'select
+                ai.protocol as "protocol",
+                it.title as "type_note",
+                p.name AS "name_client",
+                CASE
+                    WHEN EXTRACT(HOUR FROM s.start_date) < 12 THEN \'Manhã\'
+                    WHEN EXTRACT(HOUR FROM s.start_date) >= 12 AND EXTRACT(HOUR FROM s.start_date) < 18 THEN \'Tarde\'
+                    ELSE \'Noite\'
+                END AS "Turn",
+                cpa.neighborhood  as "region",
+                c.id AS "contract_id",
+                t.title as "team",
+                case
+                    when tech.technical is true then tech."name"
+                    else null
+                end as "technical",
+                (
+                    select report.beginning_date from erp.reports report
+                    where report.assignment_id = a.id
+                    and tech.technical is true and tech.id = report.person_id
+                    limit 1
+                ) as "date_start_attendance",
+                (
+                    select report.final_date  from erp.reports report
+                    where report.assignment_id = a.id
+                    and tech.technical is true and tech.id = report.person_id
+                    limit 1
+                ) as "date_end_attendance",
+                s.start_date as "date_start_schedule",
+                s.end_date as "date_end_schedule",
+                is2.title  AS "status",
+                c.v_stage  AS "stage_contract",
+                c.v_status  AS "status_contract",
+                sc.title as "context",
+                sp.title as "problem"
+            from erp.schedules s
+            left join erp.people tech on tech.id = s.person_id
+            left join erp.assignment_incidents ai on ai.assignment_id = s.assignment_id
+            left JOIN erp.assignments a ON a.id = ai.assignment_id
+            left join erp.teams t on t.id = ai.team_id
+            left JOIN erp.incident_types it ON it.id = ai.incident_type_id
+            left JOIN erp.contract_service_tags cst ON cst.id = ai.contract_service_tag_id
+            left join erp.incident_status is2 on is2.id = ai.incident_status_id
+            left JOIN erp.contracts c ON c.id = cst.contract_id
+            left JOIN erp.contract_types ct ON ct.id = c.contract_type_id
+            left JOIN erp.companies_places cp ON cp.id = c.company_place_id
+            left JOIN erp.people p ON p.id = ai.client_id
+            left join erp.regions r2 on r2.id = a.region_id
+            LEFT JOIN erp.authentication_contracts ac ON ac.service_tag_id = cst.id
+            LEFT JOIN erp.people_addresses cpa ON cpa.id = c.people_address_id
+            LEFT JOIN erp.people r ON r.id = a.responsible_id
+            left join erp.solicitation_problems sp on sp.id = ai.solicitation_problem_id
+            left join erp.solicitation_classifications sc on sc.id = ai.solicitation_classification_id';
 
         return $query;
     }

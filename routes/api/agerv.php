@@ -52,8 +52,14 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::put('user-link', [\App\Http\Controllers\AgeRv\LinkUserController::class, 'linkUserAndReleaseAccess']);
 
 
+
+
+
         });
 
+        Route::controller(\App\Http\Controllers\AgeRv\Collaborators\CollaboratorsController::class)->prefix('collaborators')->group(function () {
+            Route::get('list', 'getList');
+        });
         Route::prefix('analytics')->group(function () {
             Route::get('/', [\App\Http\Controllers\AgeRv\SalesAnalyticController::class, 'index']);
             Route::get('/payment', [\App\Http\Controllers\AgeRv\SalesRulesController::class, 'index']);
