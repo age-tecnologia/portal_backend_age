@@ -54,7 +54,7 @@ class SendingMessageActiveController extends Controller
           LEFT JOIN
             erp.financial_receivable_titles frt on frt.contract_id = c.id
           WHERE
-            c.id not in ($cellphonesList) AND
+            c.id not in ($cellphonesList)  AND
             c.v_stage = 'Aprovado' AND
             (c.v_status != 'Cancelado' AND c.v_status != 'Cortesia') and frt.title like '%FAT%' and frt.issue_date between '2023-06-01' and '2023-06-30'
           ORDER BY c.id ASC";
@@ -63,27 +63,29 @@ class SendingMessageActiveController extends Controller
 
         $cellphoneContracts = DB::connection("pgsql")->select($query);
 
-
         return $cellphoneContracts;
 
-//        try {
-//            foreach($cellphoneContracts as $key => $cellphone) {
-//
-//                try {
-//                    $cellphoneFormated = $this->removeCharacterSpecials($cellphone->cellphone);
-//
+
+        try {
+            foreach($cellphoneContracts as $key => $cellphone) {
+
+                try {
+                    $cellphoneFormated = $this->removeCharacterSpecials($cellphone->cellphone);
+
+                    return $cellphoneFormated;
+
 //                    $this->sendingMessage($cellphoneFormated);
 //                    $this->intermediary($cellphoneFormated);
 //                    $this->moveBlock($cellphoneFormated);
 //                    $this->saveData($cellphone, $cellphoneFormated);
-//                } catch (\Exception $e) {
-//                    throw $e;
-//                }
-//
-//            }
-//        } catch (\Exception $e) {
-//            $e;
-//        }
+                } catch (\Exception $e) {
+                    throw $e;
+                }
+
+            }
+        } catch (\Exception $e) {
+            $e;
+        }
 
 
         return [
@@ -199,7 +201,7 @@ class SendingMessageActiveController extends Controller
 
     private function removeCharacterSpecials($cellphone) {
         $cellphone = preg_replace('/[^0-9]/', '', $cellphone);
-        return $cellphone;
+        return trim($cellphone);
     }
 
     private function saveData($data, $cellFormatted)

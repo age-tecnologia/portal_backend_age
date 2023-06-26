@@ -190,6 +190,11 @@ class ValueStar
 
     public function getTracks($channelId)
     {
+
+
+        $tracks = [];
+
+
         if($channelId === 1) {
 
             $tracks = [
@@ -283,6 +288,39 @@ class ValueStar
             ];
 
         }
+        if($channelId === 4) {
+
+            $tracks = [
+                0 => [
+                    'initial' => 0,
+                    'final' => 69,
+                    'value' => number_format(0, 2, ',', '.')
+                ],
+                1 => [
+                    'initial' => 70,
+                    'final' => 99,
+                    'value' => number_format(2.5, 2, ',', '.')
+                ],
+                2 => [
+                    'initial' => 100,
+                    'final' => 119,
+                    'value' => number_format(5, 2, ',', '.')
+                ],
+                3 => [
+                    'initial' => 120,
+                    'final' => 140,
+                    'value' => number_format(7, 2, ',', '.')
+                ],
+                4 => [
+                    'initial' => 141,
+                    'final' => null,
+                    'value' => number_format(8, 2, ',', '.')
+                ],
+            ];
+
+        }
+
+
 
         return $tracks;
 

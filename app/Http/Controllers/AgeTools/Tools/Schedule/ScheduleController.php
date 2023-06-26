@@ -169,7 +169,9 @@ class ScheduleController extends Controller
                 c.v_stage  AS "stage_contract",
                 c.v_status  AS "status_contract",
                 sc.title as "context",
-                sp.title as "problem"
+                sp.title as "problem",
+                p.phone as "Telefone",
+                p.cell_phone_1 as "Celular"
             from erp.schedules s
             left join erp.people tech on tech.id = s.person_id
             left join erp.assignment_incidents ai on ai.assignment_id = s.assignment_id
