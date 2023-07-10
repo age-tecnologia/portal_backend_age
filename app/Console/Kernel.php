@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-        $schedule->command('update:tables')->dailyAt('10:03');
+        $schedule->command('update:tables')->dailyAt('10:07');
 
     }
 
@@ -44,4 +44,3 @@ class Kernel extends ConsoleKernel
 
     }
 }
-1
