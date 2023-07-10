@@ -52,7 +52,7 @@ class ScheduleController extends Controller
             $query .= ' AND a.region_id = '.$request->region;
         }
             $query .= 'and tech.technical is false and c.v_stage != \'Cancelado\'
-                        and sc.title != \'CONCLUÍDA\' and is2.title != \'Encerramento\' ORDER BY ai.protocol ASC';
+		                        and is2.title != \'Encerramento\' ORDER BY ai.protocol ASC';
 
         }
 
