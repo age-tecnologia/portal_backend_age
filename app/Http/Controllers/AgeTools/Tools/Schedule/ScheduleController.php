@@ -17,7 +17,7 @@ class ScheduleController extends Controller
     public function getData(Request $request)
     {
 
-        $query = $this->getQuery();
+        $query = $this->getQuery2();
 
         // Verifica se um nome foi enviado
         if ($request->has('name')) {
@@ -51,7 +51,8 @@ class ScheduleController extends Controller
             // Adiciona uma cláusula WHERE para filtrar pela região selecionada
             $query .= ' AND a.region_id = '.$request->region;
         }
-            $query .= ' ORDER BY ai.protocol ASC';
+            $query .= 'and tech.technical is false and c.v_stage != \'Cancelado\'
+                        and sc.title != \'CONCLUÍDA\' and is2.title != \'Encerramento\' ORDER BY ai.protocol ASC';
 
         }
 
@@ -192,6 +193,54 @@ class ScheduleController extends Controller
             left join erp.solicitation_classifications sc on sc.id = ai.solicitation_classification_id';
 
         return $query;
+    }
+
+    private function getQuery2()
+    {
+
+        $query = '
+                select
+                distinct(p."name") as "name_client",
+                ai.protocol as "protocol",
+                        it.title as "type_note",
+                        CASE
+                            WHEN EXTRACT(HOUR FROM s.start_date) < 12 THEN \'Manhã\'
+                            WHEN EXTRACT(HOUR FROM s.start_date) >= 12 AND EXTRACT(HOUR FROM s.start_date) < 18 THEN \'Tarde\'
+                            ELSE \'Noite\'
+                        END AS "Turn",
+                        cpa.neighborhood  as "region",
+                        t.title as "team",
+                        s.start_date as "date_start_schedule",
+                        s.end_date as "date_end_schedule",
+                        is2.title  AS "status",
+                        c.id as "contract_id",
+                        c.v_stage  AS "stage_contract",
+                        c.v_status  AS "status_contract",
+                        sc.title as "context",
+                        sp.title as "problem",
+                        p.phone as "Telefone",
+                        p.cell_phone_1 as "Celular"
+                        from erp.schedules s
+                        left join erp.assignment_incidents ai on ai.assignment_id = s.assignment_id
+                        left JOIN erp.assignments a ON a.id = ai.assignment_id
+                        left join erp.teams t on t.id = ai.team_id
+                        left JOIN erp.incident_types it ON it.id = ai.incident_type_id
+                        left JOIN erp.contract_service_tags cst ON cst.id = ai.contract_service_tag_id
+                        left join erp.incident_status is2 on is2.id = ai.incident_status_id
+                        left JOIN erp.contracts c ON c.id = cst.contract_id
+                        left JOIN erp.contract_types ct ON ct.id = c.contract_type_id
+                        left JOIN erp.companies_places cp ON cp.id = c.company_place_id
+                        left JOIN erp.people p ON p.id = ai.client_id
+                        left join erp.regions r2 on r2.id = a.region_id
+                        LEFT JOIN erp.authentication_contracts ac ON ac.service_tag_id = cst.id
+                        LEFT JOIN erp.people_addresses cpa ON cpa.id = c.people_address_id
+                        LEFT JOIN erp.people r ON r.id = a.responsible_id
+                        left join erp.people tech on tech.id = a.responsible_id
+                        left join erp.solicitation_problems sp on sp.id = ai.solicitation_problem_id
+                        left join erp.solicitation_classifications sc on sc.id = ai.solicitation_classification_id';
+
+        return $query;
+
     }
 
 
