@@ -71,7 +71,7 @@ class VoalleSalesController extends Controller
                 // Instanciando o banco de dados local
                 $dataVoalle = new VoalleSales();
 
-                set_time_limit(1000);
+                set_time_limit(200000);
 
                 $dataVoalle->truncate();
 

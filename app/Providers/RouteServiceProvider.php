@@ -66,6 +66,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api/agerv/')
                 ->group(base_path('routes/api/agerv.php'));
 
+            Route::middleware('api')
+                ->namespace($this->namespace)
+                ->prefix('api/agecommunicate/')
+                ->group(base_path('routes/api/agecommunicate.php'));
+
 
         });
     }

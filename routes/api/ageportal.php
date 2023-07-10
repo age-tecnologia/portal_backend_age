@@ -19,4 +19,13 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         });
     });
+
+
+    Route::prefix('billing-rule')->group(function() {
+
+        Route::controller(\App\Http\Controllers\AgeCommunicate\BillingRule\BuilderController::class)->prefix('send')->group(function () {
+            Route::get('/', 'build');
+        });
+
+    });
 });

@@ -38,33 +38,57 @@ class SendingMessageActiveController extends Controller
 
 
 
+//        $query = "SELECT
+//            c.id,
+//            p.v_name,
+//            c.collection_day,
+//          	frt.title,
+//            CASE
+//                WHEN p.cell_phone_1 IS NOT NULL THEN p.cell_phone_1
+//                ELSE p.cell_phone_2
+//            END AS cellphone
+//          FROM
+//            erp.contracts c
+//          LEFT JOIN
+//            erp.people p ON p.id = c.client_id
+//          LEFT JOIN
+//            erp.financial_receivable_titles frt on frt.contract_id = c.id
+//          WHERE
+//            c.id in ($cellphonesList)  AND
+//            c.v_stage = 'Aprovado' AND
+//            (c.v_status != 'Cancelado' AND c.v_status != 'Cortesia') and frt.title like '%FAT%'
+//            and c.collection_day = 5 and
+//          ORDER BY c.id ASC";
+
+        $monthNow = Carbon::now()->format('m');
+
+
         $query = "SELECT
-            c.id,
-            p.v_name,
-            c.collection_day,
-          	frt.title,
-            CASE
-                WHEN p.cell_phone_1 IS NOT NULL THEN p.cell_phone_1
-                ELSE p.cell_phone_2
-            END AS cellphone
-          FROM
-            erp.contracts c
-          LEFT JOIN
-            erp.people p ON p.id = c.client_id
-          LEFT JOIN
-            erp.financial_receivable_titles frt on frt.contract_id = c.id
-          WHERE
-            c.id not in ($cellphonesList)  AND
-            c.v_stage = 'Aprovado' AND
-            (c.v_status != 'Cancelado' AND c.v_status != 'Cortesia') and frt.title like '%FAT%' and frt.issue_date between '2023-06-01' and '2023-06-30'
-          ORDER BY c.id ASC";
+                    distinct (c.id),
+                    p.v_name,
+                    c.collection_day,
+                    CASE
+                        WHEN p.cell_phone_1 IS NOT NULL THEN p.cell_phone_1
+                        ELSE p.cell_phone_2
+                    END AS cellphone
+                  FROM
+                    erp.contracts c
+                  LEFT JOIN
+                    erp.people p ON p.id = c.client_id
+                  LEFT JOIN
+                    erp.financial_receivable_titles frt on frt.contract_id = c.id
+                  WHERE
+                    c.id in ($cellphonesList) AND
+                    c.v_stage = 'Aprovado' AND
+                    (c.v_status != 'Cancelado' AND c.v_status != 'Cortesia') and frt.title like '%FAT%'
+                    and c.collection_day = 7
+                  ORDER BY c.id ASC";
 
 
 
         $cellphoneContracts = DB::connection("pgsql")->select($query);
 
-        return $cellphoneContracts;
-
+        
 
         try {
             foreach($cellphoneContracts as $key => $cellphone) {
@@ -72,14 +96,15 @@ class SendingMessageActiveController extends Controller
                 try {
                     $cellphoneFormated = $this->removeCharacterSpecials($cellphone->cellphone);
 
-                    return $cellphoneFormated;
 
-//                    $this->sendingMessage($cellphoneFormated);
-//                    $this->intermediary($cellphoneFormated);
-//                    $this->moveBlock($cellphoneFormated);
-//                    $this->saveData($cellphone, $cellphoneFormated);
+                    $this->sendingMessage($cellphoneFormated);
+                    $this->intermediary($cellphoneFormated);
+                    $this->moveBlock($cellphoneFormated);
+                    $this->saveData($cellphone, $cellphoneFormated, 1);
                 } catch (\Exception $e) {
                     throw $e;
+                    $this->saveData($cellphone, $cellphoneFormated, 0);
+
                 }
 
             }
@@ -204,7 +229,7 @@ class SendingMessageActiveController extends Controller
         return trim($cellphone);
     }
 
-    private function saveData($data, $cellFormatted)
+    private function saveData($data, $cellFormatted, $status)
     {
         $takeMsgActive = new MessageActive();
 
@@ -216,7 +241,7 @@ class SendingMessageActiveController extends Controller
            'lote' => 1,
            'vencimento' => $data->collection_day,
            'data_envio_whatsapp' => Carbon::now(),
-           'sucesso' => 1,
+           'sucesso' => $status,
         ]);
 
     }

@@ -68,6 +68,7 @@ class TestController extends Controller
     {
         set_time_limit(200000);
 
+        return "break";
 
 
 //        $array = \Maatwebsite\Excel\Facades\Excel::toArray(new \stdClass(), $request->file('excel'));
@@ -111,61 +112,61 @@ class TestController extends Controller
 //        ];
 
 
-        $array = [
-            'Amanda Mariana De Morais',
-            'Barbara Kaliny',
-            'Jessica dos Santos Rocha',
-            'Maria Julia Macedo',
-            'Rayane Neves',
-            'Sthefany Rodrigues'
-        ];
-
-        $collabs = [];
-        $fails = [];
-
-
-        foreach($array as $k => $v) {
-            $collab = Collaborator::where('nome', 'like', '%'.$v.'%')->first(['id', 'nome']);
-
-            if(isset($collab->id)) {
-                $collabs[] = $collab;
-            } else {
-                $fails[] = $v;
-            }
-        }
-
-        return $collabs;
-
-
-        if(count($fails) !== 0) {
-            foreach($collabs as $k => $v) {
-                if(isset($v->id)) {
-
-                    $collab = CollaboratorMeta::whereColaboradorId($v->id)->where('mes_competencia', 01)
-                        ->where('ano_competencia', 2023)
-                        ->first();
-
-                    if(isset($collab->id)) {
-                        $collab->update([
-                            'meta' => 12
-                        ]);
-                    } else {
-
-                        CollaboratorMeta::create([
-                            'colaborador_id' => $v->id,
-                            'mes_competencia' => 01,
-                            'ano_competencia' => 2023,
-                            'meta' => 12,
-                            'modified_by' => 1
-                        ]);
-
-                    }
-                }
-            }
-
-        }
-
-            return "BREAK";
+//        $array = [
+//            'Amanda Mariana De Morais',
+//            'Barbara Kaliny',
+//            'Jessica dos Santos Rocha',
+//            'Maria Julia Macedo',
+//            'Rayane Neves',
+//            'Sthefany Rodrigues'
+//        ];
+//
+//        $collabs = [];
+//        $fails = [];
+//
+//
+//        foreach($array as $k => $v) {
+//            $collab = Collaborator::where('nome', 'like', '%'.$v.'%')->first(['id', 'nome']);
+//
+//            if(isset($collab->id)) {
+//                $collabs[] = $collab;
+//            } else {
+//                $fails[] = $v;
+//            }
+//        }
+//
+//        return $collabs;
+//
+//
+//        if(count($fails) !== 0) {
+//            foreach($collabs as $k => $v) {
+//                if(isset($v->id)) {
+//
+//                    $collab = CollaboratorMeta::whereColaboradorId($v->id)->where('mes_competencia', 01)
+//                        ->where('ano_competencia', 2023)
+//                        ->first();
+//
+//                    if(isset($collab->id)) {
+//                        $collab->update([
+//                            'meta' => 12
+//                        ]);
+//                    } else {
+//
+//                        CollaboratorMeta::create([
+//                            'colaborador_id' => $v->id,
+//                            'mes_competencia' => 01,
+//                            'ano_competencia' => 2023,
+//                            'meta' => 12,
+//                            'modified_by' => 1
+//                        ]);
+//
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//            return "BREAK";
 
 //        $id = $request->input('id');
 //        $idCollab = $request->input('idCollab');

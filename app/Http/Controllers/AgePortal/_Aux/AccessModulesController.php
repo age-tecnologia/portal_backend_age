@@ -11,7 +11,7 @@ class AccessModulesController extends Controller
 
     public function getModulesAndSections()
     {
-        $modules = Modules::with('sections')->get(['id', 'modulo', 'icone', 'descricao', 'rota']);
+        $modules = Modules::with('sections')->get(['id', 'modulo', 'icone', 'descricao', 'rota', 'cor_fundo']);
 
 
         return $modules;
